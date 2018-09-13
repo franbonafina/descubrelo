@@ -1,0 +1,341 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.menu.CoAMapping']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:focus context="coatmFiltersForm" />
+
+				<h:form id="msgForm">
+					<p:messages id="listCOAFormMessages" closable="true"
+						showDetail="false" autoUpdate="false" />
+				</h:form>
+				
+				<h:form id="coatmFiltersForm">					
+
+					<p:tabView id="filterTabView">
+						<p:tab title="#{msg['message.common.search']}">
+
+							<p:panelGrid id="searchPanel" styleClass="no-border" columns="2">
+
+								<!-- COMPANY -->
+								<p:outputLabel for="companyFilter"
+									value="#{msg['message.common.company']}" />
+								<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{filterContainer.coaFilterGenerator.company}"
+									title="#{msg['message.coa.tooltip.search.company']}"
+									required="true">
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company" itemValue="#{company}"
+										itemLabel="#{company.code} - #{company.description}" />
+								</p:selectOneMenu>
+
+								<!-- SERVICE TYPE -->
+								<p:outputLabel for="serviceReceivedTypeFilter"
+									value="#{msg['message.coa.serviceReceivedType']}" />
+								<p:selectOneMenu id="serviceReceivedTypeFilter"
+									styleClass="dis-input-width"
+									value="#{filterContainer.coaFilterGenerator.serviceReceivedType}"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.coa.tooltip.search.serviceReceivedType']}">
+									<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+									<f:selectItems
+										value="#{selectorController.serviceReceivedTypeFilterList}"
+										var="serviceType" itemValue="#{serviceType}"
+										itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceType)}" />
+								</p:selectOneMenu>
+
+								<!-- IS PREBILL -->
+								<p:outputLabel for="prebillFilter"
+									value="#{msg['message.common.prebill']}" />
+								<p:selectOneMenu id="prebillFilter" styleClass="dis-input-width"
+									value="#{filterContainer.coaFilterGenerator.prebill}"
+									title="#{msg['message.coa.tooltip.search.prebill']}">
+									<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+									<f:selectItem itemLabel="#{msg['message.common.true']}"
+										itemValue="#{true}" />
+									<f:selectItem itemLabel="#{msg['message.common.false']}"
+										itemValue="#{false}" />
+								</p:selectOneMenu>
+
+								<!--LINETYPE-->
+								<p:outputLabel for="lineFilter"
+									value="#{msg['message.coa.lineType']}" />
+								<p:selectOneMenu id="lineFilter"
+									value="#{filterContainer.coaFilterGenerator.lineType}"
+									converter="omnifaces.SelectItemsConverter"
+									styleClass="dis-input-width"
+									title="#{msg['message.coa.tooltip.search.lineType']}">
+									<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+									<f:selectItems value="#{selectorController.lineTypeList}"
+										var="type" itemValue="#{type}" itemLabel="#{type}" />
+								</p:selectOneMenu>
+
+								<!-- LINE SUBTYPE -->
+								<p:outputLabel for="lineSubFilter"
+									value="#{msg['message.coa.subtype']}" />
+								<p:inputText id="lineSubFilter" styleClass="dis-input-width"
+									value="#{filterContainer.coaFilterGenerator.lineSubtype}"
+									title="#{msg['message.coa.tooltip.search.lineSubtype']}"
+									label="#{msg['message.coa.subtype']}" />
+
+							</p:panelGrid>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="4"
+								styleClass="no-spacing no-border dis-spacing-small">
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									onsuccess="PF('coatmDataTable').show();" process="searchPanel"
+									update=":listCoatmForm:listCoatm"
+									title="#{msg['message.coatm.tooltip.searchCoatm']}" />
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}" process="@this"
+									actionListener="#{coatmController.clearFilters}"
+									oncomplete="PF('coatmDataTable').close();"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									update="searchPanel" resetValues="true"
+									title="#{msg['message.common.tooltip.clear.filters']}" />
+							</p:panelGrid>
+						</p:tab>
+
+						<p:tab title="#{msg['message.common.add']}">
+
+							<p:panelGrid id="addPanel" styleClass="no-border" columns="2">
+
+								<!-- COMPANY -->
+								<p:outputLabel for="companyFilterAdd"
+									value="#{msg['message.common.company']}" />
+								<p:selectOneMenu id="companyFilterAdd"
+									styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{filterContainer.coaFilterGenerator.company}"
+									title="#{msg['message.coa.tooltip.add.company']}"
+									required="true">
+									<p:ajax process="@this"/>
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company" itemValue="#{company}"
+										itemLabel="#{company.code} - #{company.description}" />
+								</p:selectOneMenu>
+
+								<!-- SERVICE TYPE -->
+								<p:outputLabel for="serviceReceivedTypeFilterAdd"
+									value="#{msg['message.coa.serviceReceivedType']}" />
+								<p:selectOneMenu id="serviceReceivedTypeFilterAdd"
+									styleClass="dis-input-width"
+									value="#{filterContainer.coaFilterGenerator.serviceReceivedType}"
+									converter="omnifaces.SelectItemsConverter" required="true"
+									title="#{msg['message.coa.tooltip.add.serviceReceivedType']}">
+									<p:ajax process="@this"/>
+									<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+									<f:selectItems
+										value="#{selectorController.serviceReceivedTypeFilterList}"
+										var="serviceType" itemValue="#{serviceType}"
+										itemLabel="#{serviceType.serviceType}" />
+								</p:selectOneMenu>
+
+								<!-- IS PREBILL -->
+								<p:outputLabel for="prebillFilterAdd"
+									value="#{msg['message.common.prebill']}" />
+								<p:selectOneMenu id="prebillFilterAdd"
+									styleClass="dis-input-width" required="true"
+									value="#{filterContainer.coaFilterGenerator.prebill}"
+									title="#{msg['message.coa.tooltip.add.prebill']}">
+									<p:ajax process="@this"/>
+									<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+									<f:selectItem itemLabel="#{msg['message.common.true']}"
+										itemValue="#{true}" />
+									<f:selectItem itemLabel="#{msg['message.common.false']}"
+										itemValue="#{false}" />
+								</p:selectOneMenu>
+
+								<!--LINETYPE-->
+								<p:outputLabel for="lineFilterAdd"
+									value="#{msg['message.coa.lineType']}" />
+								<p:selectOneMenu id="lineFilterAdd"
+									value="#{filterContainer.coaFilterGenerator.lineType}"
+									converter="omnifaces.SelectItemsConverter"
+									styleClass="dis-input-width" required="true"
+									title="#{msg['message.coa.tooltip.add.lineType']}">
+									<p:ajax process="@this"/>
+									<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+									<f:selectItems value="#{selectorController.lineTypeList}"
+										var="type" itemValue="#{type}" itemLabel="#{type}" />
+								</p:selectOneMenu>
+
+								<!-- LINE SUBTYPE -->
+								<p:outputLabel for="lineSubFilterAdd"
+									value="#{msg['message.coa.subtype']}" />
+								<p:inputText id="lineSubFilterAdd" required="true"
+									styleClass="dis-input-width"
+									value="#{filterContainer.coaFilterGenerator.lineSubtype}"
+									title="#{msg['message.coa.tooltip.add.lineSubtype']}"
+									label="#{msg['message.coa.subtype']}">
+									<p:ajax process="@this"/>
+								</p:inputText>
+
+							</p:panelGrid>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="4"
+								styleClass="no-spacing no-border dis-spacing-small">
+								<p:commandButton id="Add" value="#{msg['message.common.add']}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									process="@form" action="#{coatmController.add}"
+									update="addPanel msgForm:listCOAFormMessages"
+									title="#{msg['message.coatm.tooltip.addCoatm']}" />
+
+								<p:commandButton id="clearAdd"
+									value="#{msg['message.common.clear']}" process="@this"
+									actionListener="#{coatmController.clearFilters}"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									update="addPanel" resetValues="true"
+									title="#{msg['message.common.tooltip.clear.data']}" />
+							</p:panelGrid>
+						</p:tab>
+
+					</p:tabView>
+
+				</h:form>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+
+				<h:form id="listCoatmForm">
+
+					<p:panel id="coatmDataTable" widgetVar="coatmDataTable"
+						visible="false" closable="true" toggleable="true" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="listCoatm" widgetVar="listCoatm" var="coatm"
+							styleClass="dataTable-letters"
+							value="#{coatmController.coatmLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="multiple" rows="10" selectionMode="single"
+							selection="#{coatmController.selected}" lazy="true"
+							stickyHeader="false" rowKey="#{coatm.id}"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="edit"
+												styleClass="Fleft LightButton" icon="ui-icon-pencil"
+												process="@this" action="#{coatmController.edit}"
+												disabled="#{coatmController.selected == null}"
+												title="#{msg['message.coatm.tooltip.editCoatm']}" /></td>
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.menu.CoAMapping']}" /></td>
+										<td></td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<p:ajax event="rowSelect" update="edit" />
+							<p:ajax event="rowUnselect" update="edit" />
+							<p:ajax event="rowDblselect" onstart="changeCoatmAction()" />
+							
+							<!-- ID -->
+							<p:column headerText="#{msg['message.list.coatm.id']}"
+								styleClass="" sortBy="#{coatm.id}">
+								<h:outputText value="#{coatm.id}" />
+							</p:column>
+
+							<!-- COMPANY -->
+							<p:column headerText="#{msg['message.list.coatm.company']}"
+								styleClass="" sortBy="#{coatm.company.description}">
+								<h:outputText value="#{coatm.company.description}" />
+							</p:column>
+
+							<!-- SERVICE RECEIVED TYPE -->
+							<p:column
+								headerText="#{msg['message.list.coatm.serviceReceivedType']}"
+								styleClass="" sortBy="#{coatm.serviceReceivedType.serviceType}">
+								<h:outputText value="#{labelUtil.getServiceReceivedTypeLabel(coatm.serviceReceivedType)}" />
+							</p:column>
+
+							<!-- PREBILL -->
+							<p:column headerText="#{msg['message.list.coatm.prebill']}"
+								styleClass="" sortBy="#{coatm.prebill}">
+								<h:outputText
+									value="#{coatm.prebill ? msg['message.common.true'] : msg['message.common.false']}" />
+							</p:column>
+
+							<!-- LINE TYPE -->
+							<p:column headerText="#{msg['message.list.coatm.lineType']}"
+								styleClass="" sortBy="#{coatm.lineType}">
+								<h:outputText value="#{coatm.lineType}" />
+							</p:column>
+
+							<!-- LINE SUB TYPE -->
+							<p:column headerText="#{msg['message.list.coatm.lineSubType']}"
+								styleClass="" sortBy="#{coatm.lineSubtype}">
+								<h:outputText value="#{coatm.lineSubtype}" />
+							</p:column>
+
+							<!-- ACCOUNT -->
+							<p:column headerText="#{msg['message.list.coatm.account']}"
+								styleClass="" sortBy="#{coatm.account.number}">
+								<h:outputText value="#{coatm.account.number}" />
+							</p:column>
+
+							<!-- GEOGRAPHY -->
+							<p:column headerText="#{msg['message.list.coatm.geography']}"
+								styleClass="" sortBy="#{coatm.geography.code}">
+								<h:outputText
+									value="#{coatm.geography.code} - #{coatm.geography.description}" />
+							</p:column>
+
+							<!-- PLATFORM -->
+							<p:column headerText="#{msg['message.list.coatm.platform']}"
+								styleClass="" sortBy="#{coatm.platform.code}">
+								<h:outputText
+									value="#{coatm.platform.code} - #{coatm.platform.description}" />
+							</p:column>
+
+							<!-- DESCRIPTION -->
+							<p:column headerText="#{msg['message.list.coatm.description']}"
+								styleClass="" sortBy="#{coatm.description}">
+								<h:outputText value="#{coatm.description}" />
+							</p:column>
+
+						</p:dataTable>					
+					</p:panel>
+					<p:remoteCommand autoRun="true" 
+						actionListener="#{coatmController.showTable}" />
+					<p:remoteCommand name="changeCoatmAction"
+						action="#{coatmController.edit}" />
+				</h:form>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

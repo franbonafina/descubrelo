@@ -1,0 +1,390 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.customer']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<p:panel styleClass="no-spacing no-border">
+
+					<p:focus context="listCustomerForm" />
+
+					<h:form id="listCustomerForm">
+
+						<p:messages id="listCustomerFormMessages" closable="true"
+							showDetail="false" autoUpdate="false" />
+
+						<p:tabView activeIndex="#{customerController.searchActiveIndex}"
+							id="customerTabView">
+							<p:ajax event="tabChange" process="@form" resetValues="true"
+								update="listCustomerForm:customerTabView:addCustomerTab" />
+								
+							<!-- SEARCH TAB -->
+							<p:tab title="#{msg['message.common.search']}">
+
+								<p:panelGrid id="searchCustomerTab" styleClass="no-border"
+									columns="4">
+
+									<!-- COMPANY -->
+									<p:outputLabel for="companyFilter"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="companyFilter"
+										styleClass="dis-input-width"
+										value="#{filterContainer.customerFilterGenerator.filterCode}"
+										title="#{msg['message.customer.tooltip.filterCode']}"
+										converter="omnifaces.SelectItemsConverter" required="true">
+										<f:selectItems value="#{sessionSelectorController.companies}"
+											var="company" itemValue="#{company}"
+											itemLabel="#{company.code} - #{company.description}" />
+									</p:selectOneMenu>
+
+									<!-- NAME -->
+									<p:outputLabel value="#{msg['message.customer.table.name']}" />
+									<p:inputText styleClass="dis-input-width"
+										value="#{filterContainer.customerFilterGenerator.filterName}"
+										title="#{msg['message.customer.tooltip.filterName']}" />
+
+									<!-- TAX ID -->
+									<p:outputLabel value="#{msg['message.customer.table.tax_id']}" />
+									<p:inputText styleClass="dis-input-width"
+										value="#{filterContainer.customerFilterGenerator.filterTaxID}"
+										title="#{msg['message.customer.tooltip.filterTaxID']}" />
+
+									<!-- CUSTOMER TYPE -->
+									<p:outputLabel for="customerTypeSearchFilter"
+										value="#{msg['message.customer.table.cust_type']}" />
+									<p:selectOneMenu id="customerTypeSearchFilter"
+										styleClass="dis-input-width"
+										value="#{filterContainer.customerFilterGenerator.filterCustomerType}"
+										title="#{msg['message.customer.tooltip.filterCustomerType']}">
+										<f:selectItem
+											itemLabel="#{msg['message.customer.select.customerType']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.customerTypeList}"
+											var="customerType"
+											itemValue="#{customerType}"
+											itemLabel="#{labelUtil.getCustomerTypeLabel(customerType)}" />
+									</p:selectOneMenu>
+
+									<!-- COUNTRY -->
+									<p:outputLabel for="countrySearchFilter"
+										value="#{msg['message.customer.form.country']}" />
+									<p:selectOneMenu id="countrySearchFilter"
+										styleClass="dis-input-width"
+										label="#{msg['message.customer.form.country']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.customerFilterGenerator.filterCountry}"
+										title="#{msg['message.customer.add.tooltip.country']}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.customer.add.select.country']}" />
+										<f:selectItems value="#{selectorController.countryList}"
+											var="country"
+											itemLabel="#{country.isoAlpha3Code} - #{country.name}"
+											itemValue="#{country}" />
+									</p:selectOneMenu>
+
+									<!-- SERVICE TYPE-->
+									<p:outputLabel
+										value="#{msg['message.customer.form.service_received']}"
+										for="serviceTypeFilter" />
+									<p:selectOneMenu id="serviceTypeFilter"
+										styleClass="dis-input-width"
+										label="#{msg['message.customer.form.service_received']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.customerFilterGenerator.filterServiceReceivedType}"
+										title="#{msg['message.customer.add.tooltip.serviceType']}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.customer.add.select.serviceType']}" />
+										<f:selectItems
+											value="#{selectorController.serviceReceivedTypeFilterList}"
+											var="serviceReceivedType"
+											itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceReceivedType)}"
+											itemValue="#{serviceReceivedType}" />
+									</p:selectOneMenu>
+
+									<!-- BMS -->
+									<p:outputLabel value="#{msg['message.customer.table.bms']}" />
+									<p:inputText styleClass="dis-input-width"
+										value="#{filterContainer.customerFilterGenerator.filterBmsReference}"
+										title="#{msg['message.customer.tooltip.filterBMS']}" />
+
+									<!-- ERP -->
+									<p:outputLabel value="#{msg['message.customer.table.erp']}" />
+									<p:inputText styleClass="dis-input-width"
+										value="#{filterContainer.customerFilterGenerator.filterErpReference}"
+										title="#{msg['message.customer.tooltip.filterERP']}" />
+
+									<!-- LAIS ID -->
+									<p:outputLabel value="#{msg['message.customer.table.lais_id']}" />
+									<p:inputText styleClass="dis-input-width"
+										label="#{msg['message.customer.table.lais_id']}"
+										value="#{filterContainer.customerFilterGenerator.filterId}"
+										title="#{msg['message.customer.tooltip.filterId']}">
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+
+								</p:panelGrid>
+
+								<p:spacer styleClass="dis-spacer-small" />
+
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">
+									<p:commandButton icon="ui-icon-search"
+										process=":listCustomerForm:customerTabView:searchCustomerTab @this"
+										oncomplete="PF('customerDataTablePanel').show();"
+										value="#{msg['message.common.search']}"
+										update=":customerDataTableForm:listCustomer :listCustomerForm"
+										title="#{msg['message.customer.tooltip.searchButton']}" />
+									<p:commandButton id="clearSearch"
+										value="#{msg['message.common.clear']}"
+										actionListener="#{filterContainer.customerFilterGenerator.clearFilters}"
+										oncomplete="PF('customerDataTablePanel').close();"
+										styleClass="dis-button-width" icon="ui-icon-refresh"
+										process="@this" update=":listCustomerForm"
+										resetValues="true"
+										title="#{msg['message.common.tooltip.clear.filters']}" />
+								</p:panelGrid>
+
+							</p:tab>
+							
+							<!-- ADD TAB -->
+							<p:tab title="#{msg['message.customer.form.button.add']}" rendered="#{perm.isPermitted('customer:create')}">
+								<p:panelGrid id="addCustomerTab" styleClass="no-border"
+									columns="2" cellpadding="10">
+									
+									<!-- COMPANY -->
+									<p:outputLabel for="codeFilter"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="codeFilter"
+										label="#{msg['message.common.company']}"
+										styleClass="dis-input-width" required="true"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{customerController.company}"
+										title="#{msg['message.customer.add.tooltip.filterCode']}">
+										<f:selectItems value="#{sessionSelectorController.companies}"
+											var="company" itemValue="#{company}"
+											itemLabel="#{company.code} - #{company.description}" />
+									</p:selectOneMenu>
+
+									<!-- COUNTRY -->
+									<p:outputLabel for="countryFilter"
+										value="#{msg['message.customer.form.country']}" />
+									<p:selectOneMenu id="countryFilter"
+										styleClass="dis-input-width"
+										label="#{msg['message.customer.form.country']}"
+										converter="omnifaces.SelectItemsConverter" required="true"
+										value="#{customerController.country}"
+										title="#{msg['message.customer.add.tooltip.country']}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.customer.add.select.country']}" />
+										<f:selectItems value="#{selectorController.countryList}"
+											var="country"
+											itemLabel="#{country.isoAlpha3Code} - #{country.name}"
+											itemValue="#{country}" />
+									</p:selectOneMenu>
+									
+									<!-- TAX ID -->
+									<p:outputLabel for="taxIdFilter"
+										value="#{msg['message.customer.table.tax_id']}" />
+									<p:inputText id="taxIdFilter" required="true"
+										styleClass="dis-input-width"
+										label="#{msg['message.customer.table.tax_id']}"
+										value="#{customerController.taxId}"
+										title="#{msg['message.customer.add.tooltip.filterTaxID']}" />								</p:panelGrid>
+								
+								<p:spacer styleClass="dis-spacer-small" />
+
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">
+									<p:commandButton icon="ui-icon-plus"
+										process=":listCustomerForm:customerTabView:addCustomerTab @this"
+										value="#{msg['message.customer.form.button.add']}"
+										action="#{customerController.addOrEdit}"
+										title="#{msg['message.common.tooltip.add']}"
+										update="listCustomerForm:customerTabView listCustomerForm:listCustomerFormMessages" />
+
+									<p:commandButton id="clearAdd"
+										value="#{msg['message.common.clear']}"
+										actionListener="#{customerController.clearFields}"
+										oncomplete="PF('customerDataTablePanel').close();"
+										styleClass="dis-button-width" icon="ui-icon-refresh"
+										update="listCustomerForm:customerTabView" process="@this"
+										resetValues="true"
+										title="#{msg['message.common.tooltip.clear.filters']}" />
+								</p:panelGrid>
+							</p:tab>
+						</p:tabView>
+
+						<p:spacer styleClass="dis-spacer-small" />
+
+						<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+							disabled="true" ajax="false" />
+						<p:defaultCommand target="buttonDefault" />
+
+
+					</h:form>
+
+					<h:form id="customerDataTableForm">
+						<p:panel id="customerDataTablePanel"
+							widgetVar="customerDataTablePanel" visible="false"
+							closable="true" toggleable="true" closeSpeed="0"
+							styleClass="no-border no-spacing">
+
+							<p:dataTable id="listCustomer" widgetVar="listCustomer"
+								var="customer" selectionMode="single"
+								value="#{customerController.customerLazyDataModel}"
+								selection="#{customerController.selectCustomer}"
+								paginatorAlwaysVisible="true" paginator="true"
+								currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+									{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+								sortMode="single" rows="100" stickyHeader="false" lazy="true"
+								emptyMessage="#{msg['message.datatable.emptyMessage']}"
+								styleClass="dataTable-letters">
+
+								<f:facet name="header">
+									<table class="no-border dis-table-header">
+										<tr>
+											<td><h:panelGroup layout="block" id="tableButton"
+													styleClass="">
+
+													<p:commandButton id="editButton"
+														styleClass="Fleft LightButton" icon="ui-icon-pencil"
+														process="@this"
+														disabled="#{customerController.selectCustomer == null}"
+														rendered="#{perm.isPermitted('customer:update')}"
+														action="#{customerController.edit}"
+														title="#{msg['message.common.edit']}" />
+
+													<p:commandButton id="viewButton"
+														styleClass="Fleft LightButton" icon="ui-icon-search"
+														process="@this"
+														disabled="#{customerController.selectCustomer == null}"
+														rendered="#{perm.isPermitted('customer:view')}"
+														action="#{customerController.view}"
+														title="#{msg['message.common.view']}" />
+												</h:panelGroup></td>
+
+											<td class="ui-datatable ui-datatable-header"><h:outputText
+													value="#{msg['message.customer.title.table']}" /></td>
+											<td><p:commandButton id="toggler" type="button"
+													styleClass="LightButton Fright" icon="ui-icon-wrench" /> 
+													<p:columnToggler id="togglerCustomer"
+													widgetVar="columnToggler" datasource="listCustomer"
+													trigger="toggler" />
+											<script type="text/javascript">removeDuplicatedToggler('#customerDataTableForm\\:listCustomer\\:togglerCustomer')</script>	
+											</td>
+										</tr>
+									</table>
+								</f:facet>
+
+								<p:ajax event="page"
+									oncomplete="updateToggles(PF('columnToggler'))" />
+								<p:ajax event="rowSelect" update="tableButton" />
+								<p:ajax event="rowUnselect" update="tableButton" />
+								<p:ajax event="rowDblselect"
+									disabled="#{!perm.isPermitted('customer:update')}"
+									onstart="changeCustomerAction()" />
+
+								<!-- COLUMNS -->
+
+								<p:column
+									headerText="#{msg['message.customer.table.company_code']}"
+									styleClass="col-customer-code">
+									<h:outputText value="#{customer.company.code}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.lais_id']}"
+									styleClass="col-customer-code">
+									<h:outputText value="#{customer.id}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.name']}"
+									styleClass="col-user-user">
+									<h:outputText value="#{customer.name}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.country']}"
+									styleClass="col-customer-small">
+									<h:outputText value="#{customer.country.isoAlpha3Code}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.tax_id']}"
+									styleClass="col-user-user">
+									<h:outputText value="#{null != customer.formattedTaxID ? customer.formattedTaxID : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.customer.table.vatTreatment']}"
+									styleClass="col-user-user">
+									<h:outputText
+										value="#{labelUtil.getTaxStatusLabel(customer.taxStatus)}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.customer.table.cust_type']}"
+									styleClass="col-user-user">
+									<h:outputText value="#{labelUtil.getCustomerTypeLabel(customer.customerType)}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.agency']}"
+									styleClass="col-user-user">
+									<h:outputText
+										value="#{null != customer.agency ? customer.agency.id.toString().concat(' - ').concat(customer.agency.name) : '-'}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.bms']}"
+									styleClass="col-user-user">
+									<h:outputText value="#{(null != customer.crossReference.bmsReference) and (not empty customer.crossReference.bmsReference) ? customer.crossReference.bmsReference : ' - '}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.erp']}"
+									styleClass="col-user-user">
+									<h:outputText value="#{(null != customer.crossReference.erpReference) and (not empty customer.crossReference.erpReference) ? customer.crossReference.erpReference : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.customer.table.billing_scenario']}"
+									styleClass="col-user-user">
+									<h:outputText value="#{null != customer.billingScenario ? customer.billingScenario.number : ' - '}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.onAir']}"
+									styleClass="col-customer-small">
+									<h:outputText
+										value="#{customer.onAir ? msg['message.common.true'] : msg['message.common.false']}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.customer.table.active']}"
+									styleClass="col-customer-small">
+									<h:outputText
+										value="#{customer.active? msg['message.common.true'] : msg['message.common.false']}" />
+								</p:column>
+
+							</p:dataTable>
+						</p:panel>
+						<p:remoteCommand name="changeCustomerAction"
+							action="#{customerController.edit}" />
+						<p:remoteCommand autoRun="true"
+							actionListener="#{customerController.showTable}" />
+					</h:form>
+
+
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,270 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/empty-template.xhtml">
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+					navigationRuler.errorPage, transmissionOrdersDetailController.toh)}" />
+		</h:form>
+		<h:form id="detailOrdersForm">
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+
+					<div class="FontBold Fs18 hardblue">
+						#{msg['message.order.detail.header.content']}</div>
+
+					<p:panelGrid columns="4"
+						styleClass="no-internal-border panelGrid-detail">
+
+						<!-- TransmissionOrderHeader -->
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.invoiceNumber']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.invoiceNumber}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.originalInvoiceNumber']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.originalInvoiceNumber}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.docCreateDate']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.docCreateDate}" >
+							<f:convertDateTime dateStyle="short" type="both"
+								locale="#{languageController.locale}" />
+						</h:outputText>
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.docType']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.docType}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.contractType']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.contractType}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.billItemType']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.billItemType}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.billingItemId']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.billingItemId}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.summaryIndicator']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.summaryIndicator ? 
+							msg['message.common.true']:msg['message.common.false']}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.taxCode']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.taxCode}" />
+
+						<p:outputLabel value="#{msg['message.order.detail.header.content.grossCost']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.grossCost}" >
+							<f:convertNumber locale="#{languageController.locale}"
+									type="currency" currencySymbol="" maxFractionDigits="2" />
+						</h:outputText>
+						<p:outputLabel value="#{msg['message.order.detail.header.content.currencyCode']}" />
+
+						<h:outputText
+							value="#{transmissionOrdersDetailController.toh.currency.iso3Code}" />
+					</p:panelGrid>
+
+					<p:spacer styleClass="dis-spacer-small" />
+
+
+						<p:tabView id="tabViewTransmissionOrderLine"
+							styleClass="dis-batch-customer-custom-tab-view"
+							activeIndex="#{transmissionOrdersDetailController.selectedTab}">
+							<p:ajax event="tabChange" process="@form"
+								update=":detailOrdersForm:listTransmissionOrderLine" />
+
+							<p:tab title="#{msg['message.order.tab.mainInformation']}" />
+							<p:tab title="#{msg['message.order.tab.spot']}" />
+							<p:tab title="#{msg['message.order.tab.salesChannel']}" />
+							<p:tab title="#{msg['message.order.tab.cost']}" />
+
+						</p:tabView>
+
+					<p:dataTable id="listTransmissionOrderLine" widgetVar="listTransmissionOrderLine"
+						var="tol"
+						value="#{transmissionOrdersDetailController.tohLines}"
+						styleClass="dataTable-letters" paginatorAlwaysVisible="true"
+						paginator="true" paginatorPosition="bottom"
+						currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+										{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000" sortMode="single" rows="10"
+						stickyHeader="false"
+						emptyMessage="#{msg['message.datatable.emptyMessage']}"
+						reflow="true">
+						
+						<!-- LINE NUMBER -->
+						<p:column headerText="#{msg['message.orders.table.line']}"
+							styleClass="col-index-tol">
+							<h:outputText value="#{tol.lineNumber}" />
+						</p:column>
+						
+						<!-- ORIGINAL INVOICE LINE -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.originalInvoiceLine']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==0}">
+							<h:outputText value="#{null != tol.originalInvoiceLine ? tol.originalInvoiceLine : ' - '}" />
+						</p:column>
+						
+						<!-- BOOKING ZONE DESCRIPTION -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.bookingZoneDescription']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==0}">
+							<h:outputText value="#{tol.bookingZoneDescription}" />
+						</p:column>
+						
+						<!-- PRODUCT -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.product']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==0}">
+							<h:outputText value="#{tol.product}" />
+						</p:column>
+						
+						<!-- SPOT ID -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.spotId']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==1}">
+							<h:outputText value="#{tol.spotId}" />
+						</p:column>
+						
+						<!-- SPOT LENGTH -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.spotLength']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==1}">
+							<h:outputText value="#{tol.spotLength}" />
+						</p:column>
+						
+						<!-- SPOT DESCRIPTION -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.spotDescription']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==1}">
+							<h:outputText value="#{tol.spotDescription}" />
+						</p:column>
+						
+						<!-- SALES CHANNEL NAME -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.salesChannelName']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==1}">
+							<h:outputText value="#{tol.salesChannelName}" />
+						</p:column>
+						
+						<!-- SALES CHANNEL CALL SIGN -->						
+						<p:column headerText="#{msg['message.order.detail.dataTable.salesChannelCallSign']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==1}">
+							<h:outputText value="#{tol.salesChannelCallSign}" />
+						</p:column>
+						
+						<!-- REVENUE TYPE -->						
+						<p:column headerText="#{msg['message.order.detail.dataTable.revenueType']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==2}">
+							<h:outputText value="#{tol.revenueType}" />
+						</p:column>
+						
+						<!-- GROSS COST -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.grossCost']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==2}">
+							<h:outputText value="#{tol.grossCost}" >
+								<f:convertNumber locale="#{languageController.locale}"
+									type="currency" currencySymbol="" maxFractionDigits="2" />
+							</h:outputText>
+						</p:column>
+						
+						<!-- COPY NUMBER -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.copyNumber']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==2}">
+							<h:outputText value="#{tol.copyNumber}" />
+						</p:column>
+						
+						<!-- SCHEDULE AIR DATE TIME -->
+						<p:column 
+							headerText="#{msg['message.order.detail.dataTable.SchedAirDateTime']}" 
+							styleClass="col-column-tol"
+							rendered="#{transmissionOrdersDetailController.selectedTab ==2}">							
+							<h:outputText value="#{tol.schedAirDateTime}" >
+								<f:convertDateTime dateStyle="short" type="both"
+									locale="#{languageController.locale}" />
+							</h:outputText>
+						</p:column>
+						
+						<!-- ACTUAL AIR DATE TIME -->						
+						<p:column 
+							headerText="#{msg['message.order.detail.dataTable.actualAirDateTime']}" 
+							styleClass="col-column-tol"
+							rendered="#{transmissionOrdersDetailController.selectedTab ==2}">							
+							<h:outputText value="#{tol.actualAirDateTime}" >
+								<f:convertDateTime dateStyle="short" type="both"
+									locale="#{languageController.locale}" />
+							</h:outputText>
+						</p:column>
+						
+						<!-- REASON CODE -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.reasonCode']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==3}">
+							<h:outputText value="#{null != tol.reasonCode ? tol.reasonCode : ' - '}" />
+						</p:column>
+						
+						<!-- DELETE RECONCILIATION REASON CODE -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.deleteReconciliationReasonCode']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==3}">
+							<h:outputText value="#{null != tol.deleteReconciliationReasonCode ? tol.deleteReconciliationReasonCode : ' - '}" />
+						</p:column>
+						
+						<!-- INVENTORY VALUE -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.inventoryValue']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==3}">
+							<h:outputText value="#{tol.inventoryValue}" />
+						</p:column>
+						
+						<!-- MAKE GOOD ID -->
+						<p:column headerText="#{msg['message.order.detail.dataTable.makeGoodId']}" 
+						styleClass="col-column-tol"
+						rendered="#{transmissionOrdersDetailController.selectedTab ==3}">
+							<h:outputText value="#{null != tol.makeGoodId ? tol.makeGoodId : ' - '}" />
+						</p:column>
+
+					</p:dataTable>
+	
+				</div>
+			</div>
+			<p:spacer styleClass="dis-spacer-small" />
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

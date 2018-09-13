@@ -1,0 +1,136 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.menu.Platform']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<c:if test="#{platformCRUDController.selected != null}">
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<p:focus context="updatePlatformForm" />
+
+					<h:form id="updatePlatformForm">
+
+						<f:facet name="header">
+							<p:outputLabel
+								value="#{msg['message.coatm.header.modificate']}" />
+						</f:facet>
+
+						<p:messages autoUpdate="true" id="indexMessagesPlatform"
+							showDetail="false" showSummary="true" closable="true" />
+
+						<p:panel styleClass="" id="selectPlatformPanel" style="background-color: #FBFCFD;">
+
+							<p:panelGrid id="pGrid" styleClass="no-border" columns="4"
+								columnClasses="label, value">
+								
+								<!-- COMPANY -->
+								<p:outputLabel for="company"
+									value="#{msg['message.common.company']}" />
+								<p:selectOneMenu id="company" styleClass="dis-input-width"
+									value="#{platformCRUDController.selected.company}"
+									title="#{msg['message.common.select.company']}"
+									converter="omnifaces.SelectItemsConverter" required="true">
+
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company" itemValue="#{company}"
+										itemLabel="#{company.code} - #{company.description}" />
+								</p:selectOneMenu>
+								
+								<!-- CODE -->
+								<p:outputLabel
+									value="#{msg['message.list.platform.code']}" for="code" />
+								<p:inputText id="code"
+									label="#{msg['message.list.platform.code']}"
+									maxlength="15"
+									value="#{platformCRUDController.selected.code}" required="true"
+									disabled="#{not platformCRUDController.new}"									
+									title="#{msg['message.platform.tooltip.code']}">
+									
+								<f:validator 
+										validatorId="com.discovery.dis.web.validator.PlatformValidator" />
+										
+								</p:inputText>
+
+								<!-- ACTIVE -->
+								<p:outputLabel for="active"
+									value="#{msg['message.list.platform.active']}" />
+
+								<p:inputSwitch id="active"
+									value="#{platformCRUDController.selected.active}"
+									label="#{msg['message.list.platform.active']}"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									title="#{msg['message.platform.tooltip.active']}">
+									<p:tooltip for="active"
+										value="#{msg['message.platform.tooltip.active']}" />
+								</p:inputSwitch>
+
+								<!-- DESCRIPTION -->
+								<p:outputLabel value="#{msg['message.common.description']}" for="description" />
+
+								<p:inputTextarea id="description" autoResize="false"
+									label="#{msg['message.common.description']}"
+									value="#{platformCRUDController.selected.description}"
+									style="width: 370px; max-width: 800px"
+									maxlength="2000"
+									title="#{msg['message.platform.tooltip.description']}">
+								</p:inputTextarea>
+								
+							
+							</p:panelGrid>
+							
+						</p:panel>
+
+						<p:spacer styleClass="dis-spacer-small" />
+
+						<div class="form-group">
+							<div style="margin-top: 5px;">
+								<p:commandButton value="#{msg['message.common.save']}"
+									id="aceptar" action="#{platformCRUDController.update}"
+									icon="ui-icon-check" validateClient="true" process="@form"
+									update="updatePlatformForm" title="#{msg['message.platform.tooltip.update']}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+
+								</p:commandButton>
+
+								<p:commandButton value="#{msg['message.common.cancel']}"
+									resetValues="true" id="cancel" process="@this"
+									icon="ui-icon-cancel" update="updatePlatformForm"
+									title="#{msg['message.platform.tooltip.back']}" 
+									immediate="true"
+									action="#{platformCRUDController.cancel}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.cancel']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+
+							</div>
+						</div>
+						<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+							disabled="true" />
+						<p:defaultCommand target="buttonDefault" />
+					</h:form>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,304 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.journal.header']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:focus />
+				
+				<p:messages id="journalMessages" closable="true"
+						showDetail="false" autoUpdate="true" />
+
+				<p:panel id="p1" styleClass="no-spacing no-border transparent"
+					visible="#{journalController.selectedInvoice == null}">
+
+					<h:form id="journalFiltersForm"
+						rendered="#{journalController.selectedInvoice == null}">
+						<p:tabView>
+							<p:tab title="#{msg['message.common.filters']}">
+
+								<p:panelGrid styleClass="no-border" columns="4">
+								
+									<!-- COMPANY -->
+									<p:outputLabel for="companyFilter"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="companyFilter"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{journalFilterGenerator.company}"
+										title="#{msg['message.invoice.tooltip.filterCode']}"
+										required="true">
+										<f:selectItems value="#{sessionSelectorController.companies}"
+											var="company" itemValue="#{company}"
+											itemLabel="#{company.code} - #{company.description}" />
+										<!-- <p:ajax update="billingScenarioSearchFilter customerNameFilter" /> -->
+									</p:selectOneMenu>									
+										
+									<p:outputLabel 
+										value="#{msg['message.journal.invoiceLaisId']} :" />								
+									<p:inputText id="inputlaisID" 
+										styleClass="dis-input-width"
+										value="#{journalFilterGenerator.laisID}"
+										title="#{msg['message.journal.tooltip.invoiceLaisID']}">
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+									
+									<p:outputLabel value="#{msg['message.journal.journalID']} :" />
+									<p:inputText id="inputJournalID" styleClass="dis-input-width"
+										value="#{journalFilterGenerator.journalID}"
+										title="#{msg['message.journal.tooltip.journalID']}"/>
+
+									<p:outputLabel
+										value="#{msg['message.journal.invoiceNumber']} :" />
+									<p:inputText id="inputInvoiceNumber"
+										styleClass="dis-input-width"
+										value="#{journalFilterGenerator.invoiceNumber}"
+										title="#{msg['message.journal.tooltip.invoiceNumber']}" />
+
+									<p:outputLabel
+										value="#{msg['message.journal.invoiceDate.from']} :" />
+									<p:calendar id="inputFromDate" styleClass="dis-input-width"
+										value="#{journalFilterGenerator.from}"
+										title="#{msg['message.journal.tooltip.invoiceDateFrom']}"
+										locale="#{languageController.locale}" />
+
+									<p:outputLabel
+										value="#{msg['message.journal.invoiceDate.to']} :" />
+									<p:calendar id="inputToDate" styleClass="dis-input-width"
+										value="#{journalFilterGenerator.to}"
+										title="#{msg['message.journal.tooltip.invoiceDateTo']}"
+										locale="#{languageController.locale}" />									
+								</p:panelGrid>
+		
+								<p:spacer styleClass="dis-spacer-small" />
+
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">
+									<p:commandButton id="search"
+										value="#{msg['message.common.search']}"
+										actionListener="#{journalController.search}"
+										styleClass="dis-button-width" icon="ui-icon-search"
+										oncomplete="PF('journalDataTablePanel').show();
+										PF('journalLineDataTablePanel').show();"
+										update=":listJournalForm"
+										title="#{msg['message.journal.tooltip.search']}" />
+
+									<p:commandButton id="clear"
+										value="#{msg['message.common.clear']}"
+										actionListener="#{journalController.clearFilters}"
+										oncomplete="PF('journalDataTablePanel').close();
+										PF('journalLineDataTablePanel').close();"
+										styleClass="dis-button-width" icon="ui-icon-refresh"
+										update="@form :listJournalForm"
+										process="@this"
+										title="#{msg['message.common.tooltip.clear.filters']}" />
+
+								</p:panelGrid>
+
+							</p:tab>
+						</p:tabView>
+					</h:form>
+
+				</p:panel>
+
+				<p:panel id="p2" styleClass="no-spacing no-border transparent"
+					visible="#{null != journalController.selectedInvoice}">
+
+					<h:form id="fromCRUDForm">
+
+						<p:panelGrid styleClass="no-border transparent" columns="2">
+
+							<p:commandButton id="backToInvoice"
+								value="#{journalController.fromInvoice ? msg['message.journal.backToInvoice'] : msg['message.journal.backToConsumption']}"
+								styleClass="dis-button-width"
+								icon="ui-icon-arrowreturnthick-1-w"
+								title="#{journalController.fromInvoice ? msg['message.journal.tooltip.backToInvoice'] : msg['message.journal.tooltip.backToConsumption']}"
+								process="@this"
+								action="#{journalController.backToInvoice}" />
+
+							<p:commandButton id="goToJournalsPage"
+								value="#{msg['message.journal.goToJournals']}"
+								actionListener="#{journalController.clearAll}"
+								oncomplete="
+								PF('journalLineDataTablePanel').close();
+								PF('journalDataTablePanel').close();"
+								styleClass="dis-button-width" icon="ui-icon-arrowthick-1-e"
+								process="@this" update=":p1 :p2"
+								title="#{msg['message.journal.tooltip.goToJournals']}" />
+
+						</p:panelGrid>
+					</h:form>
+				</p:panel>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+				<h:form id="listJournalForm">
+					<p:panel id="journalDataTablePanel"
+						widgetVar="journalDataTablePanel" visible="#{null != journalController.selectedInvoice or null != journalController.selectedJournal}"
+						closable="true"	toggleable="true" closeSpeed="0" styleClass="no-border no-spacing">
+
+						<p:dataTable id="listJournal" widgetVar="listJournal"
+							var="journal" value="#{journalController.lazyDataModel}"
+							paginatorPosition="top" paginatorAlwaysVisible="true"
+							paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000" sortMode="single"
+							rows="10" lazy="true" selectionMode="single"
+							rowKey="#{journal.id}"
+							selection="#{journalController.selectedJournal}"
+							stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td></td>
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.journal.searchResults']}" /></td>
+										<td>
+											<p:commandButton id="togglerJournalButton" type="button"
+												styleClass="LightButton Fright" icon="ui-icon-wrench" /> 
+											<p:columnToggler id="togglerJournal"
+												widgetVar="togglerJournal" datasource="listJournal"
+												trigger="togglerJournalButton" />
+											<script type="text/javascript">
+												removeDuplicatedToggler('#customerDataTableForm\\:listCustomer\\:togglerJournal')
+											</script>
+										</td>
+									</tr>
+								</table>
+							</f:facet>						
+
+							<!-- Selection events -->
+							<p:ajax event="rowSelect"
+								listener="#{journalController.onRowSelectionChange}"
+								process="@form"	update="listJournalForm:listJournalLine"/>
+							<p:ajax event="rowUnselect"
+								listener="#{journalController.onRowSelectionChange}"
+								process="@form"	update="listJournalForm:listJournalLine"/>
+							<p:ajax event="rowSelectCheckbox"
+								listener="#{journalController.onRowSelectionChange}"
+								process="@form"	update="listJournalForm:listJournalLine"/>
+							<p:ajax event="rowUnselectCheckbox"
+								llistener="#{journalController.onRowSelectionChange}"
+								process="@form"	update="listJournalForm:listJournalLine"/>
+							<p:ajax event="toggleSelect"
+								listener="#{journalController.onRowSelectionChange}"
+								process="@form"	update="listJournalForm:listJournalLine"/>
+							<p:ajax event="page" 
+								oncomplete="updateToggles(PF('togglerJournal'));"/>
+							<p:ajax event="rowDblselect" process="@form"
+								oncomplete="editJournalLines()"/>
+
+							<!-- COMPANY CODE -->
+							<p:column headerText="#{msg['message.common.company']}"
+								styleClass="col-company">
+
+								<h:outputText value="#{journal.company.code}" />
+							</p:column>						
+							
+							<!-- JOURNAL ID -->
+							<p:column headerText="#{msg['message.journal.journalID']}"
+								styleClass="col-id">
+
+								<h:outputText value="#{null != journal.journalID ? journal.journalID : ' - '}" />
+							</p:column>
+
+							<!-- INVOICE LAIS ID -->
+							<p:column headerText="#{msg['message.journal.invoiceLaisId']}"
+								styleClass="col-id">
+
+								<h:outputText value="#{journal.invoice.id}" />
+							</p:column>
+
+							<!-- INVOICE NUMBER -->
+							<p:column headerText="#{msg['message.journal.invoiceNumber']}"
+								styleClass="col-invoiceNumber">
+
+								<h:outputText value="#{null != journal.invoice.invoiceNumber ? journal.invoice.invoiceNumber : ' - '}" />
+							</p:column>
+
+							<!--SERVICE RECEIVED TYPE -->
+							<p:column headerText="#{msg['message.journal.serviceReceived']}"
+								styleClass="col-service-received">
+
+								<h:outputText value="#{labelUtil.getServiceReceivedTypeLabel(journal.serviceReceivedType)}" />
+							</p:column>
+
+							<!-- INVOICE DATE-->
+							<p:column headerText="#{msg['message.journal.invoiceDate']}"
+								styleClass="col-date-notime">
+
+								<h:outputText value="#{journal.invoice.invoiceDate}">
+									<f:convertDateTime dateStyle="short"
+										locale="#{languageController.locale}" />
+								</h:outputText>
+							</p:column>
+
+							<!-- BASE CURRENCY -->
+							<p:column headerText="#{msg['message.journal.baseCurrency']}"
+								styleClass="col-transaction-currency">
+
+								<h:outputText value="#{journal.baseCurrency}" />
+							</p:column>
+
+							<!-- TOTAL BASE DEBIT -->
+							<p:column headerText="#{msg['message.journal.totalDebits']}"
+								styleClass="col-amount col-right">
+								<h:outputText value="#{journal.totalBaseDebitAmount}">
+									<f:convertNumber 
+										locale="#{languageController.locale}"
+										type="currency" 
+										currencySymbol=""
+										maxFractionDigits="2"/>			
+								</h:outputText>
+							</p:column>
+							
+							<!-- TOTAL BASE CREDIT -->
+							<p:column headerText="#{msg['message.journal.totalCredits']}"
+								styleClass="col-amount col-right">
+								<h:outputText value="#{journal.totalBaseCreditAmount}">
+									<f:convertNumber 
+										locale="#{languageController.locale}"
+										type="currency" 
+										currencySymbol=""
+										maxFractionDigits="2"/>			
+								</h:outputText>
+							</p:column>
+
+							<!-- DESCRIPTION -->
+							<p:column headerText="#{msg['message.common.description']}"
+								styleClass="col-journalEntry-description">
+
+								<h:outputText value="#{journal.description}" />
+							</p:column>
+
+						</p:dataTable>
+					</p:panel>
+
+					<p:spacer styleClass="dis-spacer-small" />
+
+					<ui:param name="journalLineIsReadOnly" value="#{true}" />
+					<ui:include src="journalLineTable.xhtml" />
+				</h:form>
+
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

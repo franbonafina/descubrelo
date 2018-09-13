@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Mensaje xmlns=""
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="responseMSDynamics.xsd">
+	<Respuesta>False</Respuesta>
+	<DescripcionError>
+		Sql procedure error codes returned:
+
+		Error Number = 108 Stored
+		Procedure= taSopLineIvcInsert Error Description =
+		Inventory item does
+		not exist
+		Node Identifier Parameters: taSopLineIvcInsert
+		SOPNUMBE =
+		FV00001399
+		SOPTYPE = 3
+		LNITMSEQ = 1
+		Related Error Code Parameters for
+		Node : taSopLineIvcInsert
+		NONINVEN = Note: This parameter was not
+		passed in, no value for the parameter
+		will be returned.
+		ITEMNMBR = 1
+
+
+		Error Number = 771 Stored Procedure= taSopLineIvcInsert Error
+		Description =
+		Price Level is blank, it must either be passed in or a
+		default must
+		exist for the transaction
+		Node Identifier Parameters:
+		taSopLineIvcInsert
+		SOPNUMBE = FV00001399
+		SOPTYPE = 3
+		LNITMSEQ = 1
+		Related
+		Error Code Parameters for Node : taSopLineIvcInsert
+		PRCLEVEL = Note:
+		This parameter was not passed in, no value for the parameter
+		will be
+		returned.
+
+
+		Error Number = 4646 Stored Procedure= taSopLineIvcInsert
+		Error Description
+		= Decimal Places passed in on UNITPRCE does not match
+		setup
+		Node Identifier Parameters: taSopLineIvcInsert
+		SOPNUMBE =
+		FV00001399
+		SOPTYPE = 3
+		LNITMSEQ = 1
+		Related Error Code Parameters for
+		Node : taSopLineIvcInsert
+		UNITPRCE = 3453
+
+
+		Error Number = 5313 Stored
+		Procedure= taSopLineIvcInsert Error Description
+		= Unit of Measure does
+		not exist for the Unit of Measure Schedule
+		being used
+		Node Identifier
+		Parameters: taSopLineIvcInsert
+		SOPNUMBE = FV00001399
+		SOPTYPE = 3
+		LNITMSEQ = 1
+		Related Error Code Parameters for Node :
+		taSopLineIvcInsert
+		NONINVEN = Note: This parameter was not passed in,
+		no value for the parameter
+		will be returned.
+		UOFM = UND
+
+
+		Error Number =
+		11454 Stored Procedure= taSopLineIvcInsert Error Description
+		= Decimal
+		Places passed in on QUANTITY does not match what is set up
+		for the Item
+		Number
+		Node Identifier Parameters: taSopLineIvcInsert
+		SOPNUMBE =
+		FV00001399
+		SOPTYPE = 3
+		LNITMSEQ = 1
+		Related Error Code Parameters for
+		Node : taSopLineIvcInsert
+		QUANTITY = 23
+		<taSopLineIvcInsert>
+			<SOPTYPE>3</SOPTYPE>
+			<SOPNUMBE>FV00001399</SOPNUMBE>
+			<CUSTNMBR>860001778</CUSTNMBR>
+			<DOCDATE>2016-12-14</DOCDATE>
+			<LOCNCODE>DISCOVERY</LOCNCODE>
+			<ITEMNMBR>1</ITEMNMBR>
+			<UNITPRCE>3453</UNITPRCE>
+			<XTNDPRCE>79419</XTNDPRCE>
+			<QUANTITY>23</QUANTITY>
+			<ITEMDESC>Description line</ITEMDESC>
+			<RecreateDist>0</RecreateDist>
+			<CURNCYID>COP</CURNCYID>
+			<UOFM>UND</UOFM>
+			<RECREATETAXES>0</RECREATETAXES>
+			<LNITMSEQ>1</LNITMSEQ>
+			<UpdateIfExists>0</UpdateIfExists>
+		</taSopLineIvcInsert>
+	</DescripcionError>
+</Mensaje>

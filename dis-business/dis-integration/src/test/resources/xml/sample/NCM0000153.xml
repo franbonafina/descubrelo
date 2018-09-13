@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+	xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 ACTION_INVOICE_CFDI.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.2"
+	serie="NCM" folio="0000153" fecha="2016-01-06" sello="" formaDePago=""
+	noCertificado="" certificado="" subTotal="" descuento=""
+	motivoDescuento="" TipoCambio="" Moneda="MXN" total="347428.8"
+	tipoDeComprobante="egreso" metodoDePago="" LugarExpedicion=""
+	NumCtaPago="" xmlns:cfdi="http://www.sat.gob.mx/cfd/3">
+	<cfdi:Emisor nombre="" rfc="">
+		<cfdi:DomicilioFiscal />
+		<cfdi:ExpedidoEn />
+		<cfdi:RegimenFiscal Regimen="" />
+	</cfdi:Emisor>
+	<cfdi:Receptor nombre="Best Value Media, S.A. de C.V."
+		rfc="2016631MXN">
+		<cfdi:Domicilio calle="" noExterior="" colonia=""
+			localidad="" municipio="" pais="" codigoPostal="" />
+	</cfdi:Receptor>
+	<cfdi:Conceptos>
+		<cfdi:Concepto cantidad="1" unidad="NO APLICA"
+			noIdentificacion="ADSMXP" descripcion="TEQUILA HORNITOS"
+			valorUnitario="347428.80" importe="347428.80">
+			<OptfieldDetalle IREFERENCE="1054" NETWORK="DSC"
+				SNOTES="NOV 2015" SOFFICE="MEXICO" SPERSON="JOSE MARTINEZ" CAMPAING="N/A"
+				CAMPAINGID="N/A" CANTIDADD="1" PERFACTURA="11/1/2015 to11/30/2015"
+				OC=" " />
+		</cfdi:Concepto>
+	</cfdi:Conceptos>
+	<cfdi:Impuestos totalImpuestosTrasladados="0.00">
+		<cfdi:Traslados>
+			<cfdi:Traslado importe="" impuesto="" tasa="" />
+		</cfdi:Traslados>
+	</cfdi:Impuestos>
+	<OPTFIELD AGID="2016631MXN" AGNAME="Best Value Media, S.A. de C.V."
+		CAMPAING="11/1/2015 to11/30/2015" CID="2016631MXN" CNAME="Best Value Media, S.A. de C.V."
+		NETWORK="DSC" SNOTES="ADSMXP 2015" SOFFICE="MEXICO" SPERSON="JOSE MARTINEZ"
+		REQDATE="2016-01-06" CONSEP="0" />
+</cfdi:Comprobante>

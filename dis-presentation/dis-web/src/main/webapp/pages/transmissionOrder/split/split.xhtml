@@ -1,0 +1,549 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.orders']}
+	</ui:define>
+
+	<ui:define name="content">
+
+		<c:if test="#{splitController.toh != null}">
+
+			<div class="ContainerIndent">
+				<h:form id="splitForm">
+
+					<div class="FontBold Fs18 hardblue">
+						#{msg['message.common.transmissionOrder']}</div>
+
+					<p:panelGrid columns="4"
+						styleClass="no-internal-border panelGrid-detail-center">
+
+						<!-- INVOICE NUMBER -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.invoiceNumber']}" />
+						<h:outputText value="#{splitController.toh.invoiceNumber}" />
+
+						<!-- ORIGINAL INVOICE NUMBER -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.originalInvoiceNumber']}" />
+						<h:outputText value="#{splitController.toh.originalInvoiceNumber}" />
+
+						<!-- DOC CREATE DATE -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.docCreateDate']}" />
+						<h:outputText value="#{splitController.toh.docCreateDate}">
+							<f:convertDateTime dateStyle="short" type="date"
+								locale="#{languageController.locale}" />
+						</h:outputText>
+
+						<!-- DOC TYPE -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.docType']}" />
+						<h:outputText value="#{splitController.toh.docType}" />
+
+						<!-- SUMMARY INDICATOR -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.summaryIndicator']}" />
+						<h:outputText
+							value="#{splitController.toh.summaryIndicator ? 
+							msg['message.common.true']:msg['message.common.false']}" />
+
+						<!-- TAX CODE -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.taxCode']}" />
+						<h:outputText value="#{splitController.toh.taxCode}" />
+
+						<!-- GROSS COST -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.grossCost']}" />
+						<h:outputText value="#{splitController.toh.grossCost}" >
+							<f:convertNumber locale="#{languageController.locale}"
+									type="currency" currencySymbol="" maxFractionDigits="2" />
+						</h:outputText>
+
+						<!-- CURRENCY CODE -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.currencyCode']}" />
+						<h:outputText value="#{splitController.toh.currency.iso3Code}" />
+
+						<!-- SPOT SIZE -->
+						<p:outputLabel
+							value="#{msg['message.order.detail.header.content.spotSize']}" />
+						<h:outputText
+							value="#{null != splitController.toh.transmissionOrderLines ? splitController.toh.transmissionOrderLines.size() : 0} " />
+					</p:panelGrid>
+
+					<br />
+
+					<p:messages id="messages" showDetail="true" autoUpdate="true"
+						closable="true" />
+
+					<!-- WIZARD -->
+					<p:wizard flowListener="#{splitController.onFlowProcess}"
+						styleClass="wizard-header"
+						nextLabel="#{msg['message.common.next']}"
+						backLabel="#{msg['message.split.wizard.previous']}">
+
+						<!-- SELECTION TYPE TAB -->
+						<p:tab id="select"
+							title="#{msg['message.split.wizard.title.select']}">
+							<p:panel>
+								<p:panelGrid columns="2" columnClasses="label, value"
+									styleClass="no-internal-border no-border">
+
+									<!-- SPLIT TYPE -->
+									<p:outputLabel value="#{msg['message.common.selectSplitType']}" />
+									<p:selectOneMenu id="selectSplitType"
+										styleClass="dis-input-width"
+										label="#{msg['message.common.selectSplitType']}"
+										value="#{splitController.splitTypeSelected}"
+										title="#{msg['message.filter.tooltip.selectSplitType']}"
+										converter="omnifaces.SelectItemsConverter" required="true">
+										<p:ajax event="change" process="@this"
+											listener="#{splitController.changeSplitType}" />
+										<f:selectItems value="#{splitController.splitTypes}"
+											var="type" itemLabel="#{msg[ type.msg ]}" />
+									</p:selectOneMenu>
+
+								</p:panelGrid>
+							</p:panel>
+						</p:tab>
+
+						<!-- SPLITTING TAB -->
+						<p:tab id="splitLine"
+							title="#{msg['message.split.wizard.title.line']}">
+
+							<!-- SPLITTING BY DATE DATATABLE -->
+							<p:panel rendered="#{splitController.airDateTime}">
+								<p:dataTable id="dataTableSplitAirDateTime" var="line"
+									widgetVar="dataTableSplitAirDateTime"
+									selection="#{splitController.lineSplitSelecteds}"
+									value="#{splitController.lineSplits}"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}"
+									editable="true" editMode="cell"
+									styleClass="dis-datatable-noHeader dataTable-letters"
+									rowKey="#{line}" rowIndexVar="index">
+
+									<!-- HEADER -->
+									<f:facet name="header">
+										<p:commandButton id="addLineButton"
+											styleClass="Fleft LightButton float-right"
+											icon="ui-icon-plus"
+											actionListener="#{splitController.addLine}" immediate="true"
+											update="dataTableSplitAirDateTime" process="@form"
+											title="#{msg['message.split.wizard.line.add.tooltip']}">
+										</p:commandButton>
+										<p:commandButton id="removeLineButton"
+											styleClass="Fleft LightButton float-right"
+											icon="ui-icon-minusthick"
+											actionListener="#{splitController.removeLine}"
+											immediate="true" process="@this"
+											update="dataTableSplitAirDateTime"
+											title="#{msg['message.split.wizard.line.remove.tooltip']}"
+											disabled="#{splitController.disabledRemoveLineButton}">
+										</p:commandButton>
+									</f:facet>
+
+									<p:ajax event="rowSelectCheckbox" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="rowUnselectCheckbox" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="rowSelect" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="rowUnselect" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="toggleSelect" process="@this"
+										update="removeLineButton" />
+
+									<p:column selectionMode="multiple"
+										style="width:20px;text-align:center" />
+
+									<!-- ID -->
+									<p:column headerText="#{msg['message.split.wizard.IdLine']}">
+										<p:outputLabel value="#{line.id}" />
+									</p:column>
+
+									<!-- DATE FROM -->
+									<p:column headerText="#{msg['message.split.wizard.dateFrom']}">
+										<p:cellEditor>
+											<f:facet name="output">
+												<p:outputLabel value="#{line.from}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</p:outputLabel>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="calendarFrom" readonlyInput="true"
+													value="#{line.from}" mindate="#{splitController.minDate}"
+													maxdate="#{splitController.maxDate}" pattern="dd/MM/yyyy">
+													<p:ajax event="dateSelect"
+														update="dataTableSplitAirDateTime" />
+												</p:calendar>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<!-- DATE TO -->
+									<p:column headerText="#{msg['message.split.wizard.dateTo']}">
+										<p:cellEditor>
+											<f:facet name="output">
+												<p:outputLabel value="#{line.to}">
+													<f:convertDateTime pattern="dd/MM/yyyy" />
+												</p:outputLabel>
+											</f:facet>
+											<f:facet name="input">
+												<p:calendar id="calendarTo" readonlyInput="true"
+													value="#{line.to}" mindate="#{splitController.minDate}"
+													maxdate="#{splitController.maxDate}" pattern="dd/MM/yyyy">
+													<p:ajax event="dateSelect"
+														update="dataTableSplitAirDateTime" />
+												</p:calendar>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<!-- QUANTITY -->
+									<p:column headerText="#{msg['message.common.quantity']}">
+										<p:outputLabel
+											value="#{splitController.getTotalAirDateTimeLine(line.from , line.to )}" />
+									</p:column>
+
+									<!-- AMOUNT -->
+									<p:column
+										headerText="#{msg['message.orders.table.commission.amount']}">
+										<p:outputLabel
+											value="#{splitController.getTotalAirDateTimeGrossCost(line.from , line.to )}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</p:outputLabel>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+
+							<!-- SPLITTING BY SPOT DATATABLE -->
+							<p:panel rendered="#{splitController.spot}">
+								<p:dataTable id="dataTableSplitSpot" var="line"
+									widgetVar="dataTableSplitSpot"
+									selection="#{splitController.lineSplitSelecteds}"
+									value="#{splitController.lineSplits}"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}"
+									editable="true" editMode="cell"
+									styleClass="dis-datatable-noHeader dataTable-letters"
+									rowKey="#{line}" rowIndexVar="index">
+
+									<!-- HEADER -->
+									<f:facet name="header">
+										<p:commandButton id="addLineButton"
+											styleClass="Fleft LightButton float-right"
+											icon="ui-icon-plus"
+											actionListener="#{splitController.addLine}" immediate="true"
+											process="@this" update="dataTableSplitSpot"
+											title="#{msg['message.split.wizard.line.add.tooltip']}">
+										</p:commandButton>
+										<p:commandButton id="removeLineButton"
+											styleClass="Fleft LightButton float-right"
+											icon="ui-icon-minusthick"
+											actionListener="#{splitController.removeLine}"
+											immediate="true" process="@this" update="dataTableSplitSpot"
+											title="#{msg['message.split.wizard.line.remove.tooltip']}"
+											disabled="#{splitController.disabledRemoveLineButton}">
+										</p:commandButton>
+									</f:facet>
+
+									<p:ajax event="rowSelectCheckbox" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="rowUnselectCheckbox" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="rowSelect" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="rowUnselect" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="toggleSelect" process="@this"
+										update="removeLineButton" />
+									<p:ajax event="cellEdit" oncomplete="updateRemaining()" />
+
+									<p:column selectionMode="multiple"
+										style="width:20px;text-align:center" />
+
+									<!-- ID -->
+									<p:column headerText="#{msg['message.split.wizard.IdLine']}">
+										<p:outputLabel value="#{line.id}" />
+									</p:column>
+
+									<!-- QUANTITY -->
+									<p:column headerText="#{msg['message.common.quantity']}">
+										<p:outputLabel value="#{line.lineSize}" />
+									</p:column>
+
+									<!-- AMOUNT -->
+									<p:column
+										headerText="#{msg['message.orders.table.commission.amount']}">
+										<p:outputLabel value="#{line.valueOfLines}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</p:outputLabel>
+									</p:column>
+
+									<!-- SPOT -->
+									<p:column headerText="#{msg['message.order.tab.spot']}">
+										<p:commandButton process="@this" icon="fa fa-cog"
+											actionListener="#{splitController.editRow(line.id)}"
+											update="splitRowForm" styleClass="button-icon-white"
+											oncomplete="PF('splitRowDialog').show();" />
+									</p:column>
+
+									<!-- REMAINING -->
+									<f:facet name="footer">
+										<p:outputLabel id="remainingLabel"
+											value="#{msg['message.split.wizard.remaining.spot']}" />
+										<p:inputText id="remaining"
+											value="#{splitController.getRemaining()}" disabled="true" />
+									</f:facet>
+								</p:dataTable>
+							</p:panel>
+
+						</p:tab>
+
+						<!-- SUMMARY TAB -->
+						<p:tab id="summary"
+							title="#{msg['message.split.wizard.title.sumary']}">
+							<p:panel>
+								<p:dataTable id="dataTableSplitSummary" var="line"
+									widgetVar="dataTableSplitSummary"
+									value="#{splitController.lineSplits}"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}"
+									styleClass="dis-datatable-noHeader dataTable-letters">
+
+									<!-- LINE ID -->
+									<p:column headerText="#{msg['message.split.wizard.IdLine']}">
+										<p:outputLabel value="#{line.id}" />
+									</p:column>
+
+									<!-- DATE FROM -->
+									<p:column rendered="#{splitController.airDateTime}"
+										headerText="#{msg['message.split.wizard.dateFrom']}">
+										<h:outputText value="#{line.from}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<!-- DATE TO -->
+									<p:column rendered="#{splitController.airDateTime}"
+										headerText="#{msg[ 'message.split.wizard.dateTo' ]}">
+										<h:outputText value="#{line.to}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+
+									<!-- SALES CHANNEL -->
+									<p:column rendered="#{splitController.salesChannel}"
+										headerText="#{msg['message.split.wizard.salesChannel']}">
+										<h:outputText value="#{line.salesChannel}" />
+									</p:column>
+
+									<!-- LINE -->
+									<p:column
+										headerText="#{msg['message.split.wizard.title.line']}">
+										<h:outputText value="#{line.lines.size()}" />
+									</p:column>
+
+									<!-- AMOUNT -->
+									<p:column headerText="#{msg['message.split.wizard.mount']}">
+										<h:outputText value="#{line.valueOfLines}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</h:outputText>
+									</p:column>
+
+								</p:dataTable>
+							</p:panel>
+
+							<p:commandButton value="#{msg['message.common.submit']}"
+								action="#{splitController.submit}" process="@this"
+								styleClass="float-right button-submit-split" />
+						</p:tab>
+					</p:wizard>
+
+					<br />
+					<br />
+					<div class="form-group">
+
+						<p:commandButton id="Back" value="#{msg['message.common.back']}"
+							icon="ui-icon-back" process="@this"
+							action="#{splitController.back()}"
+							title="#{msg['message.orders.massive_update.tooltip.backButton']}" />
+					</div>
+				</h:form>
+			</div>
+
+			<h:form>
+				<p:remoteCommand name="updateRemaining" process="@this" update="" />
+			</h:form>
+
+			<h:form id="splitRowForm">
+				<p:dialog id="splitRowDialog" widgetVar="splitRowDialog"
+					modal="true" height="400" width="80%">
+
+					<p:dataTable id="dataTableSplitRow" var="row"
+						selection="#{splitController.rowSplitSelecteds}"
+						widgetVar="dataTableSplitRow"
+						value="#{splitController.orderLines}"
+						emptyMessage="#{msg['message.datatable.emptyMessage']}"
+						styleClass="dis-datatable-noHeader dataTable-letters"
+						rowKey="#{row.id}"
+						disabledSelection="#{(null != row.parent_id) and  (splitController.lineSplit.id != row.parent_id)}">
+
+						<p:column selectionMode="multiple"
+							style="width:20px;text-align:center" />
+
+						<!-- ID -->
+						<p:column styleClass="column-filter column-size-s"
+							headerText="#{msg['message.order.detail.dataTable.spotId']}"
+							filterBy="#{row.line.spotId}" filterMatchMode="contains"
+							sortBy="#{row.line.spotId}">
+
+							<p:outputLabel value="#{row.line.spotId}" />
+						</p:column>
+
+						<!-- ACTUAL AIR DATE TIME -->
+						<p:column
+							headerText="#{msg['message.order.detail.dataTable.actualAirDateTime']}"
+							sortBy="#{row.line.actualAirDateTime}"
+							filterBy="#{row.line.actualAirDateTime}"
+							filterFunction="#{dateRangeFilterUtil.filterByDate}"
+							styleClass="column-size-xl column-filter">
+
+							<f:facet name="filter">
+								<h:inputHidden id="filter" />
+							</f:facet>
+							<f:facet name="header">
+
+								<h:outputText
+									value="#{msg['message.order.detail.dataTable.actualAirDateTime']}" />
+
+								<p:calendar id="from"
+									pattern="#{languageController.localeDatePattern}"
+									navigator="true">
+									<p:ajax event="keyup"
+										onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+										oncomplete="PF('dataTableSplitRow').filter()" />
+									<p:ajax event="dateSelect"
+										onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+										oncomplete="PF('dataTableSplitRow').filter()" />
+
+								</p:calendar>
+								<p:calendar id="to"
+									pattern="#{languageController.localeDatePattern}"
+									navigator="true">
+									<p:ajax event="keyup"
+										onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+										oncomplete="PF('dataTableSplitRow').filter()" />
+									<p:ajax event="dateSelect"
+										onstart="$(PrimeFaces.escapeClientId('#{p:component('filter')}'))[0].value = $(PrimeFaces.escapeClientId('#{p:component('from')}_input'))[0].value + '-' + $(PrimeFaces.escapeClientId('#{p:component('to')}_input'))[0].value"
+										oncomplete="PF('dataTableSplitRow').filter()" />
+								</p:calendar>
+							</f:facet>
+							<h:outputText value="#{row.line.actualAirDateTime}">
+								<f:convertDateTime type="date" pattern="dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+
+						<!-- SPOT LENGTH -->
+						<p:column styleClass="column-filter"
+							headerText="#{msg['message.order.detail.dataTable.spotLength']}"
+							filterBy="#{row.line.spotLength}" filterMatchMode="contains"
+							sortBy="#{row.line.spotLength}">
+
+							<p:outputLabel value="#{row.line.spotLength}" />
+						</p:column>
+
+						<!-- LINE NUMBER -->
+						<p:column styleClass="column-filter column-size-s"
+							headerText="#{msg['message.order.detail.dataTable.lineNumber']}"
+							filterBy="#{row.line.lineNumber}" filterMatchMode="contains"
+							sortBy="#{row.line.lineNumber}">
+
+							<p:outputLabel value="#{row.line.lineNumber}" />
+						</p:column>
+
+						<!-- GROSS COST -->
+						<p:column styleClass="column-filter"
+							headerText="#{msg['message.order.detail.dataTable.grossCost']}"
+							filterBy="#{row.line.grossCost}" filterMatchMode="contains"
+							sortBy="#{row.line.grossCost}">
+
+							<p:outputLabel value="#{row.line.grossCost}" >
+								<f:convertNumber locale="#{languageController.locale}"
+									type="currency" currencySymbol="" maxFractionDigits="2" />
+							</p:outputLabel>
+						</p:column>
+
+						<!-- PRODUCT -->
+						<p:column styleClass="column-filter"
+							headerText="#{msg['message.order.detail.dataTable.product']}"
+							filterBy="#{row.line.product}" filterMatchMode="contains"
+							sortBy="#{row.line.product}">
+
+							<p:outputLabel value="#{row.line.product}" />
+						</p:column>
+
+						<!-- SALES CHANNEL NAME -->
+						<p:column styleClass="column-filter"
+							headerText="#{msg['message.order.detail.dataTable.salesChannelName']}"
+							filterBy="#{row.line.salesChannelName}"
+							filterMatchMode="contains" sortBy="#{row.line.salesChannelName}">
+
+							<p:outputLabel value="#{row.line.salesChannelName}" />
+						</p:column>
+
+						<!-- COPY NUMBER -->
+						<p:column styleClass="column-filter"
+							headerText="#{msg['message.order.detail.dataTable.copyNumber']}"
+							filterBy="#{row.line.copyNumber}" filterMatchMode="contains"
+							sortBy="#{row.line.copyNumber}">
+
+							<p:outputLabel value="#{row.line.copyNumber}" />
+						</p:column>
+
+						<!-- PARENT LINE -->
+						<p:column styleClass="column-filter column-size-s"
+							headerText="#{msg['message.split.wizard.popup.parentLine']}"
+							filterBy="#{row.parent_id}" filterMatchMode="contains"
+							sortBy="#{row.parent_id}	">
+
+							<p:outputLabel value="#{row.parent_id}" />
+						</p:column>
+					</p:dataTable>
+
+					<f:facet name="footer">
+						<p:commandButton value="#{msg['message.common.accept']}"
+							update=":splitForm:dataTableSplitSpot"
+							actionListener="#{splitController.commitEditRow}"
+							onclick="PF('splitRowDialog').hide();"
+							oncomplete="resetFilter();" />
+
+						<p:commandButton value="#{msg['message.common.cancel']}"
+							process="@this" onclick="PF('splitRowDialog').hide();"
+							oncomplete="resetFilter();" />
+					</f:facet>
+
+				</p:dialog>
+
+				<p:remoteCommand name="resetFilter"
+					actionListener="#{splitController.resetFilters}">
+					<p:resetInput target="dataTableSplitRow" />
+				</p:remoteCommand>
+
+			</h:form>
+
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

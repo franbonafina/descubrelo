@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.report.journalEntry.name']}
+</ui:define>
+
+<!-- REPORT Journal Entry) -->
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+			<p:panel>
+				<p:focus />
+	
+				<h:form prependId="false" id="reportForm">
+					<p:messages id="messages" showDetail="false" autoUpdate="true" closable="true" />
+	
+					<p:panelGrid styleClass="transparent no-border" columns="2">
+						<!-- COMPANY -->
+						<p:outputLabel for="company"
+							value="#{msg['message.common.company']}" />
+						<p:selectOneMenu id="company"
+							styleClass="dis-input-width"
+							value="#{reportJournalEntryController.company}"
+							title="#{msg['message.customer.tooltip.filterCode']}"
+							converter="omnifaces.SelectItemsConverter"
+							required="true">
+							
+							<f:selectItems 
+								value="#{sessionSelectorController.companies}"
+								var="company" 
+								itemValue="#{company}"
+								itemLabel="#{company.code} - #{company.description}" />
+								
+							<p:ajax event="change" process="@this"
+								update="GLAccount"
+								listener="#{reportJournalEntryController.companyChanged}"/>								
+						</p:selectOneMenu>
+
+						<!-- FROM POSTED DATE -->
+						<p:outputLabel 
+							value="#{msg['message.report.startPostedDate']}" 
+							for="startPostedDate" />
+						<p:calendar id="startPostedDate"
+							value="#{reportJournalEntryController.startPostedDate}"
+							title="#{msg['message.report.startPostedDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width"
+							required="true" />
+	
+						<!-- TO POSTED DATE -->
+						<p:outputLabel 
+							value="#{msg['message.report.endPostedDate']}" 
+							for="endPostedDate"/>
+						<p:calendar id="endPostedDate"
+							value="#{reportJournalEntryController.endPostedDate}"
+							title="#{msg['message.report.endPostedDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width"
+							required="true" />				
+						
+						<!-- GL Account -->							
+						<p:outputLabel for="GLAccount"
+							value="#{msg['message.report.journalEntry.GLAccount']}" />
+						<p:selectOneMenu id="GLAccount"
+							styleClass="dis-input-width"
+							value="#{reportJournalEntryController.GLAccount}"
+							title="#{msg['message.report.journalEntry.GLAccount']}"
+							converter="omnifaces.SelectItemsConverter" >							
+							<f:selectItem
+								itemLabel="#{msg['message.report.journalEntry.GLAccount.select']}"
+								itemValue="#{null}" />
+							<f:selectItems 
+								value="#{selectorController.getAccountList(reportJournalEntryController.company)}"
+								var="glaccount" 
+								itemValue="#{glaccount}"								
+								itemLabel="#{glaccount.number} - #{glaccount.description}"/>
+						</p:selectOneMenu>
+							
+					</p:panelGrid>
+ 
+					<ui:param name="controller" value="#{reportJournalEntryController}" />
+					<ui:include src="reportFooter.xhtml" />					
+				</h:form>
+			</p:panel>				
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<import resource="test-properties.xml" />
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.discovery.dis" />
+
+	<import resource="test-transaction.xml" />
+	<import resource="test-database.xml" />
+	<import resource="dao-test-context.xml" />
+
+	<bean id="securityUtils" class="com.discovery.dis.service.test.mock.ServiceUtilsMock" />
+
+	<bean name="permissionService" id="permissionService"
+		class="com.discovery.dis.security.PermissionService" depends-on="permissionDao">
+		<constructor-arg ref="permissionDao"></constructor-arg>
+	</bean>
+
+	<bean name="roleService" id="roleService"
+		class="com.discovery.dis.security.RoleService" depends-on="roleDao">
+		<constructor-arg ref="roleDao"></constructor-arg>
+	</bean>
+
+	<bean name="erpLogService" id="erpLogService"
+		class="com.discovery.dis.service.ErpLogService" depends-on="erpLogDao">
+		<constructor-arg ref="erpLogDao"></constructor-arg>
+	</bean>
+
+	<bean name="erpLogTypeService" id="erpLogTypeService"
+		class="com.discovery.dis.service.ErpLogTypeService" depends-on="erpLogTypeDao">
+		<constructor-arg ref="erpLogTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="erpTypeService" id="erpTypeService"
+		class="com.discovery.dis.service.ERPTypeService" depends-on="erpTypeDao">
+		<constructor-arg ref="erpTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="emailTypeService" id="emailTypeService"
+		class="com.discovery.dis.service.EmailTypeService" depends-on="emailTypeDao">
+		<constructor-arg ref="emailTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="telephoneTypeService" id="telephoneTypeService"
+		class="com.discovery.dis.service.TelephoneTypeService" depends-on="telephoneTypeDao">
+		<constructor-arg ref="telephoneTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="streetTypeService" id="streetTypeService"
+		class="com.discovery.dis.service.StreetTypeService" depends-on="streetTypeDao">
+		<constructor-arg ref="streetTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="paymentMethodService" id="paymentMethodService"
+		class="com.discovery.dis.service.PaymentMethodService" depends-on="paymentMethodDao">
+		<constructor-arg ref="paymentMethodDao"></constructor-arg>
+	</bean>
+
+	<bean name="paymentTermService" id="paymentTermService"
+		class="com.discovery.dis.service.PaymentTermService" depends-on="paymentTermDao">
+		<constructor-arg ref="paymentTermDao"></constructor-arg>
+	</bean>
+
+	<bean name="currencyService" id="currencyService"
+		class="com.discovery.dis.service.CurrencyService" depends-on="currencyDao">
+		<constructor-arg ref="currencyDao"></constructor-arg>
+	</bean>
+
+	<bean name="countryService" id="countryService"
+		class="com.discovery.dis.service.CountryService" depends-on="countryDao">
+		<constructor-arg ref="countryDao"></constructor-arg>
+	</bean>
+
+	<bean name="companyService" id="companyService"
+		class="com.discovery.dis.service.CompanyService" depends-on="companyDao userDao">
+		<constructor-arg ref="companyDao"></constructor-arg>
+		<constructor-arg ref="userDao"></constructor-arg>
+	</bean>
+
+	<bean name="userService" id="userService"
+		class="com.discovery.dis.security.UserService" depends-on="userDao">
+		<constructor-arg ref="userDao"></constructor-arg>
+	</bean>
+
+	<bean name="settingsService" id="settingsService"
+		class="com.discovery.dis.service.SettingsService" depends-on="settingsDao">
+		<constructor-arg ref="settingsDao"></constructor-arg>
+	</bean>
+
+	<bean name="serviceReceivedTypeService" id="serviceReceivedTypeService"
+		class="com.discovery.dis.service.ServiceReceivedTypeService"
+		depends-on="serviceReceivedTypeDao">
+		<constructor-arg ref="serviceReceivedTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="customerService" id="customerService"
+		class="com.discovery.dis.entity.CustomerService" depends-on="customerDao serviceReceivedTypeService companyService">
+		<constructor-arg ref="customerDao"></constructor-arg>
+		<constructor-arg ref="serviceReceivedTypeService"></constructor-arg>
+		<constructor-arg ref="companyService"></constructor-arg>
+	</bean>
+
+
+	<!-- Falta el test <bean name="countryDao" id="countryDao" class="com.discovery.dis.dao.domain.CountryDao" 
+		/> <bean name="countryService" id="countryService" class="com.discovery.dis.entity.CountryService" 
+		depends-on="countryDao"> <constructor-arg ref="countryDao"></constructor-arg> 
+		</bean> -->
+
+	<bean name="languageService" id="languageService"
+		class="com.discovery.dis.service.LanguageService" depends-on="languageDao">
+		<constructor-arg ref="languageDao"></constructor-arg>
+	</bean>
+
+	<bean name="batchService" id="batchService"
+		class="com.discovery.dis.service.BatchService" depends-on="batchDao">
+		<constructor-arg ref="batchDao"></constructor-arg>
+	</bean>
+
+	<bean name="batchLogService" id="batchLogService"
+		class="com.discovery.dis.service.BatchLogService" depends-on="batchLogDao">
+		<constructor-arg ref="batchLogDao"></constructor-arg>
+	</bean>
+
+	<bean name="billingScenarioService" id="billingScenarioService"
+		class="com.discovery.dis.service.BillingScenarioService"
+		depends-on="billingScenarioDao currencyService serviceReceivedTypeService invoiceService invoiceTypeService journalService invoiceSubTypeService paymentTermService">
+		<constructor-arg ref="billingScenarioDao" />
+		<constructor-arg ref="currencyService" />
+		<constructor-arg ref="serviceReceivedTypeService" />
+		<constructor-arg ref="transmissionOrderHeaderService" />
+		<constructor-arg ref="invoiceService" />
+		<constructor-arg ref="invoiceTypeService" />
+		<constructor-arg ref="journalService" />
+		<constructor-arg ref="invoiceSubTypeService" />
+		<constructor-arg ref="paymentTermService" />
+	</bean>
+	
+	 <bean name="billingScenarioTransmissionOrderService" id="billingScenarioTransmissionOrderService"
+        class="com.discovery.dis.service.BillingScenarioTransmissionOrderService"
+        depends-on="billingScenarioDao currencyService serviceReceivedTypeService invoiceService invoiceTypeService journalService invoiceSubTypeService paymentTermService">
+        <constructor-arg ref="billingScenarioDao" />
+        <constructor-arg ref="currencyService" />
+        <constructor-arg ref="serviceReceivedTypeService" />
+        <constructor-arg ref="transmissionOrderHeaderService" />
+        <constructor-arg ref="invoiceService" />
+        <constructor-arg ref="invoiceTypeService" />
+        <constructor-arg ref="journalService" />
+        <constructor-arg ref="invoiceSubTypeService" />
+        <constructor-arg ref="paymentTermService" />
+        <constructor-arg ref="customerService" />
+        <constructor-arg ref="taxService" />
+    </bean>
+
+	<bean name="addressService" id="addressService"
+		class="com.discovery.dis.service.AddressService" depends-on="addressDao countryDao">
+		<constructor-arg ref="addressDao"></constructor-arg>
+		<constructor-arg ref="countryDao"></constructor-arg>
+	</bean>
+
+	<bean name="batchCustomerService" id="batchCustomerService"
+		class="com.discovery.dis.service.BatchCustomerService" depends-on="batchCustomerDao">
+		<constructor-arg ref="batchCustomerDao"></constructor-arg>
+	</bean>
+
+	<bean name="tinValidationService" id="tinValidationService"
+		class="com.discovery.dis.service.TinValidationService" depends-on="tinValidationDao">
+		<constructor-arg ref="tinValidationDao"></constructor-arg>
+	</bean>
+
+	<bean name="batchLogTypeService" id="batchLogTypeService"
+		class="com.discovery.dis.service.BatchLogTypeService" depends-on="batchLogTypeDao">
+		<constructor-arg ref="batchLogTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="transmissionOrderHeaderService" id="transmissionOrderHeaderService"
+		class="com.discovery.dis.service.transmissionOrder.TransmissionOrderHeaderService"
+		depends-on="transmissionOrderHeaderDao">
+		<constructor-arg ref="transmissionOrderHeaderDao"></constructor-arg>
+		<constructor-arg ref="transmissionOrderProcedure"></constructor-arg>
+	</bean>
+
+	<bean name="accountService" id="accountService"
+		class="com.discovery.dis.service.AccountService" depends-on="accountDao">
+		<constructor-arg ref="accountDao" />
+	</bean>
+
+	<bean name="geographyService" id="geographyService"
+		class="com.discovery.dis.service.GeographyService" depends-on="geographyDao">
+		<constructor-arg ref="geographyDao" />
+	</bean>
+
+	<bean name="platformService" id="platformService"
+		class="com.discovery.dis.service.PlatformService" depends-on="platformDao">
+		<constructor-arg ref="platformDao" />
+	</bean>
+
+	<bean name="profitCenterService" id="profitCenterService"
+		class="com.discovery.dis.service.ProfitCenterService" depends-on="profitCenterDao">
+		<constructor-arg ref="profitCenterDao" />
+	</bean>
+
+	<bean name="costCenterService" id="costCenterService"
+		class="com.discovery.dis.service.CostCenterService" depends-on="costCenterDao">
+		<constructor-arg ref="costCenterDao" />
+	</bean>
+
+	<bean name="delayReasonService" id="delayReasonService"
+		class="com.discovery.dis.service.DelayReasonService" depends-on="delayReasonDao">
+		<constructor-arg ref="delayReasonDao" />
+	</bean>
+
+	<bean name="invoiceTypeMappingService" id="invoiceTypeMappingService"
+		class="com.discovery.dis.service.InvoiceTypeMappingService"
+		depends-on="invoiceTypeMappingDao">
+		<constructor-arg ref="invoiceTypeMappingDao" />
+	</bean>
+
+	<bean name="invoiceTypeService" id="invoiceTypeService"
+		class="com.discovery.dis.service.InvoiceTypeService" depends-on="invoiceTypeDao invoiceTypeMappingService">
+		<constructor-arg ref="invoiceTypeDao" />
+		<constructor-arg ref="invoiceTypeMappingService" />
+	</bean>
+
+	<bean name="invoiceSubTypeService" id="invoiceSubTypeService"
+		class="com.discovery.dis.service.InvoiceSubTypeService" depends-on="invoiceSubTypeDao">
+		<constructor-arg ref="invoiceSubTypeDao"></constructor-arg>
+	</bean>
+
+	<bean name="coaTransactionMappingService" id="coaTransactionMappingService"
+		class="com.discovery.dis.service.CoATransactionMappingService"
+		depends-on="coaTransactionMappingDao profitCenterService accountService">
+		<constructor-arg ref="coaTransactionMappingDao" />
+		<constructor-arg ref="profitCenterService" />
+		<constructor-arg ref="accountService" />
+	</bean>
+
+	<bean name="invoiceService" id="invoiceService"
+		class="com.discovery.dis.service.InvoiceService"
+		depends-on="invoiceDao customerService journalService invoiceLineService invoiceUpdateStatusProcedure">
+		<constructor-arg ref="invoiceDao"></constructor-arg>
+		<constructor-arg ref="customerService" />
+		<constructor-arg ref="journalService" />
+		<constructor-arg ref="invoiceLineService" />
+		<constructor-arg ref="invoiceUpdateStatusProcedure" />
+		<constructor-arg ref="transmissionOrderHeaderService" />
+		<constructor-arg ref="taxService" />
+	</bean>
+
+	<bean name="invoiceLineService" id="invoiceLineService"
+		class="com.discovery.dis.service.InvoiceLineService" depends-on="invoiceLineDao">
+		<constructor-arg ref="invoiceLineDao"></constructor-arg>
+	</bean>
+
+	<bean name="journalEntryRuleService" id="journalEntryRuleService"
+		class="com.discovery.dis.service.JournalEntryRuleService" depends-on="journalEntryRuleDao">
+		<constructor-arg ref="journalEntryRuleDao"></constructor-arg>
+	</bean>
+
+	<bean name="journalService" id="journalService"
+		class="com.discovery.dis.service.JournalService"
+		depends-on="journalDao journalEntryRuleService coaTransactionMappingService invoiceSubTypeService channelService profitCenterService">
+		<constructor-arg ref="journalDao" />
+		<constructor-arg ref="journalEntryRuleService" />
+		<constructor-arg ref="coaTransactionMappingService" />
+		<constructor-arg ref="invoiceSubTypeService" />
+		<constructor-arg ref="channelService" />
+		<constructor-arg ref="profitCenterService" />
+	</bean>
+
+	<bean name="journalLineService" id="journalLineService"
+		class="com.discovery.dis.service.JournalLineService" depends-on="journalLineDao">
+		<constructor-arg ref="journalLineDao" />
+	</bean>
+
+	<bean name="reportContactService" id="reportContactService"
+		class="com.discovery.dis.service.ReportContactService" depends-on="reportContactDao">
+		<constructor-arg ref="reportContactDao" />
+	</bean>
+
+	<bean name="taxStatusService" id="taxStatusService"
+		class="com.discovery.dis.service.TaxStatusService" depends-on="taxStatusDao">
+		<constructor-arg ref="taxStatusDao" />
+	</bean>
+
+	<bean name="emailService" id="emailService"
+		class="com.discovery.dis.service.EmailService">
+	</bean>
+
+	<bean name="channelDao" id="channelDao"
+		class="com.discovery.dis.dao.domain.ChannelDao" />
+
+	<bean name="channelService" id="channelService"
+		class="com.discovery.dis.service.ChannelService" depends-on="channelDao">
+		<constructor-arg ref="channelDao"></constructor-arg>
+	</bean>
+
+	<bean id="getInvoiceNumberProcedure" name="getInvoiceNumberProcedure"
+		class="com.discovery.dis.dao.procedure.GetInvoiceNumberProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+
+	<bean name="regionService" id="regionService"
+		class="com.discovery.dis.service.RegionService" depends-on="regionDao">
+		<constructor-arg ref="regionDao" />
+	</bean>
+
+	<bean name="viewReportService" id="viewReportService"
+		class="com.discovery.dis.service.report.ViewReportService">
+	</bean>
+
+
+	<bean name="erpClientService" id="erpClientService"
+		class="com.discovery.dis.service.invoice.ErpClientService"
+		depends-on="tangoService sageService msDynamicsService sapService companyService viewReportService">
+		<constructor-arg ref="tangoService" />
+		<constructor-arg ref="sageService" />
+		<constructor-arg ref="msDynamicsService" />
+		<constructor-arg ref="sapService" />
+		<constructor-arg ref="companyService" />
+		<constructor-arg ref="viewReportService" />
+	</bean>
+
+
+	<bean name="tangoService" id="tangoService"
+		class="com.discovery.dis.service.invoice.TangoService"
+		depends-on="invoiceService erpLogService erpLogTypeService customerService getInvoiceNumberProcedure">
+		<constructor-arg ref="invoiceService" />
+		<constructor-arg ref="erpLogService" />
+		<constructor-arg ref="erpLogTypeService" />
+		<constructor-arg ref="customerService" />
+		<constructor-arg ref="getInvoiceNumberProcedure" />
+		<constructor-arg ref="companyService" />
+	</bean>
+
+
+	<bean name="msDynamicsService" id="msDynamicsService"
+		class="com.discovery.dis.service.invoice.MSDynamicsService"
+		depends-on="invoiceService erpLogService erpLogTypeService customerService getInvoiceNumberProcedure">
+		<constructor-arg ref="invoiceService" />
+		<constructor-arg ref="erpLogService" />
+		<constructor-arg ref="erpLogTypeService" />
+		<constructor-arg ref="customerService" />
+		<constructor-arg ref="getInvoiceNumberProcedure" />
+		<constructor-arg ref="companyService" />
+	</bean>
+	
+	<bean name="sapService" id="sapService"
+		class="com.discovery.dis.service.invoice.SAPService"
+		depends-on="invoiceService erpLogService erpLogTypeService customerService getInvoiceNumberProcedure">
+		<constructor-arg ref="invoiceService" />
+		<constructor-arg ref="erpLogService" />
+		<constructor-arg ref="erpLogTypeService" />
+		<constructor-arg ref="customerService" />
+		<constructor-arg ref="getInvoiceNumberProcedure" />
+		<constructor-arg ref="companyService" />
+	</bean>
+
+	<bean name="sageService" id="sageService"
+		class="com.discovery.dis.service.invoice.SageService"
+		depends-on="getInvoiceNumberProcedure invoiceService sageInvoiceCustomerService">
+		<constructor-arg ref="getInvoiceNumberProcedure" />
+		<constructor-arg ref="invoiceService" />
+		<constructor-arg ref="customerService" />
+		<constructor-arg ref="sageInvoiceCustomerService" />
+		<constructor-arg ref="mockAuditUtil" />
+	</bean>
+
+	<bean name="sageInvoiceCustomerService" id="sageInvoiceCustomerService"
+		class="com.discovery.dis.service.sage.SAGEInvoiceCustomerService"
+		depends-on="SAGEInvoiceCustomerOptFieldProcedure SAGEInvoiceCustomerProcedure">
+		<constructor-arg ref="SAGEInvoiceCustomerOptFieldProcedure" />
+		<constructor-arg ref="SAGEInvoiceCustomerProcedure" />
+	</bean>
+
+
+	<bean id="invoiceUpdateStatusProcedure" name="invoiceUpdateStatusProcedure"
+		class="com.discovery.dis.dao.procedure.InvoiceUpdateStatusProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+
+	<bean id="transmissionOrderProcedure" name="transmissionOrderProcedure"
+		class="com.discovery.dis.dao.procedure.TransmissionOrderProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+
+	<bean name="reportNotificationService" id="reportNotificationService"
+		class="com.discovery.dis.service.ReportNotificationService"
+		depends-on="reportNotificationDao">
+		<constructor-arg ref="reportNotificationDao" />
+	</bean>
+
+	<bean name="taxService" id="taxService" class="com.discovery.dis.service.TaxService"
+		depends-on="taxDao">
+		<constructor-arg index="0" ref="taxDao"></constructor-arg>
+		<constructor-arg ref="invoiceUpdateStatusProcedure" />
+	</bean>
+</beans>

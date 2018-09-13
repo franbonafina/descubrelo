@@ -1,0 +1,337 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.common.country']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<h:form id="countryform">
+					<p:tabView>
+						<p:tab title="#{msg['message.common.country']}">
+							<p:messages autoUpdate="false" id="indexMessagesCountry"
+								showDetail="false" showSummary="true" closable="true" />
+							<p:panelGrid styleClass="no-border" columns="4"
+								columnClasses="label, value">
+
+
+								<!--Name -->
+								<p:outputLabel for="name" value="#{msg['message.country.name']}" />
+								<p:inputText maxlength="50" id="name"
+									value="#{countryCRUDController.country.name}"
+									styleClass="dis-input-width" required="true"
+									title="#{msg['message.country.tooltip.name']}">
+									<f:validateLength maximum="50" />
+								</p:inputText>
+
+								<!-- isoNumericCode -->
+								<p:outputLabel for="isoNumericCode"
+									value="#{msg['message.country.code.numeric']}" />
+								<p:inputText maxlength="3" id="isoNumericCode"
+									value="#{countryCRUDController.country.isoNumericCode}"
+									styleClass="dis-input-width" required="true"
+									title="#{msg['message.country.tooltip.numeric']}">
+									<f:validateLength minimum="3" maximum="3" />
+								</p:inputText>
+
+
+								<!-- CODE Alpha2 ISO -->
+								<p:outputLabel for="isoAlpha2CodeFilter"
+									value="#{msg['message.country.code.alpha.a']}" />
+								<p:inputText maxlength="2" id="isoAlpha2CodeFilter"
+									styleClass="dis-input-width"
+									value="#{countryCRUDController.country.isoAlpha2Code}"
+									required="true"
+									title="#{msg['message.country.tooltip.alpha.a']}">
+									<f:validateLength minimum="2" maximum="2" />
+								</p:inputText>
+
+								<!-- EUMember -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.country.eumember']} :"
+										for="inputSwitchEUMember" />
+								</p:column>
+								<p:column>
+									<p:inputSwitch id="inputSwitchEUMember" label="EUMember"
+										value="#{countryCRUDController.country.EUMember}"
+										title="#{msg['message.country.tooltip.country.eumember']}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}">
+										<p:tooltip for="inputSwitchEUMember" />
+									</p:inputSwitch>
+								</p:column>
+
+
+								<!--isoAlpha3Code -->
+								<p:outputLabel for="isoAlpha3Code"
+									value="#{msg['message.country.code.alpha']}" />
+								<p:inputText maxlength="3" id="isoAlpha3Code"
+									value="#{countryCRUDController.country.isoAlpha3Code}"
+									styleClass="dis-input-width" required="true"
+									title="#{msg['message.country.tooltip.alpha']}">
+									<f:validateLength minimum="3" maximum="3" />
+								</p:inputText>
+
+								<!-- Active-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.active']} :"
+										for="inputSwitchActive" />
+								</p:column>
+								<p:column>
+									<p:inputSwitch id="inputSwitchActive"
+										label="#{msg['message.common.active']}"
+										value="#{countryCRUDController.country.active}"
+										title="#{msg['message.country.tooltip.active']}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}">
+										<p:tooltip for="inputSwitchActive" />
+									</p:inputSwitch>
+								</p:column>
+
+								<!-- vatPercentage-->
+								<p:outputLabel value="#{msg['message.country.vatpercentage']}" for="vatPercentage" />
+								<p:inputMask id="vatPercentage"
+									value="#{countryCRUDController.country.vatPercentage}"
+									title="#{msg['message.country.tooltip.country.vatpercentage']}"
+									styleClass="dis-input-width" maxlength="5" required="true">
+									<f:validateDoubleRange minimum="0" maximum="99.99" />
+									<f:convertNumber maxFractionDigits="2" pattern="##0.00" />
+								</p:inputMask>
+
+							</p:panelGrid>
+
+
+
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+
+							<p:panel id="ValidationDataTablePanel"
+								widgetVar="ValidationDataTablePanel" visible="true"
+								closable="true" toggleable="true" closeSpeed="0"
+								styleClass="no-border no-spacing">
+
+								<p:dataTable id="validationListDatatable"
+									widgetVar="validationListDatatable" var="tinValidation"
+									value="#{countryCRUDController.validationList}"
+									selection="#{countryCRUDController.selectedValidationList}"
+									rowIndexVar="rowIndexVar" rowKey="#{tinValidation}"
+									stickyHeader="false"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}"
+									editable="true" editMode="cell">
+
+
+
+									<f:facet name="header">
+										<table class="no-border dis-table-header">
+
+											<tr>
+												<td></td>
+												<td class="ui-datatable ui-datatable-header"><h:outputText
+														value="#{msg['message.country.tinValidation']}" /></td>
+
+												<td><p:panel styleClass="panel_Button_Invoice">
+														<p:commandButton id="addValidationButton"
+															styleClass="Fleft LightButton" icon="ui-icon-plus"
+															actionListener="#{countryCRUDController.addTinvalidation}"
+															immediate="true" process="@form"
+															update="@this validationListDatatable"
+															title="#{msg['message.country.tooltip.addtin']}">
+														</p:commandButton>
+
+														<p:commandButton id="removeValidationButton"
+															styleClass="Fleft LightButton" icon="ui-icon-minusthick"
+															actionListener="#{countryCRUDController.removeTinvalidation}"
+															immediate="true" process="@form"
+															update="@this validationListDatatable"
+															disabled="#{empty countryCRUDController.selectedValidationList}"
+															title="#{msg['message.country.tooltip.remove']}">
+														</p:commandButton>
+													</p:panel></td>
+											</tr>
+										</table>
+									</f:facet>
+
+
+									<p:ajax event="rowSelect" update="removeValidationButton" />
+									<p:ajax event="rowUnselect" update="removeValidationButton" />
+									<p:ajax event="rowSelectCheckbox"
+										update="removeValidationButton" />
+									<p:ajax event="rowUnselectCheckbox"
+										update="removeValidationButton" />
+									<p:ajax event="toggleSelect" update="removeValidationButton" />
+
+
+
+
+									<!-- validation CHECKBOX -->
+									<p:column id="validationSelection" selectionMode="multiple"
+										styleClass="" />
+
+
+
+									<p:column headerText="#{msg['message.country.company']}"
+										styleClass="col-user-user" sortBy="#{tinValidation.company}">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{tinValidation.company}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:selectOneMenu value="#{tinValidation.company}"
+													styleClass="invoiceLineTable-edit"
+													converter="omnifaces.SelectItemsConverter" label="Company">
+													<f:selectItem
+														itemLabel="#{msg['message.common.selectOne']}"
+														itemValue="#{null}" />
+													<f:selectItems
+														value="#{sessionSelectorController.companies}"
+														var="company" itemValue="#{company}"
+														itemLabel="#{company.code} - #{company.description}" />
+
+													<p:ajax event="change" process="@this" />
+												</p:selectOneMenu>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+
+									<!-- Description -->
+									<p:column headerText="#{msg['message.country.desc']}"
+										styleClass="col-user-user">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{tinValidation.description}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText value="#{tinValidation.description}"
+													styleClass="invoiceLineTable-edit"
+													label="#{msg['message.common.description']}">
+													<p:ajax event="change" process="@this" />
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<!-- regex -->
+									<p:column headerText="#{msg['message.country.rex']}"
+										styleClass="col-user-user">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{tinValidation.regex}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText value="#{tinValidation.regex}"
+													styleClass="invoiceLineTable-edit" label="Regex">
+													<p:ajax event="change" process="@this" />
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+
+									<!-- matchingExamples -->
+									<p:column headerText="#{msg['message.country.mat']}"
+										styleClass="col-user-user">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{tinValidation.matchingExamples}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText value="#{tinValidation.matchingExamples}"
+													styleClass="invoiceLineTable-edit" label="matchingExamples">
+													<p:ajax event="change" process="@this" />
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<!-- TINFormatRegex -->
+									<p:column headerText="#{msg['message.country.tin']}"
+										styleClass="col-user-user">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{tinValidation.TINFormatRegex}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText value="#{tinValidation.TINFormatRegex}"
+													styleClass="invoiceLineTable-edit" label="TINFormatRegex">
+													<p:ajax event="change" process="@this" />
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<!-- TINFormatReplacement -->
+									<p:column headerText="#{msg['message.country.tinrep']}"
+										styleClass="col-user-user">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{tinValidation.TINFormatReplacement}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText value="#{tinValidation.TINFormatReplacement}"
+													styleClass="invoiceLineTable-edit"
+													label="TINFormatReplacement">
+													<p:ajax event="change" process="@this" />
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="2"
+								styleClass="no-spacing no-border dis-spacing-small">
+
+								<!-- BOUTTON -->
+								<p:commandButton value="#{msg['message.common.save']}"
+									id="accept" styleClass="dis-button-width" process="@form"
+									action="#{countryCRUDController.createOrUpdate}"
+									update="countryform indexMessagesCountry" icon="ui-icon-check"
+									oncomplete="scrollOnMessageToTop()"
+									title="#{msg['message.country.tooltip.country.save']}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" global="true" showEffect="fade"
+										hideEffect="fade" />
+								</p:commandButton>
+
+
+								<p:commandButton value="#{msg['message.common.cancel']}"
+									resetValues="true" id="cancelar" process="@this"
+									styleClass="dis-button-width" icon="ui-icon-cancel"
+									immediate="true" action="#{countryCRUDController.cancel}"
+									title="#{msg['message.country.tooltip.country.cancel']}">
+
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.cancel']}"
+										icon="ui-icon-alert" />
+
+								</p:commandButton>
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+				</h:form>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

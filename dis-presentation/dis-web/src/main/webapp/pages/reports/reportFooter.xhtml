@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions" >
+
+	<p:spacer styleClass="dis-spacer-small" />
+	
+	<o:importConstants
+		type="com.discovery.dis.web.view.reports.Report$EXPORT_FORMAT"
+		var="EXPORT_FORMAT" />
+		
+	<p:panelGrid 
+		columns="5" styleClass="transparent no-border no-spacing" columnClasses="no-spacing">
+			
+		<p:commandButton value="#{msg['message.common.back']}" 
+			styleClass="dis-button-width" icon="ui-icon-arrow-1-w"
+			action="reports" process="@this" />
+			
+		<p:commandButton id="clearReportData"
+			value="#{msg['message.common.clear']}"
+			actionListener="#{controller.clearReportData}"
+			styleClass="dis-button-width" icon="ui-icon-refresh"
+			update="@form"
+			process="@this"
+			immediate="true"
+			title="#{msg['message.common.tooltip.clear.filters']}" />
+
+		<p:spacer styleClass="dis-spacer-small" />
+			
+		<p:panel styleClass="no-internal-border">
+	        <p:selectOneRadio 
+	        	id="reportFormat" 
+	        	converter="omnifaces.SelectItemsConverter"
+	        	value="#{controller.format}"
+	        	styleClass="Fleft LightButton" >
+	        	
+				<f:selectItems 
+					value="#{EXPORT_FORMAT}" />
+	        </p:selectOneRadio>
+	        		
+			<p:commandButton id="getReport"
+				update="@form"
+				value="#{msg['message.report.getReport']}"
+				actionListener="#{controller.onReport}"
+				styleClass="Fleft dis-button-width" icon="ui-icon-search"
+				title="#{msg['message.report.getReport.tooltip']}" />
+			
+			<p:commandButton id="sendEmailReportButton" 
+				disabled="#{not controller.isSendEmailReportConfgured()}"
+				value="#{msg['message.report.sendEmailReport']}"
+				action="#{controller.sendEmailReport}"
+				ajax="false"
+				styleClass="Fleft dis-button-width" 
+				icon="ui-icon-mail-closed"
+				title="#{msg['message.report.sendEmailReport.tooltip']}" />
+				
+		</p:panel>
+
+	</p:panelGrid>
+		
+</ui:composition>

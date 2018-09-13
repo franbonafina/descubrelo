@@ -1,0 +1,733 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.consumption']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<p:panel styleClass="no-spacing no-border">
+
+					<p:focus context="consumptionsListForm" />
+
+					<h:form id="consumptionsListForm">
+						<p:messages id="consumptionsListFormMessages" closable="true"
+							showDetail="false" autoUpdate="false" />
+
+						<p:tabView id="consumptionsTabView"
+							activeIndex="#{consumptionController.activeIndex}" >
+							<p:ajax event="tabChange"
+							update=":consumptionDataTableForm"
+							resetValues="true" /> 
+								
+							<!-- CONSUMPTION SEARCH TAB -->
+							<p:tab id="consumptionSearchTab"
+								title="#{msg['message.common.search']}">
+
+								<p:panelGrid id="consumptionSearchPanelGrid"
+									styleClass="no-border"
+									columns="4" >	
+									
+									<!-- COMPANY -->
+									<p:outputLabel for="consumptionCompanyFilter"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="consumptionCompanyFilter"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionFilterGenerator.company}"
+										title="#{msg['message.consumption.filter.tooltip.company']}"
+										required="true">
+										<f:selectItems value="#{sessionSelectorController.companies}"
+											var="company" itemValue="#{company}"
+											itemLabel="#{company.code} - #{company.description}" />
+										<p:ajax update="consumptionCustomerFilter consumptionOperationFilter consumptionTypeFilter" />
+									</p:selectOneMenu>
+									
+									<!-- CONSUMPTION STATUS -->
+									<p:outputLabel for="consumptionStatusFilter"
+										value="#{msg['message.consumption.filter.status']}" />
+									<p:selectOneMenu id="consumptionStatusFilter" styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionFilterGenerator.status}"
+										title="#{msg['message.consumption.filter.tooltip.status']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.statusFilter']}"
+											itemValue="#{null}" />										
+										<f:selectItems value="#{selectorController.getStatusListByUser(loginController.user)}"
+											var="status"
+											itemValue="#{status}"
+											itemLabel="#{labelUtil.getInvoiceStatusLabel(status)}" />
+									</p:selectOneMenu>
+									
+									<!-- LAIS ID -->
+									<p:outputLabel for="consumptionLaisIdFilter"
+										value="#{msg['message.consumption.filter.laisId']}" />
+									<p:inputText id="consumptionLaisIdFilter"
+										styleClass="dis-input-width" 
+										value="#{consumptionFilterGenerator.laisId}"
+										label="#{msg['message.consumption.filter.laisId']}"
+										title="#{msg['message.consumption.filter.tooltip.laisId']}" >
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+									
+									<!-- SERVICE RECEIVED TYPE -->
+									<p:outputLabel for="consumptionServiceRTFilter"
+										value="#{msg['message.consumption.filter.serviceReceivedType']}" />
+									<p:selectOneMenu id="consumptionServiceRTFilter"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionFilterGenerator.serviceReceivedType}"
+										title="#{msg['message.consumption.filter.tooltip.serviceReceivedType']}">
+										<f:selectItem
+											itemLabel="#{msg['message.consumption.filter.select.serviceReceivedType']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.getServiceReceivedTypeList(true)}"
+											var="serviceReceivedType"
+											itemValue="#{serviceReceivedType}"
+											itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceReceivedType)}"/>
+									</p:selectOneMenu>
+									
+									<!-- CUSTOMER TAX ID -->
+									<p:outputLabel for="consumptionCustomerTaxIdFilter"
+										value="#{msg['message.consumption.filter.customer.taxId']}" />
+									<p:inputText id="consumptionCustomerTaxIdFilter"
+										styleClass="dis-input-width"
+										value="#{consumptionFilterGenerator.taxId}"
+										title="#{msg['message.consumption.filter.tooltip.customer.taxId']}" />									
+									
+									<!-- OPERATION -->
+									<p:outputLabel for="consumptionOperationFilter"
+										value="#{msg['message.consumption.filter.operation']}" />
+									<p:selectOneMenu id="consumptionOperationFilter"
+										value="#{consumptionFilterGenerator.billingScenario}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.consumption.filter.tooltip.operation']}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.consumption.filter.select.operation']}" />
+										<f:selectItems
+											value="#{selectorController.getConsumptionBillingScenarios(consumptionFilterGenerator.company)}"
+											var="operation" itemValue="#{operation}"
+											itemLabel="#{(labelUtil.getConsumptionOperationLabel(operation))}" />
+									</p:selectOneMenu>
+									
+									<!-- CUSTOMER NAME -->
+									<p:outputLabel for="consumptionCustomerFilter"
+										value="#{msg['message.consumption.filter.customer']}" />
+									<p:selectOneMenu id="consumptionCustomerFilter"
+										value="#{consumptionFilterGenerator.customer}"
+										effect="fade" var="customer" filter="true"
+										filterMatchMode="contains"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.consumption.filter.tooltip.customer']}">
+										<f:selectItem
+											itemValue="#{null}"
+											itemLabel="#{msg['message.consumption.filter.select.customer']}" />
+										<f:selectItems
+											value="#{selectorController.getCustomerList(consumptionFilterGenerator.company)}"
+											var="customer"
+											itemValue="#{customer}"
+											itemLabel="#{(labelUtil.getCustomerLabel(customer))}" />
+										<p:column>
+											<p:outputLabel
+												value="#{customer != null ? (labelUtil.getCustomerLabel(customer)) : msg['message.consumption.filter.select.customer']}" />
+										</p:column>
+									</p:selectOneMenu>
+									
+									<!-- CONSUMPTION TYPE -->
+									<p:outputLabel for="consumptionTypeFilter"
+										value="#{msg['message.consumption.filter.type']}" />
+									<p:selectOneMenu id="consumptionTypeFilter"
+										value="#{consumptionFilterGenerator.invoiceType}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.consumption.filter.tooltip.type']}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.consumption.filter.select.type']}" />
+										<f:selectItems
+											value="#{selectorController.getInvoiceTypeConsumption(consumptionFilterGenerator.company)}"
+											var="type" itemValue="#{type}"
+											itemLabel="#{(labelUtil.getInvoiceTypeLabel(consumptionFilterGenerator.company, type))}" />
+									</p:selectOneMenu>
+
+									<!-- CONSUMPTION DATE  -->
+									<p:outputLabel for="consumptionDateFromFilter"
+										value="#{msg['message.consumption.filter.dateFrom']}" />
+									<p:calendar id="consumptionDateFromFilter"
+										locale="#{languageController.language}"
+										value="#{consumptionFilterGenerator.dateFrom}"
+										title="#{msg['message.consumption.filter.tooltip.dateFrom']}"
+										styleClass="dis-input-width" readonlyInput="true" >
+										<p:ajax event="dateSelect" update="consumptionDateToFilter"/>
+									</p:calendar>
+									
+									<!-- CONSUMPTION DATE TO  -->
+									<p:outputLabel for="consumptionDateToFilter"
+										value="#{msg['message.consumption.filter.dateTo']}" />
+									<p:calendar id="consumptionDateToFilter"
+										locale="#{languageController.language}"
+										value="#{consumptionFilterGenerator.dateTo}"
+										title="#{msg['message.consumption.filter.tooltip.dateTo']}"
+										mindate="#{consumptionFilterGenerator.dateFrom}"
+										styleClass="dis-input-width" readonlyInput="true" >
+									</p:calendar>
+								</p:panelGrid>
+
+								<p:spacer styleClass="dis-spacer-small" />
+
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">
+									<p:commandButton id="consumptionSearchFilterButton"
+										icon="ui-icon-search"
+										styleClass="dis-button-width" 
+										actionListener="#{consumptionController.search}"
+										process="consumptionSearchTab @this"
+										update="consumptionDataTableForm @form:consumptionsListFormMessages"
+										oncomplete="PF('consumptionDataTablePanel').show();"
+										value="#{msg['message.common.search']}"
+										title="#{msg['message.consumption.tooltip.searchButton']}" />
+																				
+									<p:commandButton id="consumptionClearFilterButton"
+										icon="ui-icon-refresh"
+										styleClass="dis-button-width" 
+										actionListener="#{consumptionController.cleanFilters}"
+										process="@this @form:consumptionsListFormMessages"
+										update="@form"
+										oncomplete="PF('consumptionDataTablePanel').close();
+											PF('consumptionDataTable').unselectAllRows();"
+										value="#{msg['message.common.clear']}"
+										resetValues="true"
+										title="#{msg['message.common.tooltip.clear.filters']}" />										
+								</p:panelGrid>
+							</p:tab>
+							
+							<!-- CONSUMPTION ADD TAB -->
+							<p:tab title="#{msg['message.common.add']}">
+								<p:panelGrid id="consumptionAddTab"
+									styleClass="no-border"
+									columns="2" cellpadding="10">
+									
+									<!-- COMPANY -->
+									<p:outputLabel for="consumptionCompanyAdd"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="consumptionCompanyAdd"
+										label="#{msg['message.common.company']}"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionController.selectedCompany}"
+										required="true"										
+										title="#{msg['message.consumption.add.tooltip.company']}" >
+										<f:selectItems value="#{sessionSelectorController.companies}"
+											var="company" itemValue="#{company}"
+											itemLabel="#{company.code} - #{company.description}" />
+										<p:ajax event="change"
+											listener="#{consumptionController.onSelectCompany}"
+											process="@this"
+											update="consumptionAddTab consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+							
+									<!-- CUSTOMER -->
+									<p:outputLabel for="consumptionCustomerAdd"
+										value="#{msg['message.consumption.add.customer']}" />								
+									<p:selectOneMenu id="consumptionCustomerAdd" 
+										value="#{consumptionController.selectedCustomer}"
+										effect="fade" 
+										var="customer" 
+										filter="true"
+										filterMatchMode="contains"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.consumption.add.tooltip.customer']}"
+										disabled="#{null == consumptionController.selectedCompany}" >										
+										<f:selectItem noSelectionOption="true"
+											itemLabel="#{msg['message.consumption.add.customer.select']}"
+											itemValue="#{null}"/>										
+										<f:selectItems var="customer"
+											itemValue="#{customer}"	itemLabel="#{customer.id} - #{customer.name}"
+											value="#{selectorController.getCustomerList(consumptionController.selectedCompany)}" />											
+										<p:column>
+											<p:outputLabel
+												value="#{customer != null ? customer : msg['message.consumption.add.customer.select']}" />
+										</p:column>
+										<p:ajax event="change"
+											listener="#{consumptionController.onSelectCustomer}" 
+											process="@this"
+											update="consumptionAddTab consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+					
+									<!-- ADVERTISER -->
+									<p:outputLabel for="consumptionAdvertiserAdd"
+										value="#{msg['message.consumption.add.advertiser']}"
+										rendered="#{consumptionController.advertiserRendered}" />
+									<p:selectOneMenu id="consumptionAdvertiserAdd"
+										styleClass="dis-input-width"
+										label="#{msg['message.consumption.add.advertiser']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionController.selectedAdvertiser}"
+										title="#{msg['message.consumption.add.tooltip.advertiser']}"
+										rendered="#{consumptionController.advertiserRendered}"
+										effect="fade" 
+										var="advertiser" 
+										filter="true"
+										filterMatchMode="contains" >
+										<f:selectItem noSelectionOption="true"
+											itemValue="#{null}"
+											itemLabel="#{msg['message.consumption.add.advertiser.select']}" />
+										<f:selectItems 
+											value="#{consumptionController.advertisers}"
+											var="advertiser"
+											itemValue="#{advertiser}"
+											itemLabel="#{advertiser.id} - #{advertiser.name}" />											
+										<p:column>
+											<p:outputLabel
+												value="#{advertiser != null ? advertiser : msg['message.invoice.add.form.select.advertiser']}" />
+										</p:column>
+										<p:ajax event="change"
+											listener="#{consumptionController.onSelectAdvertiser}" 
+											process="@this"
+											update="consumptionAddTab consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+																	
+									<!-- SERVICE TYPE -->
+									<p:outputLabel
+										value="#{msg['message.consumption.add.serviceType']}"
+										for="consumptionServiceTypeAdd" />
+									<p:selectOneMenu id="consumptionServiceTypeAdd"
+										styleClass="dis-input-width"										
+										label="#{msg['message.consumption.add.serviceType']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionController.selectedServiceReceivedType}"
+										title="#{msg['message.consumption.add.tooltip.serviceType']}"
+										disabled="#{consumptionController.serviceReceivedTypeDisabled}" >
+										<f:selectItem itemValue="#{null}" noSelectionOption="true"
+											itemLabel="#{msg['message.consumption.add.serviceType.select']}" />
+										<f:selectItems
+											value="#{consumptionController.serviceReceivedTypes}"
+											var="serviceReceivedType"
+											itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceReceivedType)}"
+											itemValue="#{serviceReceivedType}" />
+										<p:ajax event="change"
+											listener="#{consumptionController.onSelectServiceType}"
+											process="@this"
+											update="consumptionAddTab consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+									
+									<!-- CONSUMPTION TYPE -->
+									<p:outputLabel for="consumptionTypeAdd"
+										value="#{msg['message.consumption.filter.type']}" />
+									<p:selectOneMenu id="consumptionTypeAdd"
+										value="#{consumptionController.consumptionType}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.consumption.add.tooltip.type']}"										
+										disabled="#{consumptionController.consumptionTypeDisabled}" >
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.consumption.filter.select.type']}" />
+										<f:selectItems
+											value="#{selectorController.getInvoiceTypeConsumption(consumptionController.selectedCompany)}"
+											var="type" itemValue="#{type}"
+											itemLabel="#{(labelUtil.getInvoiceTypeLabel(consumptionController.selectedCompany, type))}" />
+										<p:ajax event="change"
+											listener="#{consumptionController.onSelectConsumptionType}"
+											process="@this"
+											update="consumptionAddTab consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+																		
+									<!-- PREBILL -->
+									<p:outputLabel
+										value="#{msg['message.consumption.add.prebill']}"
+										for="consumptionPrebillAdd" />
+									<p:selectOneMenu id="consumptionPrebillAdd"
+										styleClass="dis-input-width"										
+										label="#{msg['message.consumption.add.prebill']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionController.selectedPrebill}"
+										title="#{msg['message.consumption.add.tooltip.prebill']}"
+										disabled="#{consumptionController.prebillDisabled}"
+										effect="fade"
+										var="prebill"
+										filter="true"
+										filterMatchMode="contains" >
+										<f:selectItem itemValue="#{null}" noSelectionOption="true"
+											itemLabel="#{msg['message.consumption.add.prebill.select']}" />
+										<f:selectItems
+											value="#{consumptionController.prebills}"
+											var="prebill"
+											itemLabel="#{labelUtil.getInvoiceLabel(prebill)}"
+											itemValue="#{prebill}" />
+										<p:column>
+											<p:outputLabel
+												value="#{null != prebill ? labelUtil.getInvoiceLabel(prebill) : msg['message.consumption.add.prebill.select']}" />
+										</p:column>
+										<p:ajax event="change"
+											listener="#{consumptionController.onSelectPrebill}"
+											process="@this"
+											update="consumptionAddTab consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+									
+									<!-- PREBILL CONSUMPTION -->
+									<p:outputLabel
+										value="#{msg['message.consumption.add.prebillConsumption']}"
+										rendered="#{null != consumptionController.consumptionType and (consumptionController.consumptionType.isPrebillReversalConsumption())}"
+										for="consumptionPrebillConsumptionAdd" />
+									<p:selectOneMenu id="consumptionPrebillConsumptionAdd"
+										styleClass="dis-input-width"										
+										label="#{msg['message.consumption.add.prebillConsumption']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{consumptionController.selectedPrebillConsumption}"
+										title="#{msg['message.consumption.add.tooltip.prebillConsumption']}"
+										rendered="#{null != consumptionController.consumptionType and (consumptionController.consumptionType.isPrebillReversalConsumption())}"
+										disabled="#{consumptionController.prebillConsumptionDisabled}"
+										effect="fade"
+										var="consumption"
+										filter="true"
+										filterMatchMode="contains" >
+										<f:selectItem itemValue="#{null}" noSelectionOption="true"
+											itemLabel="#{msg['message.consumption.add.prebillConsumption.select']}" />
+										<f:selectItems
+											value="#{consumptionController.prebillConsumptions}"
+											var="consumption"
+											itemLabel="#{labelUtil.getConsumptionLabel(consumption, languageController.locale)}"
+											itemValue="#{consumption}" />
+										<p:column>
+											<p:outputLabel
+												value="#{null != consumption ? labelUtil.getConsumptionLabel(consumption, languageController.locale) : msg['message.consumption.add.prebillConsumption.select']}" />
+										</p:column>
+										<p:ajax event="change"
+											process="@this"
+											update="consumptionAddButtonAdd" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:spacer styleClass="dis-spacer-small" />
+								
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">									
+									<p:commandButton id="consumptionAddButtonAdd" icon="ui-icon-plus"
+										value="#{msg['message.common.add']}"
+										action="#{consumptionController.addConsumption}"
+										title="#{msg['message.common.tooltip.add']}"
+										process="@form"
+										update="@form"
+										disabled="#{consumptionController.addButtonDisabled}" />
+									<p:commandButton id="consumptionClearButtonAdd"
+										value="#{msg['message.common.clear']}"
+										actionListener="#{consumptionController.cleanAddFields}"
+										styleClass="dis-button-width" icon="ui-icon-refresh"
+										process="@this"
+										update="consumptionAddTab consumptionAddButtonAdd"
+										title="#{msg['message.common.tooltip.clear.filters']}" />
+								</p:panelGrid>
+								
+							</p:tab>
+						</p:tabView>
+
+						<p:spacer styleClass="dis-spacer-small" />
+						
+					</h:form>
+					
+					<h:form id="consumptionDataTableForm">
+						<p:panel id="consumptionDataTablePanel"
+							widgetVar="consumptionDataTablePanel"
+							visible="false" closable="true"
+							toggleable="true" closeSpeed="0"
+							rendered="#{consumptionController.activeIndex == 0}"
+							styleClass="no-border no-spacing">
+
+							<p:dataTable id="consumptionDataTable"
+								widgetVar="consumptionDataTable"
+								var="consumption"
+								value="#{consumptionController.consumptionLazyDataModel}"
+								selection="#{consumptionController.selectedConsumptions}"
+								paginatorAlwaysVisible="true" paginator="true"
+								currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} 
+										#{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} 
+										#{msg['message.common.of']} {totalPages}]"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+						 				{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+								sortMode="single" rows="10" stickyHeader="false" lazy="true"
+								emptyMessage="#{msg['message.datatable.emptyMessage']}"
+								styleClass="dataTable-letters">
+
+								<f:facet name="header">
+									<table class="no-border dis-table-header">
+										<tr>
+											<td>
+												<p:commandButton id="viewConsumptionButton"
+													styleClass="Fleft LightButton"
+													icon="ui-icon-zoomin"
+													disabled="#{consumptionController.viewButtonDisabled}"
+													action="#{consumptionController.viewSelected}"
+													process="@this"
+													title="#{msg['message.common.view']}" />
+												<p:commandButton id="viewConsumptionPrebillButton"
+													styleClass="Fleft LightButton"
+													icon="ui-icon-arrowreturnthick-1-n"
+													disabled="#{consumptionController.viewButtonDisabled}"
+													action="#{consumptionController.viewPrebill}"
+													process="@this"
+													title="#{msg['message.consumption.CRUD.viewPrebill']}" />
+												<p:commandButton id="viewConsumptionJournalButton"
+													styleClass="Fleft LightButton"
+													icon="ui-icon-arrowthick-1-e"
+													disabled="#{consumptionController.viewButtonDisabled}"
+													action="#{consumptionController.viewJournal}"
+													process="@this"
+													rendered="#{perm.isPermitted('journal:view')}"
+													title="#{msg['message.consumption.tooltip.viewJournalEntries']}" />
+											</td>
+											<td class="ui-datatable ui-datatable-header"><h:outputText
+													value="#{msg['message.consumption.table.title']}" /></td>
+											<td>
+												<p:commandButton id="consumptionTogglerButton" type="button"
+													styleClass="LightButton Fright" icon="ui-icon-wrench" />
+												<p:columnToggler
+													id="togglerConsumptions" widgetVar="togglerConsumptions"
+													datasource="consumptionDataTable" trigger="consumptionTogglerButton" />
+												<script type="text/javascript"> removeDuplicatedToggler('#consumptionDataTableForm\\:consumptionDataTable\\:togglerConsumptions') </script>
+											</td>
+										</tr>
+									</table>
+								</f:facet>
+								
+								<p:ajax event="page" oncomplete="updateToggles(PF('togglerConsumptions'))" />
+								
+								<p:ajax event="rowDblselect" oncomplete="viewConsumption();" />
+									
+								<p:ajax event="rowSelect" update="@form:consumptionButtons viewConsumptionButton viewConsumptionJournalButton viewConsumptionPrebillButton"/>
+								<p:ajax event="rowUnselect" update="@form:consumptionButtons viewConsumptionButton viewConsumptionJournalButton viewConsumptionPrebillButton"/>
+								<p:ajax event="rowSelectCheckbox" update="@form:consumptionButtons viewConsumptionButton viewConsumptionJournalButton viewConsumptionPrebillButton"/>
+								<p:ajax event="rowUnselectCheckbox" update="@form:consumptionButtons viewConsumptionButton viewConsumptionJournalButton viewConsumptionPrebillButton"/>
+								<p:ajax event="toggleSelect" update="@form:consumptionButtons viewConsumptionButton viewConsumptionJournalButton viewConsumptionPrebillButton" />
+								
+								<!-- COLUMNS -->
+								<p:column 
+									selectionMode="multiple"
+									toggleable="false"
+									styleClass="col-selection-checkbox" />
+								
+								<!-- LAIS ID -->
+								<p:column headerText="#{msg['message.invoice.table.id']}"
+									styleClass="col-customer-code">
+									<h:outputText value="#{consumption.id}" />
+								</p:column>
+								
+								<!-- CUSTOMER -->
+								<p:column headerText="#{msg['message.invoice.table.customer']}"
+									styleClass="col-customer-name">
+									<h:outputText value="#{labelUtil.getCustomerLabel(consumption.customer)}" />
+								</p:column>
+								
+								<!-- CONSUMPTION TYPE-->
+								<p:column headerText="#{msg['message.invoice.table.type']}"
+									styleClass="col-customer-invoiceType">
+									<h:outputText value="#{labelUtil.getInvoiceTypeLabel(consumptionController.searchedCompany, consumption.invoiceType)}"/>
+								</p:column>
+								
+								<!-- OPERATION -->
+								<p:column headerText="#{msg['message.consumption.table.operation']}"
+									styleClass="col-customer-invoiceType">
+									<h:outputText value="#{labelUtil.getConsumptionOperationLabel(consumption.billingScenario)}"/>
+								</p:column>
+
+								<!-- CONSUMPTION DATE -->
+								<p:column headerText="#{msg['message.invoice.table.date']}"
+									styleClass="col-customer-invoiceDate">
+									<h:outputText value="#{consumption.invoiceDate}">
+										<f:convertDateTime dateStyle="short" timeStyle="short"
+										locale="#{languageController.locale}"/>
+									</h:outputText>
+								</p:column>
+
+								<!-- SERVICE TYPE -->
+								<p:column
+									headerText="#{msg['message.invoice.table.serviceType']}"
+									styleClass="col-service-received">
+									<h:outputText
+										value="#{labelUtil.getServiceReceivedTypeLabel(consumption.serviceReceivedType)}" />
+								</p:column>
+								
+								<!-- CONSUMPTION SOURCE -->
+								<p:column
+									headerText="#{msg['message.invoice.table.invoiceSource']}"
+									styleClass="col-transaction-currency">
+									<h:outputText
+										value="#{labelUtil.getInvoiceSourceLabel(consumption.invoiceSource)}" />
+								</p:column>
+
+								<!-- TRANSACTION CURRENCY -->
+								<p:column headerText="#{msg['message.invoice.table.currency']}"
+									styleClass="col-transaction-currency">
+									<h:outputText value="#{consumption.transactionCurrency.iso3Code}" />
+								</p:column>
+
+								<!-- TRANSACTION GROSS AMOUNT -->
+								<p:column
+									headerText="#{msg['message.invoice.table.transactionGrossAmount']}"
+									styleClass="col-amount right">
+									<h:outputText value="#{consumption.transactionGrossAmount}" >
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+
+								<!-- CONSUMPTION STATUS -->
+								<p:column headerText="#{msg['message.invoice.table.status']}"
+									styleClass="col-status">
+									<h:outputText value="#{labelUtil.getInvoiceStatusLabel(consumption.status)}" />
+								</p:column>
+							</p:dataTable>
+							
+							<div class="EmptyBox30"></div>					
+							
+							<p:panel 
+								id="consumptionButtons"
+								styleClass="no-border transparent dis-spacing-small" >					
+								
+								<!-- SUBMIT -->
+								<p:commandButton id="submitConsumptionsButton"
+									value="#{msg['message.common.submit']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.submit']}"
+									icon="ui-icon-mail-closed"
+									disabled="#{consumptionController.submitButtonDisabled}"
+									oncomplete="scrollOnMessageToTop()"
+									rendered="#{perm.isPermitted('invoice:submit')}"
+									actionListener="#{consumptionController.submitConsumptions}"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages">
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>			
+								
+								<!-- APPROVE -->			
+								<p:commandButton id="approveConsumptionsButton"
+									value="#{msg['message.common.approve']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.approve']}"
+									icon="ui-icon-circle-check"
+									disabled="#{consumptionController.approveButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:approve')}"
+									actionListener="#{consumptionController.approveConsumptions}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages">
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- REJECT -->
+								<p:commandButton id="rejectConsumptionsButton"
+									value="#{msg['message.common.reject']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.reject']}"
+									icon="ui-icon-circle-close"
+									disabled="#{consumptionController.refuseButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:approve')}"
+									actionListener="#{consumptionController.refuseConsumptions}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages">
+									<p:confirm
+										message="#{msg['message.consumption.confirm.list.reject']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- TRANSMIT -->
+								<p:commandButton id="transmitConsumptionsButton"
+									value="#{msg['message.common.transmit']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.transmit']}"
+									icon="ui-icon-arrowthick-1-e"
+									disabled="#{consumptionController.transmitButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:transmit') and not consumptionController.sageCompany}"
+									actionListener="#{consumptionController.transmitConsumptions}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages" >
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- BOTONES SAGE (Integracion Manual) -->
+									
+								<!-- TRANSMIT MANUAL -->
+								<p:commandButton id="transmitManualConsumptionsButton"
+									value="#{msg['message.common.transmit']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.transmit.manual']}"
+									icon="ui-icon-arrowthick-1-e"
+									disabled="#{consumptionController.transmitManualButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:transmit') and consumptionController.sageCompany}"
+									actionListener="#{consumptionController.transmitConsumptionsManual}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages" >
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- POST MANUAL -->
+								<p:commandButton id="postConsumptionsButton"
+									value="#{msg['message.common.post']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.post']}"
+									icon="ui-icon-flag"
+									rendered="#{perm.isPermitted('invoice:post') and consumptionController.sageCompany}"
+									disabled="#{consumptionController.postButtonDisabled}"
+									actionListener="#{consumptionController.postConsumptions}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages" >
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- DELETE -->
+								<p:commandButton id="deleteConsumptionsButton"
+									value="#{msg['message.common.delete']}"
+									styleClass="lais-delete-button dis-button-width"
+									title="#{msg['message.consumption.tooltip.list.delete']}"
+									icon="ui-icon-trash"
+									disabled="#{consumptionController.cancelButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:cancel')}"
+									actionListener="#{consumptionController.cancelConsumptions}"
+									process="@this @form"
+									update="@form consumptionsListForm:consumptionsListFormMessages">
+									<p:confirm
+										message="#{msg['message.consumption.confirm.list.delete']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>	
+							</p:panel>
+							
+							<p:remoteCommand name="viewConsumption"
+								action="#{consumptionController.viewSelected}" />
+								
+							<p:remoteCommand autoRun="true"
+								actionListener="#{consumptionController.showTable}" />
+						</p:panel>
+					</h:form>
+
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+	
+	<ui:define name="viewTitle">
+		#{msg['message.header.configuration']}
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="ContainerIndent">
+			<p:panel id="panelSetting" header="#{msg['message.setting.title']}">
+
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h:outputText value="#{msg['message.setting.title']}"
+							styleClass="FontBold Fs18 hardblue"></h:outputText>
+					</div>
+				</div>
+
+				<h:form id="settingForm">
+
+					<p:messages autoUpdate="true" id="indexMessagesSettings"
+						showDetail="true" showSummary="true" closable="true" />
+
+
+					<div class="Container100">
+						<div class="ContainerIndent">
+
+							<h:panelGrid columns="2" id="panelGridSetting" cellpadding="5">
+								
+							</h:panelGrid>
+
+							<p:commandButton id="saveSettingsButton"
+								value="#{msg['message.common.confirm']}"
+								widgetVar="saveSettingsButton" icon="ui-icon-check"
+								update="settingForm"
+								actionListener="#{settingsController.saveSettings()}" />
+
+						</div>
+					</div>
+				</h:form>
+			</p:panel>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+	xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.2"
+	serie="F" folio="594" fecha="2015-07-10T15:11:59"
+	sello="CeEcuXef2gIX3GTGoiWuUKQSZQsN+k0AZrZJNG/SeSPsXEw2hTfcO2+f5ckdMua2JepUgspgyoG/ROfVxPVs9iLThZukqn2Bi7hLHC5o4fNFSwkSnqqF2kL0gop+gSj3wOE2g6aQ9AEPKKQezOArA1rydWxnT25gMo8FE5cP9H8="
+	formaDePago="PAGO EN UNA SOLA EXHIBICIÓN" noCertificado="00001000000202808330"
+	certificado="MIIErTCCA5WgAwIBAgIUMDAwMDEwMDAwMDAyMDI4MDgzMzAwDQYJKoZIhvcNAQEFBQAwggGVMTgwNgYDVQQDDC9BLkMuIGRlbCBTZXJ2aWNpbyBkZSBBZG1pbmlzdHJhY2nDs24gVHJpYnV0YXJpYTEvMC0GA1UECgwmU2VydmljaW8gZGUgQWRtaW5pc3RyYWNpw7NuIFRyaWJ1dGFyaWExODA2BgNVBAsML0FkbWluaXN0cmFjacOzbiBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpw7NuMSEwHwYJKoZIhvcNAQkBFhJhc2lzbmV0QHNhdC5nb2IubXgxJjAkBgNVBAkMHUF2LiBIaWRhbGdvIDc3LCBDb2wuIEd1ZXJyZXJvMQ4wDAYDVQQRDAUwNjMwMDELMAkGA1UEBhMCTVgxGTAXBgNVBAgMEERpc3RyaXRvIEZlZGVyYWwxFDASBgNVBAcMC0N1YXVodMOpbW9jMRUwEwYDVQQtEwxTQVQ5NzA3MDFOTjMxPjA8BgkqhkiG9w0BCQIML1Jlc3BvbnNhYmxlOiBDZWNpbGlhIEd1aWxsZXJtaW5hIEdhcmPDrWEgR3VlcnJhMB4XDTEzMDExNDIyMzk1NVoXDTE3MDExNDIyMzk1NVowge4xMDAuBgNVBAMTJ0RJU0NPVkVSWSBORVRXT1JLUyBNRVhJQ08gUyBERSBSTCBERSBDVjEwMC4GA1UEKRMnRElTQ09WRVJZIE5FVFdPUktTIE1FWElDTyBTIERFIFJMIERFIENWMTAwLgYDVQQKEydESVNDT1ZFUlkgTkVUV09SS1MgTUVYSUNPIFMgREUgUkwgREUgQ1YxJTAjBgNVBC0THEROTTA0MDUzMUtHNCAvIE1PQ0M2NDAzMDVFNjcxHjAcBgNVBAUTFSAvIE1PQ0M2NDAzMDVIREZSUlIwMDEPMA0GA1UECxMGVW5pZGFkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDIL19kVyfjE/MWYplIAOlMTxkSIHytd0nvYc9IqLBlP2NPK6xnjpp4vm7/K+RpHL2qZ9FUMYmrDM6YSlqg/Zk7VmY0S7V/OXtdC1zoFaRI/OPUAOnnaW0j3ls6ZPdU58qIKCNRxvFNYWilzM1w46f0WxuQhwzoSUZYZhW5B5TBbwIDAQABox0wGzAMBgNVHRMBAf8EAjAAMAsGA1UdDwQEAwIGwDANBgkqhkiG9w0BAQUFAAOCAQEAKMzN3ECxAE+OiZgulVBHZnzCKqWYJgqk9Lh55JX4gWdL4WMOfeAleAIemPvKK8AHo0JiTtgyW1tyU/PC2si3OFoZwkVe6TBJD8c08AQ8tYZ70P3HGsi3ATQhJeTHlvVz/Vef4RIlC40alNQHXMLg34ek57JAzq4WpHp/O3uPBi+jTVBaAx3UpYdqwNjmFqo6cHxsoa6SgFHFYzFtbUOzB3BisEJONh9KYcg+Dw5mqB1152p/izbR30yx8VDfTN0z1Mr8f5hxyyHqAuv0BDoGCpSW+wLF8HysY+F9loxyYHFk9OGCQQ6of4eaNFpZY42/m2lNqlDdOjtTgtItg9SMug=="
+	subTotal="57216.75" TipoCambio="1" Moneda="MXN" total="66371.43"
+	tipoDeComprobante="ingreso" metodoDePago="No identificado"
+	LugarExpedicion="Discovery Networks Mexico, S. de R.L. de C.V."
+	xmlns:cfdi="http://www.sat.gob.mx/cfd/3">
+	<cfdi:Emisor nombre="Discovery Networks Mexico, S. de R.L. de C.V."
+		rfc="DNM040531KG4">
+		<cfdi:DomicilioFiscal calle="Paseo de las Palmas"
+			noExterior="425" colonia="Lomas de Chapultepec" localidad="MIGUEL HIDALGO"
+			municipio="MIGUEL HIDALGO" estado="Distrito Federal" pais="México"
+			codigoPostal="11000" />
+		<cfdi:ExpedidoEn calle="Paseo de las Palma"
+			noExterior="425" colonia="Lomas de Chapultepec" localidad="MIGUEL HIDALGO"
+			referencia="Distrito Federal" municipio="MIGUEL HIDALGO" estado="Distrito Federal"
+			pais="México" codigoPostal="11000" />
+		<cfdi:RegimenFiscal Regimen="REGIMEN GENERAL DE LEY" />
+	</cfdi:Emisor>
+	<cfdi:Receptor nombre="Mondelez Mexico, S. De R.L. de C.V."
+		rfc="KFM920615PS8">
+		<cfdi:Domicilio calle="Av. H. Congreso De La Union No. 5840"
+			colonia="Tres Estrellas" localidad="DF" municipio="Gustavo A. Madero"
+			pais="MX" codigoPostal="07820" />
+	</cfdi:Receptor>
+	<cfdi:Conceptos>
+		<cfdi:Concepto cantidad="1" unidad="No aplica"
+			noIdentificacion="DCME" descripcion="DCME Halls" valorUnitario="57216.75"
+			importe="57216.75" />
+	</cfdi:Conceptos>
+	<cfdi:Impuestos totalImpuestosTrasladados="9154.68">
+		<cfdi:Traslados>
+			<cfdi:Traslado importe="9154.68" impuesto="IVA" tasa="16.00" />
+		</cfdi:Traslados>
+	</cfdi:Impuestos>
+	<cfdi:Complemento>
+		<tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/TimbreFiscalDigital/TimbreFiscalDigital.xsd"
+			selloCFD="CeEcuXef2gIX3GTGoiWuUKQSZQsN+k0AZrZJNG/SeSPsXEw2hTfcO2+f5ckdMua2JepUgspgyoG/ROfVxPVs9iLThZukqn2Bi7hLHC5o4fNFSwkSnqqF2kL0gop+gSj3wOE2g6aQ9AEPKKQezOArA1rydWxnT25gMo8FE5cP9H8="
+			FechaTimbrado="2015-07-10T15:15:05" UUID="d87d55d9-d78b-4948-9d52-87b402ffdda0"
+			noCertificadoSAT="00001000000203092957" version="1.0"
+			selloSAT="CMG+eawQhsL+KYyATPFcSu2qK66YQJmbFE++FqE9yc04mm6eR7Pa9xREAUyuPC21FixAV+4xxInTxXS0uin1QbyTOIK/TuY1hipnZTaoIbf2rKEcQIUdgkB8HhZd507jGA33HPp4PaOulXqueMzNiOLRy/Ej7GKFobRkcianOHA=" />
+	</cfdi:Complemento>
+</cfdi:Comprobante>

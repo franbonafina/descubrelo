@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="disWSP"
+	targetNamespace="http://xmlns.discovery.com/LAIS/ABCS/MSDynamics/Integration/V1"
+	xmlns:tns="http://xmlns.discovery.com/LAIS/ABCS/MSDynamics/Integration/V1"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:abm="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1"
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import
+				namespace="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1"
+				schemaLocation="./lais-msdynamics-ws.xsd" />
+		</xsd:schema>
+	</wsdl:types>
+	
+	<wsdl:message name="CreateOrUpdateCustomerReqMsg">
+		<wsdl:part name="CreateOrUpdateCustomer" element="abm:CreateOrUpdateCustomerABM">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="CreateOrUpdateCustomerRespMsg">
+		<wsdl:part name="CreateOrUpdateCustomerResponse" element="abm:CreateOrUpdateCustomerResponseABM">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="SubmitInvoiceReqMsg">
+		<wsdl:part name="SubmitInvoice" element="abm:SubmitInvoiceABM">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="SubmitInvoiceRespMsg">
+		<wsdl:part name="SubmitInvoiceResponse" element="abm:SubmitInvoiceResponseABM">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="SubmitJournalReqMsg">
+		<wsdl:part name="SubmitJournal" element="abm:SubmitJournalABM">
+		</wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="SubmitJournalRespMsg">
+		<wsdl:part name="SubmitJournalResponse" element="abm:SubmitJournalResponseABM">
+		</wsdl:part>
+	</wsdl:message>
+
+	<wsdl:portType name="LaisMSDynamicsReqABCSPortType">
+		<wsdl:operation name="CreateOrUpdateCustomer">
+			<wsdl:input message="tns:CreateOrUpdateCustomerReqMsg">
+			</wsdl:input>
+			<wsdl:output message="tns:CreateOrUpdateCustomerRespMsg">
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SubmitInvoice">
+			<wsdl:input message="tns:SubmitInvoiceReqMsg">
+			</wsdl:input>
+			<wsdl:output message="tns:SubmitInvoiceRespMsg">
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SubmitJournal">
+			<wsdl:input message="tns:SubmitJournalReqMsg">
+			</wsdl:input>
+			<wsdl:output message="tns:SubmitJournalRespMsg">
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="LaisMSDynamicsReqABCSBinding" type="tns:LaisMSDynamicsReqABCSPortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="CreateOrUpdateCustomer">
+			<soap:operation soapAction="CreateOrUpdateCustomer"
+				style="document" />
+			<wsdl:input>
+				<soap:body parts="CreateOrUpdateCustomer" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body parts="CreateOrUpdateCustomerResponse" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SubmitInvoice">
+			<soap:operation soapAction="SubmitInvoice"
+				style="document" />
+			<wsdl:input>
+				<soap:body parts="SubmitInvoice" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body parts="SubmitInvoiceResponse" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SubmitJournal">
+			<soap:operation soapAction="SubmitJournal"
+				style="document" />
+			<wsdl:input>
+				<soap:body parts="SubmitJournal" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body parts="SubmitJournalResponse" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	
+	<wsdl:service name="LaisMSDynamicsReqABCSService">
+		<wsdl:port name="LaisMSDynamicsReqABCSPort" binding="tns:LaisMSDynamicsReqABCSBinding">
+			<soap:address
+				location="http://dctradwms01.discovery.com:35555/ws/DcAIS.ws.provider.disWSP/LaisMSDynamicsReqABCSPort" />
+		</wsdl:port>
+	</wsdl:service>
+	
+</wsdl:definitions>

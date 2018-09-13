@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.discovery.dis</groupId>
+		<artifactId>dis-business</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dis-service-test</artifactId>
+	<packaging>jar</packaging>
+	<name>Dis Service Test Resources</name>
+	<url>http://dis.une.com.ar</url>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.discovery.dis</groupId>
+			<artifactId>dis-dao-test</artifactId>
+			<version>${dis.version}</version>
+		</dependency>
+
+	</dependencies>
+</project>

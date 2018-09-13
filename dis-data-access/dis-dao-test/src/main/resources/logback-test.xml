@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyMMdd.HH:mm:ss.SSS} [%class{0}.%method] %-5level
+				%logger{36} - %msg - %replace(%ex){"une",
+				"une.consulting"}%nopex%n</pattern>
+		</encoder>
+	</appender>
+
+<!-- 	<logger name="org.hibernate.type" level="TRACE" /> -->
+<!-- 	<logger name="org.hibernate.SQL" level="DEBUG" /> -->
+
+	<logger name="dis" level="INFO" />
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

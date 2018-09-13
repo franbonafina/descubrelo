@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html" locale="#{languageController.locale}">
+    <h:head>
+    	<link rel="shortcut icon" href="#{resource['images/favicon.ico']}" type="image/x-icon" />
+        
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        
+        <title>#{msg['message.application']}</title>
+        
+        <h:outputScript name="js/layout.js" library="sentinel-layout" />
+        <h:outputScript name="js/primefaces-locales.js" />
+        <h:outputText value="&lt;!--[if gte IE 9]&gt;" escape="false" />
+            <style type="text/css">
+                .ui-tabs-top .ui-tabs-nav li,
+                .ui-tabs .ui-tabs-nav li{margin-bottom: 0px !important;}
+            </style>
+        <h:outputText value="&lt;![endif]--&gt;" escape="false" />
+
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body>        
+    	<!-- Instanciate session controller 
+			 TODO: to this server side -->
+	<!-- 	<h:form>
+			<p:remoteCommand name="initSC" autoRun="true" actionListener="#{sessionController.init}" />
+		</h:form>
+     -->
+     	<!-- GLOBAL TOOLTIP -->
+		<p:tooltip globalSelector="a,:input,:button,label,div" showDelay="0" />
+							
+     	<!-- GLOBAL CONFIRM DIALOG -->
+   		<p:confirmDialog global="true" showEffect="fade">
+			<p:commandButton value="#{msg['message.common.true']}" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="#{msg['message.common.false']}" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<!-- SPINNER TARGET DIV -->
+		<div id="spinner-target" class="spinner-targett" />
+		
+		<!-- SECTIONS -->        
+        <ui:include src="topbar.xhtml" />
+        <ui:include src="leftmenu.xhtml" />
+        <div id="layout-portlets-cover" class="fontRegular">
+            <ui:insert name="content">
+               Template
+            </ui:insert>
+        </div>
+
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="ais-style.css" library="css"/>
+        <h:outputStylesheet name="hover.css" library="css"/>
+        <h:outputScript name="js/spin.js"/>
+        <h:outputScript name="js/dis.js"/>
+        <h:outputScript name="js/validation.js"/>
+        <h:outputScript name="js/report.js"/>
+        
+        
+        <!-- GLOBAL WAITING THINGY (AJAX STATUS) -->
+     	<p:ajaxStatus 
+     		onstart="globalSpinner.spin(spinnerTarget)" 
+     		onsuccess="globalSpinner.stop()" />
+        
+    <!--     <p:socket onMessage="handleMessage" channel="/notify" /> -->
+<!-- 		<script type="text/javascript">
+			function handleMessage(facesmessage) { PF('sessionExpiredDialog').show(); }
+		</script> -->
+        
+    </h:body>
+</f:view>
+</html>

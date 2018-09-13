@@ -1,0 +1,1451 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.orders']}
+	</ui:define>
+
+	<ui:define name="content">
+
+		<div class="ContainerIndent">
+			<h:form id="searchByCompany">
+				<p:messages id="searchByCompanyMessages" closable="true"
+					showDetail="false" autoUpdate="true" />
+
+				<p:tabView id="searchByCompanyTabView">
+
+					<p:tab id="searchByCompanyTab"
+						title="#{msg['message.common.search']}">
+
+						<p:panelGrid styleClass="no-border" columns="2">
+
+							<!-- COMPANY -->
+							<p:outputLabel for="companyFilter"
+								value="#{msg['message.transmission_order.company']}" />
+							<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+								value="#{transmissionOrdersViewController.selectedCompany}"
+								title="#{msg['message.transmission_order.tooltip.filterCompany']}"
+								required="true" converter="omnifaces.SelectItemsConverter">
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+							</p:selectOneMenu>
+
+							<!-- STATUS -->
+							<p:outputLabel for="statusFilter"
+								value="#{msg['message.transmission_order.status']}" />
+							<p:selectCheckboxMenu id="statusFilter"
+								value="#{filterContainer.viewOrdersFilterGenerator.selectedTransmissionOrderStatuses}"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.transmission_order.tooltip.filterStatus']}"
+								label="#{msg['message.transmission_order.status']}" >
+								<f:selectItems
+									var="status"
+									itemValue="#{status}"
+									itemLabel="#{labelUtil.getTransmissionOrderStatusLabel(status)}"
+									value="#{filterContainer.viewOrdersFilterGenerator.transmissionOrderStatuses}" />
+							</p:selectCheckboxMenu>
+
+						</p:panelGrid>
+
+						<p:spacer styleClass="dis-spacer-small" />
+
+						<p:panelGrid columns="3"
+							styleClass="no-spacing no-border dis-spacing-small">
+							<p:commandButton icon="ui-icon-search"
+								process="searchByCompanyTab"
+								actionListener="#{transmissionOrdersViewController.setTableRendered(true)}"
+								oncomplete="PF('dataTableOrders').show();"
+								value="#{msg['message.common.search']}"
+								update=":tabViewOrdersForm:listTohs @form"
+								title="#{msg['message.order.tooltip.searchButton']}" />
+							<p:commandButton id="clearSearch"
+								value="#{msg['message.common.clear']}"
+								actionListener="#{transmissionOrdersViewController.clearFilters(false)}"
+								oncomplete="PF('dataTableOrders').close();"
+								styleClass="dis-button-width" icon="ui-icon-refresh"
+								process="@this" update="@form"
+								title="#{msg['message.common.tooltip.clear.filters']}" />
+							<p:commandButton id="clearFilters"
+								value="#{msg['message.common.clear.table_filters']}"
+								actionListener="#{transmissionOrdersViewController.clearFilters(true)}"
+								styleClass="dis-button-width" icon="ui-icon-refresh"
+								rendered="#{transmissionOrdersViewController.tableRendered}"
+								process="@this" update=":tabViewOrdersForm:listTohs"
+								title="#{msg['message.common.tooltip.clear.table_filters']}" />
+						</p:panelGrid>
+
+					</p:tab>
+				</p:tabView>
+			</h:form>
+
+			<p:spacer styleClass="dis-spacer-small" />
+			<p:panel id="dataTableOrders" widgetVar="dataTableOrders"
+				visible="false" closable="true" closeSpeed="0" rendered="true"
+				styleClass="dis-fake-tabview no-border-panel no-spacing">
+
+				<h:form id="tabViewOrdersForm">
+
+					<p:tabView id="tabViewOrders"
+						styleClass="dis-batch-customer-custom-tab-view"
+						activeIndex="#{transmissionOrdersViewController.selectedTab}">
+
+						<p:ajax event="tabChange" process="@this"
+							update=":tabViewOrdersForm:listTohs" />
+
+						<p:tab title="#{msg['message.orders.tab.mainInformation']}" />
+						<p:tab title="#{msg['message.orders.tab.edit']}" />
+						<p:tab title="#{msg['message.orders.tab.billing']}" />
+						<p:tab title="#{msg['message.orders.tab.campaign']}" />
+						<p:tab title="#{msg['message.orders.tab.salesRepresentative']}" />
+						<p:tab title="#{msg['message.orders.tab.salesChannel']}" />
+						<p:tab title="#{msg['message.orders.tab.commissions']}" />
+						<p:tab title="#{msg['message.orders.tab.invoice']}" />
+						<p:tab title="#{msg['message.orders.tab.others']}" />
+
+					</p:tabView>
+
+
+					<p:dataTable id="listTohs" widgetVar="listTohs" var="toh"
+						rowIndexVar="rowIndexVar"
+						value="#{transmissionOrdersViewController.orderLazyDataModel}"
+						paginatorAlwaysVisible="true" paginator="true"
+						paginatorPosition="top"
+						currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+									{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+						sortMode="single" rows="50" lazy="true" stickyHeader="false"
+						selectionMode="single"
+						emptyMessage="#{msg['message.datatable.emptyMessage']}"
+						reflow="true" styleClass="dataTable-letters"
+						selection="#{transmissionOrdersViewController.selected}"
+						rowKey="#{toh.id}">
+
+						<!-- COLUMNS -->
+						<p:ajax event="rowDblselect" onstart="changeOrderAction()" />
+
+						<!--ROW INDEX -->
+						<p:column headerText="#{msg['message.orders.table.line']}"
+							styleClass="col-index">
+							<h:outputText value="#{rowIndexVar+1}" />
+						</p:column>
+
+						<!-- BILL TO -->
+						<p:column
+							headerText="#{msg['message.orders.table.mainInformation.billTo']}"
+							filterBy="#{toh.billTo}" styleClass="">
+							<f:facet name="filter">
+								<p:selectOneMenu onchange="PF('listTohs').filter()"
+									styleClass="size-filter size-filter-data-table-responsive"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{filterContainer.viewOrdersFilterGenerator.billTo}"
+									effect="fade" var="billTo" filter="true"
+									filterMatchMode="contains">
+
+									<f:selectItem noSelectionOption="true"
+										itemLabel="#{msg['message.common.selectOne']}"
+										itemValue="#{null}" />
+
+									<f:selectItems
+										value="#{selectorController.getCustomerList(transmissionOrdersViewController.orderLazyDataModel.filterGenerator.company)}"
+										var="billTo" itemValue="#{billTo}" itemLabel="#{labelUtil.getCustomerLabel(billTo)}" />
+
+									<p:column>
+										<p:outputLabel
+											value="#{billTo != null ? labelUtil.getCustomerLabel(billTo) : msg['message.common.selectOne']}" />
+									</p:column>
+								</p:selectOneMenu>
+							</f:facet>
+
+							<p:outputLabel
+								value="#{labelUtil.getCustomerLabel(toh.billTo)}" />
+						</p:column>
+
+						<!--MAIN INFORMATION TAB-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==0}">
+
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.customer']}"
+								filterBy="#{toh.customer}" styleClass="">
+								<f:facet name="filter">
+									<p:selectOneMenu onchange="PF('listTohs').filter()"
+										styleClass="size-filter size-filter-data-table-responsive"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.customer}"
+										effect="fade" var="customer" filter="true"
+										filterMatchMode="contains">
+
+										<f:selectItem noSelectionOption="true"
+											itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+
+										<f:selectItems
+											value="#{selectorController.getNonAgencyList(transmissionOrdersViewController.orderLazyDataModel.filterGenerator.company)}"
+											var="customer" itemValue="#{customer}"
+											itemLabel="#{labelUtil.getCustomerLabel(customer)}" />
+
+										<p:column>
+											<p:outputLabel
+												value="#{customer != null ? labelUtil.getCustomerLabel(customer) : msg['message.common.selectOne']}" />
+										</p:column>
+									</p:selectOneMenu>
+								</f:facet>
+
+								<p:outputLabel value="#{labelUtil.getCustomerLabel(toh.customer)}" />
+							</p:column>
+
+							<!-- AGENCY -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.agency']}"
+								filterBy="#{toh.agency}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu onchange="PF('listTohs').filter()"
+										styleClass="size-filter size-filter-data-table-responsive"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.agency}"
+										effect="fade" var="agency" filter="true"
+										filterMatchMode="contains">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems
+											value="#{selectorController.getAgencyList(transmissionOrdersViewController.orderLazyDataModel.filterGenerator.company)}"
+											var="agency" itemValue="#{agency}"
+											itemLabel="#{labelUtil.getCustomerLabel(agency)}"  />
+
+										<p:column>
+											<p:outputLabel
+												value="#{agency != null ? labelUtil.getCustomerLabel(agency) : msg['message.common.selectOne']}" />
+										</p:column>
+									</p:selectOneMenu>
+								</f:facet>
+
+								<p:outputLabel value="#{labelUtil.getCustomerLabel(toh.agency)}" />
+							</p:column>
+
+
+							<!-- CHANNEL -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesChannel.channel']}"
+								filterBy="#{toh.salesChannel.channel}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu onchange="PF('listTohs').filter()"
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.channel}"
+										converter="omnifaces.SelectItemsConverter">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{selectorController.channelList}"
+											var="channel" itemValue="#{channel}"
+											itemLabel="#{channel.code} - #{channel.description}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesChannel.channel ? toh.salesChannel.channel : ' - '}" />
+							</p:column>
+							
+							<!-- CPE CODE -->
+							<p:column headerText="#{msg['message.orders.table.mainInformation.cpeCode']}"
+								filterBy="#{toh.cpeCode}" >
+								
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										rendered="#{!transmissionOrdersController.onEditionMode}"
+										value="#{filterContainer.editOrdersFilterGenerator.cpeCode}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+				
+								<p:outputLabel value="#{null != toh.cpeCode ? toh.cpeCode : ' - '}" />
+							</p:column>
+
+							<!-- CURRENCY CODE -->
+							<p:column headerText="#{msg['message.common.currency']}"
+								filterBy="#{toh.currency.iso3Code}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu onchange="PF('listTohs').filter()"
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.currencyCode}">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{selectorController.currencyList}"
+											var="curr" itemLabel="#{curr.iso3Code}"
+											itemValue="#{curr.iso3Code}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<p:outputLabel value="#{null != toh.currency.iso3Code ? toh.currency.iso3Code : ' - '}" />
+							</p:column>
+
+							<!-- GROSS COST -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.grossCost']}"
+								filterBy="#{toh.grossCost}" styleClass="text-align-right">
+
+								<f:facet name="filter">
+									<p:inputText
+										label="#{msg['message.orders.table.mainInformation.grossCost']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.grossCost}"
+										styleClass="size-filter"
+										onkeyup="delayFilterKeyUp('listTohs')">
+
+										<f:converter converterId="javax.faces.BigDecimal" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText
+									value="#{!toh.reversal ? toh.grossCost : -1*toh.grossCost }"
+									styleClass="#{toh.reversal ? 'red-text' : '' }">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- STATUS -->
+							<p:column headerText="#{msg['message.orders.table.edit.status']}"
+								filterBy="#{toh.status}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectCheckboxMenu
+										label="#{msg['message.common.select']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.selectedTransmissionOrderStatuses}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="size-filter" onchange="PF('listTohs').filter()">
+
+										<f:selectItems
+											var="status"
+											itemValue="#{status}"
+											itemLabel="#{labelUtil.getTransmissionOrderStatusLabel(status)}"
+											value="#{filterContainer.viewOrdersFilterGenerator.transmissionOrderStatuses}" />
+									</p:selectCheckboxMenu>
+								</f:facet>
+
+								<h:outputText value="#{labelUtil.getTransmissionOrderStatusLabel(toh.status)}" />
+							</p:column>
+						</c:if>
+
+
+						<!--EDIT TAB-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==1}">
+
+							<!-- BILLING SCENARIO -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.billingScenario']}"
+								filterBy="#{toh.billingScenario}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.billingScenario}"
+										converter="omnifaces.SelectItemsConverter"
+										onchange="PF('listTohs').filter()">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+
+										<f:selectItems
+											value="#{selectorController.getBillingScenarioList(transmissionOrdersViewController.selectedCompany)}"
+											var="bs" itemLabel="#{bs.number}" itemValue="#{bs}"
+											itemDescription="#{(labelUtil.getBillingScenarioDescriptionLabel(bs))}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.billingScenario.number ? toh.billingScenario.number : ' - '}" />
+
+							</p:column>
+
+							<!-- INSERTION ORDER -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.insertionOrder']}"
+								filterBy="#{toh.insertionOrder}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.edit.insertionOrder']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.insertionOrder}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.insertionOrder ? toh.insertionOrder : ' - '}" />
+							</p:column>
+
+							<!-- PURCHASE ORDER -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.purchaseOrder']}"
+								filterBy="#{toh.purchaseOrder}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.edit.purchaseOrder']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.purchaseOrder}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.purchaseOrder ? toh.purchaseOrder : ' - '}" />
+							</p:column>
+
+							<!-- PRE-BILL REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.prebillReference']}"
+								filterBy="#{toh.prebill}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.prebillReference}"
+										onchange="PF('listTohs').filter()"
+										converter="omnifaces.SelectItemsConverter">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+
+										<f:selectItems
+											value="#{filterContainer.editOrdersFilterGenerator.prebillRefs}"
+											var="bill" itemValue="#{bill}"
+											itemLabel="#{labelUtil.getInvoiceLabel(bill)}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{(labelUtil.getInvoiceLabel(toh.prebill))}" />
+							</p:column>
+
+							<!-- DELAY REASON -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.delayReason']}"
+								filterBy="#{toh.delayReason}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.edit.delayReason']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.delayReasonCode}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+
+								<h:outputText value="#{null != toh.delayReason ? toh.delayReason.code : ' - '}" />
+							</p:column>
+
+							<!-- BILLABLE -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.billable']}"
+								filterBy="#{toh.billable}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.billable}"
+										onchange="PF('listTohs').filter()">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItem itemLabel="#{msg['message.common.false']}"
+											itemValue="#{false}" />
+										<f:selectItem itemLabel="#{msg['message.common.true']}"
+											itemValue="#{true}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText
+									value="#{toh.billable ? 
+									msg['message.common.true']:msg['message.common.false']}" />
+							</p:column>
+
+							<!-- PRE-BILL -->
+							<p:column
+								headerText="#{msg['message.orders.table.edit.consumption']}"
+								filterBy="#{toh.consumption}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.consumption}"
+										onchange="PF('listTohs').filter()">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItem itemLabel="#{msg['message.common.false']}"
+											itemValue="#{false}" />
+										<f:selectItem itemLabel="#{msg['message.common.true']}"
+											itemValue="#{true}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText
+									value="#{toh.consumption ? msg['message.common.true']:msg['message.common.false']}" />
+							</p:column>
+
+							<!-- STATUS -->
+							<p:column headerText="#{msg['message.orders.table.edit.status']}"
+								filterBy="#{toh.status}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectCheckboxMenu
+										label="#{msg['message.common.select']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.selectedTransmissionOrderStatuses}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="size-filter" onchange="PF('listTohs').filter()">
+
+										<f:selectItems
+											var="status"
+											itemValue="#{status}"
+											itemLabel="#{labelUtil.getTransmissionOrderStatusLabel(status)}"
+											value="#{filterContainer.viewOrdersFilterGenerator.transmissionOrderStatuses}" />
+									</p:selectCheckboxMenu>
+								</f:facet>
+
+								<h:outputText value="#{labelUtil.getTransmissionOrderStatusLabel(toh.status)}" />
+							</p:column>
+
+						</c:if>
+
+
+						<!--BILLING TAB-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==2}">
+
+							<!-- DOCT TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.docType']}"
+								filterBy="#{toh.docType}">
+
+								<f:facet name="filter">
+									<p:selectOneMenu onchange="PF('listTohs').filter()"
+										styleClass="size-filter size-filter-data-table-responsive"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.docType}">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{selectorController.tohDocTypes}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.docType ? toh.docType : ' - '}" />
+							</p:column>
+
+							<!-- DOCUMENT CREATION DATE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.docCreateDate']}"
+								styleClass="">
+								<h:outputText value="#{null != toh.docCreateDate ? toh.docCreateDate : ' - '}">
+									<f:convertDateTime dateStyle="short" type="date"
+										locale="#{languageController.locale}" />
+								</h:outputText>
+							</p:column>
+
+							<!-- BILL ITEM TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.billItemType']}"
+								filterBy="#{toh.billItemType}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										onchange="PF('listTohs').filter()"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.billItemType}">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{selectorController.tohBillItemTypes}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.billItemType ? toh.billItemType : ' - '}" />
+							</p:column>
+
+							<!-- BILLING ITEM ID -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.billingItemId']}"
+								filterBy="#{toh.billingItemId}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.mainInformation.billingItemId']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.billingItemId}"
+										onkeyup="delayFilterKeyUp('listTohs')">
+
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.billingItemId ? toh.billingItemId : ' - '}" />
+							</p:column>
+
+							<!-- PAYMENT TERMS -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.paymentTerms']}"
+								filterBy="#{toh.paymentTerms}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.billing.paymentTerms']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.paymentTerms}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.paymentTerms ? toh.paymentTerms : ' - '}" />
+							</p:column>
+
+							<!-- PERIOD TYPE DESCRIPTION -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.periodTypeDescription']}"
+								filterBy="#{toh.periodTypeDescription}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.billing.periodTypeDescription']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.periodTypeDescription}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.periodTypeDescription ? toh.periodTypeDescription : ' - '}" />
+							</p:column>
+
+							<!-- INVOICE START DATE -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.invoiceStartDate']}"
+								filterBy="#{toh.invoiceStartDate}" styleClass="">
+
+								<f:facet name="filter">
+									<p:calendar
+										label="#{msg['message.orders.table.billing.invoiceStartDate']}"
+										locale="#{languageController.language}"
+										styleClass="size-filter-date"
+										value="#{filterContainer.viewOrdersFilterGenerator.invoiceStartDate}">
+										<p:ajax event="dateSelect" onstart="PF('listTohs').filter()" />
+										<p:ajax event="change" onstart="PF('listTohs').filter()" />
+									</p:calendar>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.invoiceStartDate ? toh.invoiceStartDate : ' - '}" />
+							</p:column>
+
+							<!-- INVOICE END DATE -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.invoiceEndDate']}"
+								filterBy="#{toh.invoiceEndDate}" styleClass="">
+
+								<f:facet name="filter">
+									<p:calendar
+										label="#{msg['message.orders.table.billing.invoiceEndDate']}"
+										locale="#{languageController.language}"
+										styleClass="size-filter-date"
+										value="#{filterContainer.viewOrdersFilterGenerator.invoiceEndDate}">
+										<p:ajax event="dateSelect" onstart="PF('listTohs').filter()" />
+										<p:ajax event="change" onstart="PF('listTohs').filter()" />
+									</p:calendar>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.invoiceEndDate ? toh.invoiceEndDate : ' - '}" />
+							</p:column>
+
+							<!-- SCHEDULE GROUP TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.scheduleGroupType']}"
+								filterBy="#{toh.scheduleGroupType}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										onchange="PF('listTohs').filter()"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.scheduleGroupType}">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems
+											value="#{selectorController.scheduleGroupTypeList}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.scheduleGroupType ? toh.scheduleGroupType : ' - '}" />
+							</p:column>
+
+						</c:if>
+
+
+						<!--CAMPAIGN-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==3}">
+
+							<!-- NUMBER OF UNIT -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.numberOfUnit']}"
+								filterBy="#{toh.numberOfUnit}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.numberOfUnit']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.numberOfUnit}">
+
+										<f:converter converterId="javax.faces.BigDecimal" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.numberOfUnit ? toh.numberOfUnit : ' - '}" />
+							</p:column>
+
+							<!-- UNIT DESCRIPTION -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.unitDescription']}"
+								filterBy="#{toh.unitDescription}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.unitDescription']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.unitDescription}" />
+								</f:facet>
+
+								<h:outputText value="#{(null != toh.unitDescription) and (not empty toh.unitDescription) ? toh.unitDescription : '  -'}" />
+							</p:column>
+
+							<!-- CAMPAIGN START DATE -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignStartDate']}"
+								filterBy="#{toh.campaignStartDate}" styleClass="">
+
+								<f:facet name="filter">
+									<p:calendar locale="#{languageController.language}"
+										styleClass="size-filter-date"
+										label="#{msg['message.orders.table.campaign.campaignStartDate']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignStartDate}">
+										<p:ajax event="dateSelect" onstart="PF('listTohs').filter()" />
+										<p:ajax event="change" onstart="PF('listTohs').filter()" />
+									</p:calendar>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignStartDate ? toh.campaignStartDate : ' - '}" />
+							</p:column>
+
+							<!-- CAMPAIGN END DATE -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignEndDate']}"
+								filterBy="#{toh.campaignEndDate}" styleClass="">
+
+								<f:facet name="filter">
+									<p:calendar
+										label="#{msg['message.orders.table.campaign.campaignEndDate']}"
+										locale="#{languageController.language}"
+										styleClass="size-filter-date"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignEndDate}">
+										<p:ajax event="dateSelect" onstart="PF('listTohs').filter()" />
+										<p:ajax event="change" onstart="PF('listTohs').filter()" />
+									</p:calendar>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignEndDate ? toh.campaignEndDate : ' - '}" />
+							</p:column>
+
+							<!-- CAMPAIGN REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignReference']}"
+								filterBy="#{toh.campaignReference}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.campaignReference']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignReference}" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignReference ? toh.campaignReference : ' - '}" />
+							</p:column>
+
+							<!-- CAMPAIGN NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignName']}"
+								filterBy="#{toh.campaignName}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.campaignName']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignName}" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignName ? toh.campaignName : ' - '}" />
+							</p:column>
+
+							<!-- ORDER REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.orderRef']}"
+								filterBy="#{toh.orderRef}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.orderRef']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.orderRef}" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.orderRef ? toh.orderRef : ' - '}" />
+							</p:column>
+
+							<!-- CAMPAIGN BILLING TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignBillingType']}"
+								filterBy="#{toh.campaignBillingType}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.campaignBillingType']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignBillingType}" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignBillingType ? toh.campaignBillingType : ' - '}" />
+							</p:column>
+
+							<!-- CAMPAIGN TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignType']}"
+								filterBy="#{toh.campaignType}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.campaignType']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignType}" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignType ? toh.campaignType : ' - '}" />
+							</p:column>
+
+							<!-- CAMPAIGN ID -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignId']}"
+								filterBy="#{toh.campaignId}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.campaign.campaignId']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignId}">
+
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignId ? toh.campaignId : ' - '}" />
+							</p:column>
+
+						</c:if>
+
+
+						<!--SALES REPRESENTATIVE TAB-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==4}">
+
+							<!-- SALES REPRESENTATIVE COMPANY REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.salesRepCompanyReference']}"
+								filterBy="#{toh.salesRepCompanyReference}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.mainInformation.salesRepCompanyReference']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesRepCompanyReference}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepCompanyReference ? toh.salesRepCompanyReference : ' - '}" />
+							</p:column>
+
+							<!-- SALES PERSON -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.salesPerson']}"
+								filterBy="#{toh.salesRepresentatives.salesPerson}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesRepresentative.salesPerson']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesPerson}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.salesPerson ? toh.salesRepresentatives.salesPerson : ' - '}" />
+							</p:column>
+
+							<!-- SALES REPRESENTATIVE NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.salesRepName']}"
+								filterBy="#{toh.salesRepresentatives.salesRepName}"
+								styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesRepresentative.salesRepName']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesRepName}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.salesRepName ? toh.salesRepresentatives.salesRepName : ' - '}" />
+							</p:column>
+
+							<!-- SALES REP TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.type']}"
+								filterBy="#{toh.salesRepresentatives.type}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										onchange="PF('listTohs').filter()"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesRepType}">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems
+											value="#{selectorController.saleRepresentativeTypes}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.type ? toh.salesRepresentatives.type : ' - '}" />
+							</p:column>
+
+							<!-- SALES OFFICE -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.salesOffice']}"
+								filterBy="#{toh.salesRepresentatives.salesOffice}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesRepresentative.salesOffice']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesOffice}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.salesOffice ? toh.salesRepresentatives.salesOffice : ' - '}" />
+							</p:column>
+
+							<!-- SALES GROUP -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.salesGroup']}"
+								filterBy="#{toh.salesRepresentatives.salesGroup}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesRepresentative.salesGroup']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesGroup}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.salesGroup ? toh.salesRepresentatives.salesGroup : ' - '}" />
+							</p:column>
+
+							<!-- SALES GROUP TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.salesGroupType']}"
+								filterBy="#{toh.salesRepresentatives.salesGroupType}"
+								styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										label="#{msg['message.orders.table.salesRepresentative.salesGroupType']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesRepGroupType}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.salesGroupType ? toh.salesRepresentatives.salesGroupType : ' - '}" />
+							</p:column>
+
+							<!-- SALES REP PERCENTAGE -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesRepresentative.percentage']}"
+								filterBy="#{toh.salesRepresentatives.percentage}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesRepresentative.percentage']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.percentage}">
+
+										<f:converter converterId="javax.faces.BigDecimal" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesRepresentatives.percentage ? toh.salesRepresentatives.percentage : ' - '}" />
+							</p:column>
+
+						</c:if>
+
+
+						<!--SALES CHANNEL-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==5}">
+							<!-- CHANNEL -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesChannel.channel']}"
+								filterBy="#{toh.salesChannel.channel}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu onkeyup="delayFilterKeyUp('listTohs')"
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.channel}"
+										converter="omnifaces.SelectItemsConverter">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{selectorController.channelList}"
+											var="channel" itemValue="#{channel}"
+											itemLabel="#{channel.code} - #{channel.description}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesChannel.channel ? toh.salesChannel.channel : ' - '}" />
+							</p:column>
+
+							<!-- SALES CHANNEL NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesChannel.salesChannelName']}"
+								filterBy="#{toh.salesChannel.salesChannelName}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesChannel.salesChannelName']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesChannelName}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesChannel.salesChannelName ? toh.salesChannel.salesChannelName : ' - '}" />
+							</p:column>
+
+							<!-- SALES CHANNEL CALL SIGN -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesChannel.salesChannelCallSign']}"
+								filterBy="#{toh.salesChannel.salesChannelCallSign}"
+								styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesChannel.salesChannelCallSign']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.salesChannelCallSign}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesChannel.salesChannelCallSign ? toh.salesChannel.salesChannelCallSign : ' - '}" />
+							</p:column>
+
+							<!-- SALES CHANNEL DEMOGRAPHIC NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesChannel.demographicName']}"
+								filterBy="#{toh.salesChannel.salesChannelCallSign}"
+								styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesChannel.demographicName']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.demographicName}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.salesChannel.demographicName ? toh.salesChannel.demographicName : ' - '}" />
+							</p:column>
+
+							<!-- GROSS COST PER SALES CHANNEL -->
+							<p:column
+								headerText="#{msg['message.orders.table.salesChannel.grossCostPerSalesChannel']}"
+								filterBy="#{toh.salesChannel.grossCostPerSalesChannel}"
+								styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.salesChannel.grossCostPerSalesChannel']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.grossCostPerSalesChannel}">
+
+										<f:converter converterId="javax.faces.BigDecimal" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText
+									value="#{!toh.reversal ? toh.salesChannel.grossCostPerSalesChannel : -1*toh.salesChannel.grossCostPerSalesChannel }"
+									styleClass="#{toh.reversal ? 'red-text' : '' }">
+									<f:convertNumber type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- CONTRACT TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.contractType']}"
+								filterBy="#{toh.contractType}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										onchange="PF('listTohs').filter()"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{filterContainer.viewOrdersFilterGenerator.contractType}">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" noSelectionOption="true" />
+										<f:selectItems value="#{selectorController.tohContractTypes}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.contractType ? toh.contractType : ' - '}" />
+							</p:column>
+
+						</c:if>
+
+						<!--COMISSION-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==6}">
+
+							<!-- PRODUCT NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.transmissionProduct.productName']}"
+								filterBy="#{toh.transmissionProduct.productName}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText
+										label="#{msg['message.orders.table.transmissionProduct.productName']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.productName}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.transmissionProduct.productName ? toh.transmissionProduct.productName : ' - '}" />
+							</p:column>
+
+							<!-- COMMISSION TYPE -->
+
+							<p:column
+								headerText="#{msg['message.orders.table.commission.type']}"
+								styleClass="">
+								<p:dataList value="#{toh.commissions}" id="commissionsType"
+									var="commission" type="definition" styleClass="datalist-border"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}">
+
+									<h:outputText id="commissionsTypeLabel"
+										value="#{null != commission.type ? commission.type : ' - '}" />
+
+								</p:dataList>
+							</p:column>
+
+
+							<!--NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.commission.name']}"
+								styleClass="">
+								<p:dataList value="#{toh.commissions}" id="commissionsName"
+									var="commission" type="definition" styleClass="datalist-border"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}">
+
+									<h:outputText id="commissionsNameLabel"
+										value="#{null != commission.name ? commission.name : ' - '}" />
+
+								</p:dataList>
+							</p:column>
+
+							<!-- PERCENTAGE -->
+							<p:column
+								headerText="#{msg['message.orders.table.commission.percentage']}" >
+								<p:dataList value="#{toh.commissions}"
+									id="commissionsPercentage" var="commission" type="definition"
+									styleClass="datalist-border"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}">
+
+									<h:outputText id="commissionsPercentageLabel"
+										value="#{null != commission.percentage ? commission.percentage : ' - '}" />
+								</p:dataList>
+							</p:column>
+
+							<!-- AMOUNT -->
+							<p:column
+								headerText="#{msg['message.orders.table.commission.amount']}"
+								styleClass="">
+								<p:dataList value="#{toh.commissions}" id="commissionsAmount"
+									var="commission" type="definition" styleClass="datalist-border #{toh.reversal ? 'light-red-text' : '' }"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}">
+
+									<h:outputText
+										value="#{!toh.reversal? commission.amount : -1*commission.amount }">
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+									</h:outputText>
+
+								</p:dataList>
+
+							</p:column>
+
+							<!-- CAMPAIGN NAME -->
+							<p:column
+								headerText="#{msg['message.orders.table.campaign.campaignName']}"
+								filterBy="#{toh.campaignName}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText
+										label="#{msg['message.orders.table.campaign.campaignName']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.campaignName}" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.campaignName ? toh.campaignName : ' - '}" />
+							</p:column>
+
+						</c:if>
+
+						<!-- INVOICE TAB -->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==7}">
+
+							<!-- INVOICE LAIS ID -->
+							<p:column
+								headerText="#{msg['message.orders.table.invoice.invoiceID']}"
+								filterBy="#{toh.invoice.id}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.invoiceID}">
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+								</f:facet>
+								<h:outputText
+									value="#{null != toh.invoice.id ? toh.invoice.id : ' - '}" />
+							</p:column>
+
+							<!-- TAX CODE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.taxCode']}"
+								filterBy="#{toh.taxCode}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.taxCode}"
+										onkeyup="delayFilterKeyUp('listTohs')">
+
+										<f:converter converterId="javax.faces.Character" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.taxCode ? toh.taxCode : ' - '}" />
+							</p:column>
+
+							<!-- INVOICE NUMBER -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.invoiceNumber']}"
+								filterBy="#{toh.invoiceNumber}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText
+										label="#{msg['message.orders.table.mainInformation.invoiceNumber']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.invoiceNumber}">
+
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.invoiceNumber ? toh.invoiceNumber : ' - '}" />
+							</p:column>
+
+							<!-- INVOICE DATE -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.invoiceDate']}"
+								filterBy="#{toh.invoiceDate}" styleClass="">
+
+								<f:facet name="filter">
+									<p:calendar
+										label="#{msg['message.orders.table.billing.invoiceDate']}"
+										locale="#{languageController.language}"
+										styleClass="size-filter-date"
+										value="#{filterContainer.viewOrdersFilterGenerator.invoiceDate}">
+
+										<p:ajax event="dateSelect" onstart="PF('listTohs').filter()" />
+										<p:ajax event="change" onstart="PF('listTohs').filter()" />
+									</p:calendar>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.invoiceDate ? toh.invoiceDate : ' - '}">
+									<f:convertDateTime dateStyle="short" type="date"
+										locale="#{languageController.locale}" />
+								</h:outputText>
+							</p:column>
+
+							<!-- ORIGINAL INVOICE NUMBER -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.originalInvoiceNumber']}"
+								filterBy="#{toh.originalInvoiceNumber}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText
+										label="#{msg['message.orders.table.mainInformation.originalInvoiceNumber']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.originalInvoiceNumber}">
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.originalInvoiceNumber ? toh.originalInvoiceNumber : ' - '}" />
+							</p:column>
+
+						</c:if>
+
+						<!--OTHERS-->
+						<c:if test="#{transmissionOrdersViewController.selectedTab==8}">
+
+							<!-- BILL TO REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.billToReference']}"
+								filterBy="#{toh.billToReference}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText
+										label="#{msg['message.orders.table.mainInformation.billToReference']}"
+										value="#{filterContainer.viewOrdersFilterGenerator.billToReference}"
+										styleClass="size-filter"
+										onkeyup="delayFilterKeyUp('listTohs')">
+
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.billToReference ? toh.billToReference : ' - '}" />
+							</p:column>
+
+							<!-- CUSTOMER REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.customerReference']}"
+								filterBy="#{toh.customerReference}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.customerReference}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<p:outputLabel value="#{null != toh.customerReference ? toh.customerReference : ' - '}" />
+							</p:column>
+
+							<!-- AGENCY CLIENT REFERENCE -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.agencyClientReference']}"
+								filterBy="#{toh.agencyclientreference}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.agencyClientReference}"
+										onkeyup="delayFilterKeyUp('listTohs')" />
+								</f:facet>
+
+								<h:outputText value="#{null != toh.agencyclientreference ? toh.agencyclientreference : ' - '}" />
+							</p:column>
+
+							<!-- TEXT LINE -->
+							<p:column
+								headerText="#{msg['message.orders.table.others.textLine']}"
+								filterBy="#{toh.textLine}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										label="#{msg['message.orders.table.others.textLine']}"
+										onkeyup="delayFilterKeyUp('listTohs')"
+										value="#{filterContainer.viewOrdersFilterGenerator.textLine}">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.textLine ? toh.textLine : ' - '}" />
+							</p:column>
+
+							<!-- SUMMARY INDICATOR -->
+							<p:column
+								headerText="#{msg['message.orders.table.mainInformation.summaryIndicator']}"
+								filterBy="#{toh.summaryIndicator}" styleClass="">
+
+								<f:facet name="filter">
+									<p:selectOneMenu
+										styleClass="size-filter size-filter-data-table-responsive"
+										value="#{filterContainer.viewOrdersFilterGenerator.summaryIndicator}"
+										onchange="PF('listTohs').filter()">
+
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItem itemLabel="#{msg['message.common.false']}"
+											itemValue="#{false}" />
+										<f:selectItem itemLabel="#{msg['message.common.true']}"
+											itemValue="#{true}" />
+									</p:selectOneMenu>
+								</f:facet>
+
+								<h:outputText
+									value="#{toh.summaryIndicator ? 
+									msg['message.common.true']:msg['message.common.false']}" />
+							</p:column>
+
+							<!-- LANGUAGE CODE TYPE -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.languageCode']}"
+								filterBy="#{toh.language.iso2Code}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.languageCode}"
+										onkeyup="delayFilterKeyUp('listTohs')">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.language ? toh.language.iso2Code : ' - '}" />
+							</p:column>
+
+							<!-- REASON CODE -->
+							<p:column
+								headerText="#{msg['message.orders.table.billing.reasonCode']}"
+								filterBy="#{toh.reasonCode}" styleClass="">
+
+								<f:facet name="filter">
+									<p:inputText styleClass="size-filter"
+										value="#{filterContainer.viewOrdersFilterGenerator.reasonCode}"
+										onkeyup="delayFilterKeyUp('listTohs')">
+									</p:inputText>
+								</f:facet>
+
+								<h:outputText value="#{null != toh.reasonCode ? toh.reasonCode : ' - '}" />
+							</p:column>
+
+						</c:if>
+					</p:dataTable>
+
+					<!-- <p:remoteCommand name="changeOrderAction" process="@this"
+					actionListener="#{transmissionOrdersViewController.actionView}"
+					oncomplete="detailPopUp = window.open('/dis-web/faces/pages/transmissionOrder/detailOrders.xhtml', '_blank');
+								detailPopUp.isPopUp = true;"/> -->
+								
+					<p:remoteCommand name="changeOrderAction" process="@this"
+						actionListener="#{transmissionOrdersViewController.actionView}"
+						oncomplete="detailPopUp = window.open('/dis-web/faces/index.xhtml', '_blank');
+								detailPopUp.isPopUp = true;" />
+
+					<p:remoteCommand autoRun="true"
+						actionListener="#{transmissionOrdersViewController.showTable}" />
+
+				</h:form>
+			</p:panel>
+
+		</div>
+	</ui:define>
+
+</ui:composition>

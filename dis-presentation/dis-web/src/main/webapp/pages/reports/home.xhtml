@@ -1,0 +1,326 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.common.reports']}
+</ui:define>
+
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<h:form>
+					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+ 
+							<p:commandLink action="reportCustomerIBMS">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.customerIBMS.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 facebookblue TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.customerIBMS.name']}</p>
+										<p class="description">
+											#{msg['message.report.customerIBMS.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+	
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportCustomerMaster">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.customerMaster.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 facebookblue TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.customerMaster.name']}</p>
+										<p class="description">
+											#{msg['message.report.customerMaster.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportInvoiceIBMS">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.invoiceIBMS.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 facebookblue TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.invoiceIBMS.name']}</p>
+										<p class="description">
+											#{msg['message.report.invoiceIBMS.description']}
+										</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+						
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportInvoiceERP">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.invoiceERP.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 facebookblue TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.invoiceERP.name']}</p>
+										<p class="description">
+											#{msg['message.report.invoiceERP.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+	
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportJournalERP">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.journalERP.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 facebookblue TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.journalERP.name']}</p>
+										<p class="description">
+											#{msg['message.report.journalERP.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+									
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportTransmissionOrder">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.transmissionOrder.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 green TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.transmissionOrder.name']}</p>
+										<p class="description">
+											#{msg['message.report.transmissionOrder.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+
+					  					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportCustomerAudit">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.customerAudit.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 orange TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.customerAudit.name']}</p>
+										<p class="description">
+											#{msg['message.report.customerAudit.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+						
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportSummaryBilling">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.summaryBilling.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 gray TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.summaryBilling.name']}</p>
+										<p class="description">
+										#{msg['message.report.summaryBilling.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportDetailActivity">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.detailActivity.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 orange TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.detailActivity.name']}</p>
+										<p class="description">
+											#{msg['message.report.detailActivity.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>  
+
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportJournalEntry">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.journalEntry.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 orange TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.journalEntry.name']}</p>
+										<p class="description">
+											#{msg['message.report.journalEntry.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportUnbilledAR">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.unbilledAR.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 orange TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.unbilledAR.name']}</p>
+										<p class="description">
+											#{msg['message.report.unbilledAR.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportPreBillAndConsumption">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.preBillAndConsumption.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 gray TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.preBillAndConsumption.name']}</p>
+										<p class="description">
+											#{msg['message.report.preBillAndConsumption.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+					
+					<div class="hvr-float Container25 Responsive dis-report-block" >
+						<div class="ContainerIndent">
+						
+							<p:commandLink action="reportTransmissionAffidavit">
+								<p:panel>
+									<div>
+										<div class="dis-report-icon-text">#{msg['message.report.transmissionAffidavit.acronym']}</div>
+										<i class="icon-list-alt Fs50 Fleft Wid25 gray TexAlCenter"></i>
+									</div>
+									<div class="Fs24 Fright MarTop10 leaden Wid70">
+										<p class="name hardblue">
+											#{msg['message.report.transmissionAffidavit.name']}</p>
+										<p class="description">
+											#{msg['message.report.transmissionAffidavit.description']}</p>
+									</div>
+								</p:panel>
+							</p:commandLink>
+						
+						</div>
+					</div>
+					
+					<c:if test="#{perm.isPermitted('report:sage:export')}">
+						<div class="hvr-float Container25 Responsive dis-report-block">
+							<div class="ContainerIndent">
+							
+								<p:commandLink action="reportSAGE">
+									<p:panel>
+										<div>
+											<div class="dis-report-icon-text">#{msg['message.report.sage.acronym']}</div>
+											<i class="icon-list-alt Fs50 Fleft Wid25 facebookblue TexAlCenter"></i>
+										</div>
+										<div class="Fs24 Fright MarTop10 leaden Wid70">
+											<p class="name hardblue">
+												#{msg['message.report.sage.name']}</p>
+											<p class="description">
+												#{msg['message.report.sage.description']}</p>
+										</div>
+									</p:panel>
+								</p:commandLink>
+							
+							</div>
+						</div>
+					</c:if>
+																
+				</h:form>
+			</div>
+		</div>
+
+
+	</ui:define>
+</ui:composition>

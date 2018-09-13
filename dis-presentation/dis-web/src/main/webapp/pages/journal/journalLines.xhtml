@@ -1,0 +1,160 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.journal.lines.header']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+			
+				<h:form id="journalLinesForm">
+				
+				<span class="FontBold Fs18 hardblue">#{msg['message.journal.lines.journalheader']}</span>
+					<div class="EmptyBox10"></div>
+
+					<p:panel id="journalDetailPanel">
+						<p:panelGrid id="journalDetailPg" styleClass="transparent no-border">
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY CODE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.company']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="jCompany" styleClass="dis-input-width"
+										value="#{journalLinesController.selectedJournal.company.code} - #{journalLinesController.selectedJournal.company.description}" />
+								</p:column>							
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- JOURNAL LAIS ID -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.journal.journalID']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="jId" styleClass="dis-input-width"
+										value="#{null != journalLinesController.selectedJournal.journalID ? journalLinesController.selectedJournal.journalID : ' - '}" />
+								</p:column>
+								
+								<!-- INVOICE LAIS ID -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.journal.invoiceLaisId']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="jLaisId" styleClass="dis-input-width"
+										value="#{journalLinesController.selectedJournal.invoice.id}" />
+								</p:column>
+							</p:row>
+							
+							<p:row styleClass="dis-input-row">
+							<!-- INVOICE TYPE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.invoiceType']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="jInvoiceType" styleClass="dis-input-width"
+										value="#{msg['invoiceType.'.concat(journalLinesController.selectedJournal.company.code).concat('.').concat(journalLinesController.selectedJournal.invoice.invoiceType.code)]}" />
+								</p:column>
+								
+								<!-- NUMBER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.number']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="jInvoiceNumber" styleClass="dis-input-width"
+										value="#{null != journalLinesController.selectedJournal.invoice.invoiceNumber ? journalLinesController.selectedJournal.invoice.invoiceNumber : ' - '}" />
+								</p:column>
+							</p:row>
+							
+							<p:row styleClass="dis-input-row">
+								<!-- TOTAL DEBITS -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.journal.totalDebits']} (#{journalLinesController.selectedJournal.baseCurrency})"/>
+								</p:column>
+								<p:column>
+									<h:outputText id="jTotalDebits" styleClass="dis-input-width"
+										value="#{journalLinesController.totalBaseDebitAmount}" >
+										<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2"/>
+									</h:outputText>
+								</p:column>							
+							
+								<!-- TOTAL CREDITS -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.journal.totalCredits']} (#{journalLinesController.selectedJournal.baseCurrency})" />
+								</p:column>
+								<p:column>
+									<h:outputText id="jTotalCredits" styleClass="dis-input-width"
+										value="#{journalLinesController.totalBaseCreditAmount}">										
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2"/>
+									</h:outputText>
+								</p:column>														
+							</p:row>
+							
+							<p:row>
+								<!-- DESCRIPTION -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.description']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea id="jDescription" autoResize="false"
+										value="#{journalLinesController.selectedJournal.description}"
+										style="width: 90%;"
+										title="#{msg['message.invoice.tooltip.description']}"
+										maxlength="2000"
+										disabled="true">
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+							
+							</p:panelGrid>
+						</p:panel>	
+
+					<p:spacer styleClass="dis-spacer-small" />
+
+					<ui:param name="journalLineIsReadOnly" value="#{false}" />
+					<ui:include src="journalLineTable.xhtml" />
+					
+					<p:spacer styleClass="dis-spacer-small" />
+					
+					<div class="EmptyBox10"></div>
+					<div class="form-group">
+						<p:commandButton id="backJournal"
+							value="#{msg['message.common.back']}"
+							action="#{journalLinesController.back}"
+							process="@this"
+							styleClass="dis-button-width" icon="ui-icon-arrowreturnthick-1-w"
+							title="#{msg['message.invoice.tooltip.viewJournalEntries']}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton id="saveJournal"
+							value="#{msg['message.common.save']}"
+							action="#{journalLinesController.save}"
+							process="@this"
+							styleClass="dis-button-width" icon="ui-icon-check"
+							title="#{msg['message.invoice.tooltip.createUpdate.save']}"
+							rendered="#{journalLinesController.editable}" >
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</div>
+
+				</h:form>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

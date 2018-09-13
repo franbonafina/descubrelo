@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<link rel="shortcut icon" href="#{resource['images/favicon.ico']}"
+		type="image/x-icon" />
+
+	<title>#{msg['message.application.brand.title']}</title>
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+	<h:outputScript name="js/layout.js" library="sentinel-layout" />
+	<h:outputStylesheet name="css/font-icon-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/sentinel-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="css/core-layout.css"
+		library="sentinel-layout" />
+	<h:outputStylesheet name="ais-style.css" library="css" />
+	<h:outputStylesheet name="login.css" library="css" />
+
+</h:head>
+
+<h:body class="fontRegular dis-login-back white-back">
+
+<p:panel id="bannerVersionPanel" styleClass="bannerVersionPanel"
+		rendered="#{environmentController.rendered}">
+		<div id="bannerVersion">
+			<p>#{environmentController.environment}</p>
+		</div>
+	</p:panel>
+	
+	<div
+		class="Container80 MaxWid600 Fnone MarAuto TexAlCenter PaddingTopPercent10">
+
+		<span><a href="" id="login-logo" style="margin: 0px;"> </a></span> <span
+			class="FontTitilliumRegular dis-title">
+			#{msg['message.application.brand.title']} </span>
+	</div>
+
+	
+
+	<!-- LOGIN BOX COVER START -->
+	<div class="Container80 MaxWid500 white-back Fnone MarAuto BordRad10"
+		id="login-box">
+		<div class="Container100">
+			<div
+				class="Container100 TexAlCenter Animated05 BoxSizeBorder TabBtn left TabBtnActiveLeft dis-panel"
+				role="1">
+
+				<p:panelGrid columns="1" style="width:100%;padding: 0px;"
+					styleClass="login-language-selector no-spacing transparent no-border">
+
+					<!-- LANGUAGE -->
+					<h:form id="languageForm" styleClass="Fright">
+						<p:selectOneMenu id="languageSelect"
+							value="#{languageController.language}" var="lang" effect="fade"
+							styleClass="dis-language-menu" onchange="submit()"
+							valueChangeListener="#{languageController.languageChanged}">
+
+							<f:selectItems value="#{languageController.languages}" />
+
+							<p:column>
+								#{lang.displayName}
+								<!-- 
+								<h:graphicImage name="#{lang.language}.png"
+									library="images/language" /> 
+								-->
+							</p:column>
+							<p:column>#{lang.language}</p:column>
+						</p:selectOneMenu>
+					</h:form>
+
+					<div class="EmptyBox5" />
+
+					<!-- TITLE -->
+					<h:outputText id="loginTitle"
+						styleClass="Fnone hardblue Wid60 MarAuto FontBold"
+						value="#{msg['message.login.title']}" />
+				</p:panelGrid>
+			</div>
+
+			<p:focus id="focus" context="loginForm" />
+
+			<h:form id="loginForm" styleClass="form-horizontal" role="form">
+				<div class="Container90 Fnone MarAuto TexAlCenter TabContent"
+					id="TAB1">
+					<p:messages id="loginMessages" showSummary="true" autoUpdate="true"
+						closable="true" styleClass="Container80 Fnone MarAuto" />
+
+					<div class="EmptyBox30"></div>
+
+					<!-- USERNAME -->
+					<p:inputText id="username" value="#{loginController.username}"
+						required="true" label="#{msg['message.common.username']}"
+						placeholder="#{msg['message.common.username']}" styleClass="Container80 Fnone MarAuto Fs18" />
+
+					<div class="EmptyBox10"></div>
+
+					<!-- PASSWORD -->
+					<p:password id="password" value="#{loginController.password}"
+						required="true" label="#{msg['message.common.password']}"
+						placeholder="#{msg['message.common.password']}" styleClass="Container80 Fnone MarAuto Fs18"
+						feedback="false" />
+
+					<div class="EmptyBox30"></div>
+
+					<!-- LOGIN -->
+					<p:commandButton id="loginButton"
+						value="#{msg['message.login.signInButton']}"
+						action="#{loginController.submit}" ajax="true" styleClass="Fs16">
+						<f:ajax execute="@form" render="@form" />
+					</p:commandButton>
+
+					<div class="EmptyBox50"></div>
+				</div>
+			</h:form>
+
+		</div>
+	</div>
+	<!-- LOGIN BOX COVER END -->
+</h:body>
+
+</html>

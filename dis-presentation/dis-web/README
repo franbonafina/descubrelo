@@ -1,0 +1,327 @@
+Pasos Charencoding
+
+1. In Eclipse, right-click on the file messages_es.properties, go to Properties and in the "Resource" submenu check 'Other' for Text File Encoding. Select "UTF-8".
+2. In Eclipse, right-click on the file messages_es.properties, go to Team and in the "Set Property..." submenu add the following property
+	Property name: svn:mime-type
+	Text property: text/plain; charset=UTF-8
+
+Pasos Preinstalación:
+1. Incluir en carpeta $CATALINA_HOME/lib del Tomcat el jar con los jdbc driver de oracle (ojdbc6-11.2.0.3.0.jar)
+
+2.a Incluir en carpeta $CATALINA_HOME/lib del Tomcat el jar con los jdbc driver de hsqldb (hsqldb-2.3.2.jar
+
+2.b Incluir en carpeta $CATALINA_HOME/lib del Tomcat el jar con las librerias de jsf
+
+jsf-api-2.2.8.jar
+jsf-impl-2.2.8.jar
+
+3. Agregar el siguiente resource en el archivo $CATALINA_HOME/conf/context.xml
+
+	<Resource name="jdbc/disDS" auth="Container" type="javax.sql.DataSource"
+		minIdle="3" maxActive="15" maxIdle="5" maxWait="15000" initialSize="10"
+		removeAbandoned="true" removeAbandonedTimeout="300"
+		abandonWhenPercentageFull="50" logAbandoned="true" testOnBorrow="true"
+		validationQuery="select 1 from dual" 
+		driverClassName="oracle.jdbc.driver.OracleDriver"
+		url="jdbc:oracle:thin:@//ryuzaki.une.com.ar:1521/pdesa.une.com.ar"
+		username="WEIGHING_SCALES" password="welcome1" />
+
+	<Resource name="jdbc/disDS" 
+		auth="Container" type="javax.sql.DataSource"
+		minIdle="3" maxActive="15" maxIdle="5" maxWait="15000" initialSize="10"
+		removeAbandoned="true" removeAbandonedTimeout="300"
+		abandonWhenPercentageFull="50" logAbandoned="true" testOnBorrow="true"
+		validationQuery="select 1 from INFORMATION_SCHEMA.SYSTEM_USERS" 
+		driverClassName="org.hsqldb.jdbcDriver"
+		url="jdbc:hsqldb:file:~/appdb/disdb;shutdown=true;hsqldb.lock_file=false"
+		username="sa" password="" />
+		
+	----JBOSS standalone.xml----
+	<datasource jndi-name="java:jboss/datasources/disDS" pool-name="disDS" enabled="true" use-java-context="true">
+                    <connection-url>jdbc:hsqldb:file:~/appdb/disdb;shutdown=true;hsqldb.lock_file=false</connection-url>
+                    <driver>hsqldb</driver>
+                    <security>
+                        <user-name>sa</user-name>
+                        <password>1</password>
+                    </security>
+    </datasource>
+
+4. Comentar alguno de los dos.
+	
+----------
+RESEQUENCE en ORACLE
+
+create or replace 
+PROCEDURE RESEQUENCE (pkColumnName VARCHAR2, table_name VARCHAR2, seq_name VARCHAR2
+) AS
+ maxPK NUMBER;
+ vQueryPK VARCHAR2(100);
+ vQuerySEQ VARCHAR2(100);
+ 
+BEGIN
+
+  vQueryPK := 'SELECT nvl(max(' || pkColumnName|| '), 0) + 1 FROM ' || table_name
+              ;                           
+  EXECUTE IMMEDIATE vQueryPK
+    INTO maxPK;
+
+DBMS_OUTPUT.put_line('Ultima PK en Uso: ' || maxPK);    
+
+BEGIN
+  EXECUTE IMMEDIATE 'DROP sequence ' || seq_name;
+    EXCEPTION
+      WHEN OTHERS THEN
+         DBMS_OUTPUT.put_line ('No se ha encontrado la secuencia: ' || seq_name || '. Creando...');
+    END;
+
+vQuerySEQ := 'CREATE SEQUENCE ' || seq_name || ' START WITH ' || maxPK ;
+
+EXECUTE IMMEDIATE vQuerySEQ;
+
+END RESEQUENCE;
+
+
+---------------------------
+
+
+create or replace 
+PROCEDURE XXP_CREATE_WEIGHINNG_ORDER(
+    transaction_id         IN VARCHAR2,
+    WEIGHING_ORDER_ID      IN VARCHAR2,
+    CLIENT                 IN VARCHAR2,
+    CLIENT_NUMBER          IN VARCHAR2,
+    CONTAINER              IN VARCHAR2,
+    CONTAINER_USAGE_NUMBER IN VARCHAR2,
+    ON_RENTED_TRUCK        IN VARCHAR2,
+    BOARDING_PERMISSION    IN VARCHAR2,
+    TRUCK_PLATE            IN VARCHAR2,
+    TRAILER_PLATE          IN VARCHAR2,
+    DRIVER_LAST_NAME       IN VARCHAR2,
+    DRIVER_FIRST_NAME      IN VARCHAR2,
+    DRIVER_DOCUMENT_NUMBER IN VARCHAR2,
+    errorcode OUT NUMBER,
+    errormessage OUT VARCHAR2 )
+IS
+  sbmensaje   VARCHAR2 (200) := NULL;
+  nombre_proc VARCHAR2 (100) := 'XXP_CREATE_WEIGHINNG_ORDER';
+  ERRCBU      EXCEPTION;
+BEGIN
+  errorcode    := 0;
+  errormessage := '-';
+  INSERT
+  INTO weighing_order
+    (
+      WEIGHING_ORDER_ID,
+      CLIENT,
+      CLIENT_NUMBER ,
+      CONTAINER,
+      CONTAINER_USAGE_NUMBER,
+      ON_RENTED_TRUCK,
+      BOARDING_PERMISSION ,
+      TRUCK_PLATE ,
+      TRAILER_PLATE ,
+      DRIVER_LAST_NAME ,
+      DRIVER_FIRST_NAME ,
+      DRIVER_DOCUMENT_NUMBER ,
+      CREATED 
+    )
+    VALUES
+    (
+      WEIGHING_ORDER_ID,
+      CLIENT,
+      CLIENT_NUMBER ,
+      CONTAINER,
+      CONTAINER_USAGE_NUMBER,
+      ON_RENTED_TRUCK,
+      BOARDING_PERMISSION ,
+      TRUCK_PLATE ,
+      TRAILER_PLATE ,
+      DRIVER_LAST_NAME ,
+      DRIVER_FIRST_NAME ,
+      DRIVER_DOCUMENT_NUMBER ,
+      SYSDATE
+    );
+  INSERT
+  INTO weighing_order_aud
+    (
+      WEIGHING_ORDER_ID
+    )
+    VALUES
+    (
+      weighing_order_id
+    );
+  IF errorcode <> 0 THEN
+    RAISE ERRCBU;
+  END IF;
+EXCEPTION
+WHEN DUP_VAL_ON_INDEX THEN
+  errorcode    := 1;
+  errormessage := 'Orden de pesada ya existente';
+  ROLLBACK;
+WHEN OTHERS THEN
+  errorcode    := SQLCODE;
+  errormessage := SQLERRM;
+  ROLLBACK;
+END XXP_CREATE_WEIGHINNG_ORDER;
+
+-----------
+
+create or replace 
+PROCEDURE PURGE_RENTED_TRUCK_TARE AS 
+  C_CANT_DIAS number := 0;
+BEGIN
+  --BUSCO EL PARAMETRO DE LA CANTIDAD DE DIAS A BORRAR
+  select to_number(s.VAL) 
+  into C_CANT_DIAS
+  from SETTINGS S 
+  where S.NAME = 'CANT_DIAS_BORRADO_RENTED_TRUCK_TARE'; 
+  
+  delete 
+  from RENTED_TRUCK_TARE
+  where trunc(CREATED) < trunc(sysdate - C_CANT_DIAS);
+  
+END PURGE_RENTED_TRUCK_TARE;
+
+
+
+lee
+sin procesar, PROCESSED = 0
+con contenedor IN_CONTAINER
+estado pesado o impreso. (PESADA2 o IMPRESA)
+
+-------
+
+y manda 
+net_weight ( todavía no existe )
+container_use
+
+---------
+
+-- Restringir boooleans en Oracle
+
+alter table AIS.SEC_USER add constraint SEC_USER_LOCAL_AUTH_BOOL CHECK (LOCAL_AUTHENTICATION IN (0,1));
+
+---------------
+
+Configurar pool en JBOSS
+
+1. copiar Driver de Oracle en JBOSS_HOME/modules/com/oracle/ojdbc6/main
+
+module.xml
+ojdbc6-11.2.0.3.0.jar
+
+2. Copiar JBOSS_HOME/standalone/configuration
+ 					<driver name="oracle" module="com.oracle.ojdbc6">
+                        <xa-datasource-class>oracle.jdbc.driver.OracleDriver</xa-datasource-class>
+                        <datasource-class>oracle.jdbc.driver.OracleDriver</datasource-class>
+                    </driver>
+                    
+                    
+                    
+--------------
+ 
+ QUERY JOURNALS
+ 
+ SELECT JER.JOURNAL_ENTRY_RULE_ID,
+JER.COMPANY_CODE,
+JER.INVOICE_TYPE_ID,
+IT.INVOICE_TYPE_CODE,
+JER.INVOICE_SUBTYPE_CODE,
+JER.JOURNAL_ENTRY_LINE_TYPE,
+JER.LINE_ORDER,
+JER.ACCOUNTING_TREATMENT,
+JER.AMOUNT_TYPE
+FROM JOURNAL_ENTRY_RULE JER, INVOICE_TYPE IT
+WHERE JER.INVOICE_TYPE_ID = IT.INVOICE_TYPE_ID
+
+--------
+BARTER
+--------
+
+UPDATE TRANSMISSION_ORDER
+SET CONTRACT_TYPE='BAR'
+WHERE TRANSMISSION_ORDER_ID IN
+(SELECT TRANSMISSION_ORDER_ID
+FROM TRANSMISSION_ORDER
+WHERE BILL_TO_CUSTOMER_ID IN
+(SELECT CUSTOMER_ID
+FROM CUSTOMER
+WHERE CUSTOMER_TYPE = 'ADVERTISER' AND AGENCY IS NULL))
+
+ ----------------
+ 
+ 
+ UPDATE TRANSMISSION_ORDER t1
+  SET (BILL_TO_CUSTOMER_ID) = (SELECT t2.AGENCY_ID
+                        FROM TRANSMISSION_ORDER t2
+                       WHERE t1.AGENCY_CLIENT_REFERENCE = t1.BILL_TO_REFERENCE
+                       AND t1.TRANSMISSION_ORDER_ID = t2.TRANSMISSION_ORDER_ID)
+WHERE EXISTS (
+   SELECT 1
+     FROM TRANSMISSION_ORDER t2
+    WHERE t1.TRANSMISSION_ORDER_ID = t2.TRANSMISSION_ORDER_ID)
+ 
+ 
+-------
+
+BEGIN
+RESEQUENCE(PKCOLUMNNAME => 'ACCOUNT_ID', TABLE_NAME => 'ACCOUNT', SEQ_NAME => 'ACCOUNT_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'ADDRESS_ID', TABLE_NAME => 'ADDRESS', SEQ_NAME => 'ADDRESS_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'BATCH_CUSTOMER_ID', TABLE_NAME => 'BATCH_CUSTOMER', SEQ_NAME => 'BATCH_CUSTOMER_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'BATCH_LOG_ID', TABLE_NAME => 'BATCH_LOG', SEQ_NAME => 'BATCH_LOG_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'BATCH_ID', TABLE_NAME => 'BATCH', SEQ_NAME => 'BATCH_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'BILLING_SCENARIO_ID', TABLE_NAME => 'BILLING_SCENARIO', SEQ_NAME => 'BILLING_SCENARIO_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'COA_TRANSACTION_MAPPING_ID', TABLE_NAME => 'COA_TRANSACTION_MAPPING', SEQ_NAME => 'COA_TRANSACTION_MAPPING_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'COMMISSION_ID', TABLE_NAME => 'COMMISSION', SEQ_NAME => 'COMMISSION_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'COMPANY_ID', TABLE_NAME => 'COMPANY', SEQ_NAME => 'COMPANY_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'COST_CENTER_ID', TABLE_NAME => 'COST_CENTER', SEQ_NAME => 'COST_CENTER_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'COUNTRY_ID', TABLE_NAME => 'COUNTRY', SEQ_NAME => 'COUNTRY_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'CURRENCY_ID', TABLE_NAME => 'CURRENCY', SEQ_NAME => 'CURRENCY_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'CUSTOMER_ID', TABLE_NAME => 'CUSTOMER', SEQ_NAME => 'CUSTOMER_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'EMAIL_ID', TABLE_NAME => 'EMAIL', SEQ_NAME => 'EMAIL_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'EMAIL_TYPE_ID', TABLE_NAME => 'EMAIL_TYPE', SEQ_NAME => 'EMAIL_TYPE_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'ERP_LOG_ID', TABLE_NAME => 'ERP_LOG', SEQ_NAME => 'ERP_LOG_SEQ' );
+
+RESEQUENCE(PKCOLUMNNAME => 'GEOGRAPHY_ID', TABLE_NAME => 'GEOGRAPHY', SEQ_NAME => 'GEOGRAPHY_SEQ' ); 
+
+RESEQUENCE(PKCOLUMNNAME => 'INVOICE_LINE_TAX_ID', TABLE_NAME => 'INVOICE_LINE_TAX', SEQ_NAME => 'INVOICE_LINE_TAX_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'INVOICE_LINE_ID', TABLE_NAME => 'INVOICE_LINE', SEQ_NAME => 'INVOICE_LINE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'INVOICE_ID', TABLE_NAME => 'INVOICE', SEQ_NAME => 'INVOICE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'INVOICE_TYPE_MAPPING_ID', TABLE_NAME => 'INVOICE_TYPE_MAPPING', SEQ_NAME => 'INVOICE_TYPE_MAPPING_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'INVOICE_TYPE_ID', TABLE_NAME => 'INVOICE_TYPE', SEQ_NAME => 'INVOICE_TYPE_SEQ' ); 
+
+RESEQUENCE(PKCOLUMNNAME => 'JOURNAL_ENTRY_RULE_ID', TABLE_NAME => 'JOURNAL_ENTRY_RULE', SEQ_NAME => 'JOURNAL_ENTRY_RULE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'JOURNAL_LINE_ID', TABLE_NAME => 'JOURNAL_LINE', SEQ_NAME => 'JOURNAL_LINE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'JOURNAL_ID', TABLE_NAME => 'JOURNAL', SEQ_NAME => 'JOURNAL_SEQ' ); 
+
+RESEQUENCE(PKCOLUMNNAME => 'PASSWORD_ID', TABLE_NAME => 'PASSWORD', SEQ_NAME => 'PASSWORD_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'PAYMENT_METHOD_ID', TABLE_NAME => 'PAYMENT_METHOD', SEQ_NAME => 'PAYMENT_METHOD_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'PAYMENT_TERM_ID', TABLE_NAME => 'PAYMENT_TERM', SEQ_NAME => 'PAYMENT_TERM_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'PLATFORM_ID', TABLE_NAME => 'PLATFORM', SEQ_NAME => 'PLATFORM_SEQ' ); 
+
+RESEQUENCE(PKCOLUMNNAME => 'PROFIT_CENTER_ID', TABLE_NAME => 'PROFIT_CENTER', SEQ_NAME => 'PROFIT_CENTER_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'REGION_ID', TABLE_NAME => 'REGION', SEQ_NAME => 'REGION_SEQ' );
+
+RESEQUENCE(PKCOLUMNNAME => 'REPORT_NOTIFICATION_ID', TABLE_NAME => 'REPORT_NOTIFICATION', SEQ_NAME => 'REPORT_NOTIFICATION_SEQ' );
+
+RESEQUENCE(PKCOLUMNNAME => 'PERMISSION_ID', TABLE_NAME => 'SEC_PERMISSION', SEQ_NAME => 'SEC_PERMISSION_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'ROLE_ID', TABLE_NAME => 'SEC_ROLE', SEQ_NAME => 'SEC_ROLE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'USER_ID', TABLE_NAME => 'SEC_USER', SEQ_NAME => 'SEC_USER_SEQ' ); 
+
+RESEQUENCE(PKCOLUMNNAME => 'SERVICE_RECEIVED_TYPE_ID', TABLE_NAME => 'SERVICE_RECEIVED_TYPE', SEQ_NAME => 'SERVICE_RECEIVED_TYPE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'SETTING_ID', TABLE_NAME => 'SETTING', SEQ_NAME => 'SETTING_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'STREET_ID', TABLE_NAME => 'STREET', SEQ_NAME => 'STREET_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'STREET_TYPE_ID', TABLE_NAME => 'STREET_TYPE', SEQ_NAME => 'STREET_TYPE_SEQ' ); 
+
+RESEQUENCE(PKCOLUMNNAME => 'TAX_ID', TABLE_NAME => 'TAX', SEQ_NAME => 'TAX_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'TAX_STATUS_ID', TABLE_NAME => 'TAX_STATUS', SEQ_NAME => 'TAX_STATUS_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'TELEPHONE_ID', TABLE_NAME => 'TELEPHONE', SEQ_NAME => 'TELEPHONE_SEQ' );
+RESEQUENCE(PKCOLUMNNAME => 'TELEPHONE_TYPE_ID', TABLE_NAME => 'TELEPHONE_TYPE', SEQ_NAME => 'TELEPHONE_TYPE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'TIN_VALIDATION_ID', TABLE_NAME => 'TIN_VALIDATION', SEQ_NAME => 'TIN_VALIDATION_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'TRANSMISSION_ORDER_ID', TABLE_NAME => 'TRANSMISSION_ORDER', SEQ_NAME => 'TRANSMISSION_ORDER_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'TRANSMISSION_ORDER_LINE_ID', TABLE_NAME => 'TRANSMISSION_ORDER_LINE', SEQ_NAME => 'TRANSM_ORDER_LINE_SEQ' ); 
+RESEQUENCE(PKCOLUMNNAME => 'TRANSMISSION_ORDER_SPLIT_ID', TABLE_NAME => 'TRANSMISSION_ORDER_SPLIT', SEQ_NAME => 'TRANSMISSION_ORDER_SPLIT_SEQ' ); 
+
+END;
+
+

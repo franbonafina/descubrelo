@@ -1,0 +1,94 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.user.settings.title.short']}
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="ContainerIndent">
+			<p:panel id="panelSetting">
+
+				<div class="Container100">
+					<div class="ContainerIndent">
+						<h:outputText value="#{msg['message.user.settings.title']}"
+							styleClass="FontBold Fs18 hardblue"></h:outputText>
+					</div>
+				</div>
+
+				<h:form id="userPreferencesForm">
+
+					<p:messages autoUpdate="true" id="indexMessagesSettings"
+						showDetail="true" showSummary="true" closable="true" />
+
+
+					<div class="Container100">
+						<div class="ContainerIndent">
+
+							<h:panelGrid columns="2" id="userSettings" cellpadding="5">
+								<h:panelGrid cellspacing="5" columns="2">
+									<!-- Language selection -->
+									<p:outputLabel value="#{msg['message.header.language']}" />
+									<p:selectOneMenu id="languageSelect" value="#{languageController.language}"
+										var="lang" effect="fade"
+										styleClass="dis-input-width"
+										valueChangeListener="#{languageController.languageChanged}">
+										<f:selectItems value="#{languageController.languages}" />
+										<p:ajax 
+											event="change" 
+											onprocess="@this" 
+											update="@all" /> 
+										<p:column>
+											#{lang.displayName}
+											<!-- 
+											<h:graphicImage name="#{lang.language}.png"
+												library="images/language" /> 
+											-->
+										</p:column>
+										<p:column style="width: 1em;">#{lang.language}</p:column>
+									</p:selectOneMenu>
+
+									<!-- Default company -->
+									
+									<p:outputLabel
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu 
+										id="defaultCompany"
+										styleClass="dis-input-width"
+										value="#{userSettingsController.user.defaultCompany}"
+										valueChangeListener="#{userSettingsController.defaultCompanyChanged}"
+										converter="omnifaces.SelectItemsConverter" >
+
+										<p:ajax 
+											event="change" 
+											process="defaultCompany" />
+																					
+										<f:selectItem 
+											itemLabel="#{msg['message.common.select.company']}" 
+											itemValue="#{null}"/>
+										
+										<f:selectItems value="#{userSettingsController.user.companies}"
+											var="company" itemValue="#{company}" 
+											itemLabel="#{company.code} - #{company.description}"/>								
+									</p:selectOneMenu>
+									
+								</h:panelGrid>
+							</h:panelGrid>
+						</div>
+					</div>
+				</h:form>
+
+			</p:panel>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

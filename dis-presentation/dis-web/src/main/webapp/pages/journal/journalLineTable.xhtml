@@ -1,0 +1,312 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core" >
+
+	<p:panel id="journalLineDataTablePanel"
+		widgetVar="journalLineDataTablePanel"
+		visible="#{journalLineIsReadOnly ? journalController.journalLinesTableVisible : journalLinesController.journalLinesTableVisible}"
+		closable="true" toggleable="true" closeSpeed="0"
+		styleClass="no-border no-spacing">
+
+		<p:dataTable id="listJournalLine" widgetVar="listJournalLine"
+			var="journalLine"
+			value="#{journalLineIsReadOnly ? journalController.journalLines : journalLinesController.journalLines}"
+			paginatorPosition="bottom" paginatorAlwaysVisible="true"
+			sortMode="single" stickyHeader="false"
+			emptyMessage="#{msg['message.datatable.emptyMessage']}"
+			reflow="true" editMode="cell"
+			editable="#{!journalLineIsReadOnly and journalLinesController.editable}" >
+
+			<f:facet name="header">
+				<table class="no-border dis-table-header">
+					<tr>
+						<td>
+							<p:commandButton id="editJournalLines"
+								styleClass="Fleft LightButton"
+								icon="#{journalController.editable ? 'ui-icon-pencil' : 'ui-icon-zoomin'}"
+								process="@this" action="#{journalController.edit}"
+								disabled="#{null == journalController.selectedJournal}"
+								title="#{journalController.editable ? msg['message.journal.tooltip.editJournalLines'] : msg['message.journal.tooltip.showJournalLines']}"
+								rendered="#{journalLineIsReadOnly}" />
+								
+							<p:selectBooleanCheckbox id="groupedJLCheckbox"
+								value="#{journalLinesController.groupedJournalLines}"
+								itemLabel="#{msg['message.journal.lines.grouped.JournalLines']}"
+								styleClass="Fleft grouped-journalLines-checkbox"
+								rendered="#{!journalLineIsReadOnly}" >
+								<p:ajax process="@this" update="listJournalLine @form:jTotalDebits @form:jTotalCredits"
+									listener="#{journalLinesController.onCheckboxChange}" />
+							</p:selectBooleanCheckbox>
+						</td>
+						<td class="ui-datatable ui-datatable-header"><h:outputText
+								value="#{msg['message.journal.lines.searchResults']}" /></td>
+						<td>
+							<p:commandButton id="journalLineTogglerButton" type="button"
+								styleClass="LightButton Fright" icon="ui-icon-wrench" /> 
+							<p:columnToggler id="togglerJournalLine"
+								widgetVar="togglerJournalLine" datasource="listJournalLine"
+								trigger="journalLineTogglerButton" />
+							<script type="text/javascript">
+								removeDuplicatedToggler('#customerDataTableForm\\:listCustomer\\:togglerJournalLine')
+							</script>
+						</td>
+					</tr>
+				</table>
+			</f:facet>
+			
+			<p:ajax event="page" 
+				oncomplete="updateToggles(PF('togglerJournalLine'));"/>
+
+			<!-- JOURNAL LINE NUMBER -->
+			<p:column headerText="#{msg['message.journal.lineNumber']}"
+				style="width: 2rem;">
+
+				<h:outputText value="#{journalLine.lineNumber}" />
+			</p:column>
+			
+			<!-- ACCOUNT -->
+			<p:column style="width: 4.5rem;" >
+				<f:facet name="header">
+					#{msg['message.journal.account']}
+					<p:panelGrid styleClass="none transparent input-panel"
+						rendered="#{!journalLineIsReadOnly and journalLinesController.editable}">
+						<i class="icon-pencil Wid25 facebookblue"></i>
+					</p:panelGrid>
+				</f:facet>
+				
+				<h:outputText value="#{journalLine.account.number}" 
+					rendered="#{journalLineIsReadOnly}" />
+					
+				<p:cellEditor rendered="#{!journalLineIsReadOnly}">
+					<f:facet name="output">
+						<h:outputText value="#{journalLine.account.number}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:selectOneMenu value="#{journalLine.account}"
+							styleClass="invoiceLineTable-edit"
+							converter="omnifaces.SelectItemsConverter"
+							panelStyleClass="account-comboBox-panel" >
+							<f:selectItems 
+								value="#{selectorController.getAccountListByCompany(journalLinesController.company)}"
+								var="account"
+								itemLabel="#{account.number} #{null != account.type ? ' - '.concat(account.type) : ''}"
+								itemValue="#{account}"
+								itemDescription="#{account.description}" />
+							<p:ajax event="change"
+								process="@this"
+								update="@this" />
+						</p:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<!-- PROFIT CENTER -->
+			<p:column style="width: 6.2rem;" >
+				<f:facet name="header">
+					#{msg['message.journal.profitCenter']}					
+					<p:panelGrid styleClass="none transparent input-panel"
+						rendered="#{!journalLineIsReadOnly and journalLinesController.editable}">
+						<i class="icon-pencil Wid25 facebookblue"></i>
+					</p:panelGrid>
+				</f:facet>
+
+				<h:outputText value="#{journalLine.profitCenter}"
+					rendered="#{journalLineIsReadOnly}" />
+					
+				<p:cellEditor rendered="#{!journalLineIsReadOnly}">
+					<f:facet name="output">
+						<h:outputText
+							value="#{journalLine.profitCenter.number} #{null != journalLine.profitCenter.IBMSChannel ? ' - '.concat(journalLine.profitCenter.IBMSChannel) : ''}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:selectOneMenu value="#{journalLine.profitCenter}"
+							styleClass="invoiceLineTable-edit"
+							converter="omnifaces.SelectItemsConverter"
+							panelStyleClass="profitCenter-comboBox-panel" >
+							<f:selectItems
+								value="#{selectorController.getProfitCenterByCompany(journalLinesController.company)}"
+								var="profitCenter"
+								itemLabel="#{profitCenter.number} #{null != profitCenter.IBMSChannel ? ' - '.concat(profitCenter.IBMSChannel) : ''}"
+								itemValue="#{profitCenter}"
+								itemDescription="#{profitCenter.description}" />
+							<p:ajax event="change" process="@this" update="@this" />
+						</p:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+				
+			<!-- COST CENTER -->
+			<p:column style="width: 6.2rem;" >
+				<f:facet name="header">
+					#{msg['message.journal.costCenter']}					
+					<p:panelGrid styleClass="none transparent input-panel"
+						rendered="#{!journalLineIsReadOnly and journalLinesController.editable}">
+						<i class="icon-pencil Wid25 facebookblue"></i>
+					</p:panelGrid>
+				</f:facet>
+				
+				<h:outputText value="#{null != journalLine.costCenter ? journalLine.costCenter : '-'}"
+					rendered="#{journalLineIsReadOnly}" />
+					
+				<p:cellEditor rendered="#{!journalLineIsReadOnly}">
+					<f:facet name="output">
+						<h:outputText value="#{null != journalLine.costCenter ? journalLine.costCenter : '-'}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:selectOneMenu value="#{journalLine.costCenter}"
+							styleClass="invoiceLineTable-edit"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems
+								value="#{selectorController.getCostCentersListByCompany(journalLinesController.company)}"
+								var="costCenter"
+								itemLabel="#{costCenter.number}"
+								itemValue="#{costCenter}"
+								itemDescription="#{costCenter.description}" />
+							<p:ajax event="change" process="@this" update="@this" />
+						</p:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			
+			<!-- GEOGRAPHY -->
+			<p:column style="width: 6.2rem;" >
+				<f:facet name="header">
+					#{msg['message.journal.geography']}					
+					<p:panelGrid styleClass="none transparent input-panel"
+						rendered="#{!journalLineIsReadOnly and journalLinesController.editable}">
+						<i class="icon-pencil Wid25 facebookblue"></i>
+					</p:panelGrid>
+				</f:facet>
+				
+				<h:outputText value="#{journalLine.geography.code}"
+					rendered="#{journalLineIsReadOnly}" />
+					
+				<p:cellEditor rendered="#{!journalLineIsReadOnly}">
+					<f:facet name="output">
+						<h:outputText value="#{journalLine.geography.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:selectOneMenu value="#{journalLine.geography}"
+							styleClass="invoiceLineTable-edit"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems
+								value="#{selectorController.getGeographyListByCompany(journalLinesController.company)}"
+								var="geography"
+								itemLabel="#{geography.code}"
+								itemValue="#{geography}"
+								itemDescription="#{geography.description}" />
+							<p:ajax event="change" process="@this" update="@this" />
+						</p:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+
+			<!-- PLATFORM -->
+			<p:column style="width: 4.8rem;" >
+				<f:facet name="header">
+					#{msg['message.journal.platform']}					
+					<p:panelGrid styleClass="none transparent input-panel"
+						rendered="#{!journalLineIsReadOnly and journalLinesController.editable}">
+						<i class="icon-pencil Wid25 facebookblue"></i>
+					</p:panelGrid>
+				</f:facet>
+
+				<h:outputText value="#{journalLine.platform.code}" 
+					rendered="#{journalLineIsReadOnly}"/>
+				
+				<p:cellEditor rendered="#{!journalLineIsReadOnly}">
+					<f:facet name="output">
+						<h:outputText value="#{journalLine.platform.code}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:selectOneMenu value="#{journalLine.platform}"
+							styleClass="invoiceLineTable-edit"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItems
+								value="#{selectorController.getPlatformListByCompany(journalLinesController.company)}"
+								var="platform"
+								itemLabel="#{platform.code}"
+								itemValue="#{platform}"
+								itemDescription="#{platform.description}" />
+							<p:ajax event="change" process="@this" update="@this" />
+						</p:selectOneMenu>
+					</f:facet>
+				</p:cellEditor>				
+			</p:column>
+
+			<!-- TRANSACTION CURRENCY -->
+			<p:column
+				headerText="#{msg['message.journal.transactionCurrency']}"
+				styleClass="col-transaction-currency col-centered">
+
+				<h:outputText value="#{journalLine.transactionCurrency}" />
+			</p:column>
+
+			<!-- TRANSACTION AMOUNT -->
+			<p:column
+				headerText="#{msg['message.journal.transactionAmount']}"
+				styleClass="col-right"
+				style="width: 6rem;" >
+				
+				<h:outputText value="#{journalLine.transactionAmount}">
+					<f:convertNumber 
+						locale="#{languageController.locale}"
+						type="currency" 
+						currencySymbol=""
+						maxFractionDigits="2"/>			
+				</h:outputText>
+			</p:column>
+
+			<!-- EXCHANGE RATE -->
+			<p:column headerText="#{msg['message.journal.exchangeRate']}"
+				styleClass="col-exchange-rate">
+
+				<h:outputText value="#{journalLine.exchangeRate}">
+					<f:convertNumber pattern="#0.00000" maxFractionDigits="5" />
+				</h:outputText>
+			</p:column>
+
+			<!-- BASE CURRENCY -->
+			<p:column headerText="#{msg['message.journal.baseCurrency']}"
+				styleClass="col-transaction-currency col-centered" >
+
+				<h:outputText value="#{journalLine.baseCurrency}" />
+			</p:column>
+
+			<!-- BASE AMOUNT -->
+			<p:column headerText="#{msg['message.journal.baseAmount']}"
+				styleClass="col-right"
+				style="width: 6rem;" >
+				<h:outputText value="#{journalLine.baseAmount}">	
+					<f:convertNumber 
+						locale="#{languageController.locale}"
+						type="currency" 
+						currencySymbol=""
+						maxFractionDigits="2"/>			
+				</h:outputText>								
+			</p:column>
+
+			<!-- ENTRY TYPE -->
+			<p:column headerText="#{msg['message.journal.type']}"
+				style="width: 3.4rem;">
+
+				<h:outputText value="#{journalLine.type}" />
+			</p:column>
+
+			<!-- DESCRIPTION -->
+			<p:column headerText="#{msg['message.common.description']}"
+				styleClass="col-description">
+
+				<h:outputText value="#{journalLine.description}" />
+			</p:column>
+
+		</p:dataTable>
+	</p:panel>
+			
+	<p:remoteCommand name="editJournalLines"
+			action="#{journalController.edit}" />
+
+</ui:composition>

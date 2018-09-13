@@ -1,0 +1,329 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.withholding']}
+	</ui:define>
+
+	<ui:define name="content">
+		<div class="ContainerIndent">
+			<h:form id="taxForm">
+				<p:messages id="taxMessages" closable="true" showDetail="false"
+					autoUpdate="true" redisplay="true" />
+
+				<p:panel id="taxDataTablePanel" widgetVar="taxDataTablePanel"
+					closeSpeed="0" styleClass="no-border no-spacing">
+					
+					<p:dataTable id="taxTable" widgetVar="taxTable" var="tax"
+						rowIndexVar="rowIndex" stickyHeader="false"
+						styleClass="dataTable-letters"
+						emptyMessage="#{msg['message.datatable.emptyMessage']}"
+						value="#{taxCRUDController.taxList}"
+						selection="#{taxCRUDController.selectedTax}"
+						rowKey="#{tax.id}" editMode="cell"
+						editable="#{taxCRUDController.onEditionMode}" >
+
+						<f:facet name="header">
+							<table class="no-border dis-table-header">
+								<tr>
+									<td></td>
+									<td class="ui-datatable ui-datatable-header"><h:outputText
+											value="#{msg['message.withholding']}" /></td>
+									<td><p:panel styleClass="panel_Button_Invoice">
+
+											<p:commandButton id="addButtonTax"
+												styleClass="Fleft LightButton" icon="ui-icon-plus"
+												actionListener="#{taxCRUDController.addTaxLine}"
+												immediate="true" process="@form" update="taxForm:taxTable"
+												disabled="#{!taxCRUDController.onEditionMode}"
+												title="#{msg['message.withholding.tooltip.addTaxLine']}">
+											</p:commandButton>
+											<p:commandButton id="removeButtonTax"
+												styleClass="Fleft LightButton" icon="ui-icon-minusthick"
+												actionListener="#{taxCRUDController.removeTaxLine}"
+												immediate="true" process="@form" update="taxForm:taxTable"
+												disabled="#{!taxCRUDController.onEditionMode}"
+												title="#{msg['message.withholding.tooltip.removeTaxLine']}">
+												<p:confirm
+													message="#{msg['message.common.confirmation.delete']}"
+													icon="ui-icon-alert" showEffect="fade" />
+											</p:commandButton>
+										</p:panel></td>
+								</tr>
+							</table>
+						</f:facet>
+						<p:ajax event="rowSelect" update="addButtonTax removeButtonTax" />
+						<p:ajax event="rowUnselect" update="addButtonTax removeButtonTax" />
+						<p:ajax event="rowSelectCheckbox"
+							update="addButtonTax removeButtonTax" />
+						<p:ajax event="rowUnselectCheckbox"
+							update="addButtonTax removeButtonTax" />
+						<p:ajax event="toggleSelect" update="addButtonTax removeButtonTax" />
+						
+						 <p:ajax event="rowEdit" update="taxForm:taxMessages"/>
+
+						<!--COLUMNS -->
+						<p:column selectionMode="multiple"
+							style="width:8px;text-align:center" />
+
+						<!-- COMPANY -->
+						<p:column headerText="#{msg['message.withholding.company']}"
+							styleClass="col-lineNumber">
+							<h:outputText value="#{tax.company.code}" />
+						</p:column>
+
+						<!-- WITHHOLDING CODE -->
+						<p:column headerText="#{msg['message.withholding.code']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{tax.taxCode}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{tax.taxCode}" 
+										label="#{msg['message.withholding.code']}"
+										required="true"
+										styleClass="invoiceLineTable-edit" >
+										<f:validateLength maximum="10" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<!-- INVOICE TYPE -->
+						<p:column headerText="#{msg['message.withholding.invoiceType']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText
+										value="#{tax.invoiceType != null ? labelUtil.getInvoiceTypeLabel(taxCRUDController.selectedCompany, tax.invoiceType) : '-'}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu id="invoiceTypes" value="#{tax.invoiceType}"
+										label="#{msg['message.withholding.invoiceType']}"
+										required="true"
+										converter="omnifaces.SelectItemsConverter">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.invoiceType']}"
+											itemValue="#{null}" />
+										<f:selectItems
+											value="#{selectorController.getInvoiceTypeListByCompany(taxCRUDController.selectedCompany)}"
+											var="invoiceType" itemValue="#{invoiceType}"
+											itemLabel="#{labelUtil.getInvoiceTypeLabel(taxCRUDController.selectedCompany, invoiceType)}" />
+									</p:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<!-- CALCULATION TYPE -->
+						<p:column headerText="#{msg['message.withholding.taxType']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText
+										value="#{labelUtil.getTaxcalculationTypeLabel(tax.calculationType)}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu styleClass="none transparent"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{tax.calculationType}" 
+										label="#{msg['message.withholding.taxType']}"
+										required="true">
+										<f:selectItem itemLabel="Select one" itemValue="#{null}" />
+										<f:selectItems value="#{taxCRUDController.calculationTypes}"
+											var="calculationType" itemValue="#{calculationType}"
+											itemLabel="#{labelUtil.getTaxcalculationTypeLabel(calculationType)}">
+										</f:selectItems>
+										<p:ajax event="change" update="taxForm:taxTable" />
+									</p:selectOneMenu>
+
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<!-- PARAMETER VALUE -->
+						<p:column
+							headerText="#{msg['message.withholding.parameterValue']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{tax.parameterValue}">
+										<f:convertNumber locale="#{languageController.locale}"
+											type="#{tax.isCalculationTypePercentage() ? 'percent' : 'number'}"
+											maxFractionDigits="5" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{tax.parameterValue}"
+										styleClass="invoiceLineTable-edit" label="#{msg['message.withholding.parameterValue']}"
+										maxlength="12">
+										<f:convertNumber locale="#{languageController.locale}"
+											type="#{tax.isCalculationTypePercentage() ? 'percent' : 'number'}"
+											maxFractionDigits="5" />
+									</p:inputText>
+
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<!--CALCULATION BASE -->
+						<p:column
+							headerText="#{msg['message.withholding.calculationBase']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText
+										value="#{labelUtil.getTaxAmountLabel(tax.calculationBase)}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu styleClass="none transparent"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{tax.calculationBase}">
+										<f:selectItem itemLabel="Select one" itemValue="#{null}" />
+										<f:selectItems value="#{taxCRUDController.calculationBases}"
+											var="calculationBase" itemValue="#{calculationBase}"
+											itemLabel="#{labelUtil.getTaxAmountLabel(calculationBase)}">
+										</f:selectItems>
+									</p:selectOneMenu>
+
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<!-- DESCRIPTION -->
+						<p:column headerText="#{msg['message.withholding.description']}"
+							styleClass="col-description-line">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{tax.description}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{tax.description}" 
+										label="#{msg['message.withholding.description']}"
+										required="true"
+										styleClass="invoiceLineTable-edit">
+										<f:validateLength maximum="150" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<!-- ERP_WTHD_CREDIT_CODE -->
+						<p:column headerText="#{msg['message.withholding.erpWthdCreditCode']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{tax.erpWthdCreditCode}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{tax.erpWthdCreditCode}" 
+										label="#{msg['message.withholding.erpWthdCreditCode']}"
+										required="false"
+										styleClass="invoiceLineTable-edit">
+										<f:validateLength maximum="100" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<!-- ERP_WTHD_DEBIT_CODE -->
+						<p:column headerText="#{msg['message.withholding.erpWthdDebitCode']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{tax.erpWthdDebitCode}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{tax.erpWthdDebitCode}" 
+										label="#{msg['message.withholding.erpWthdDebitCode']}"
+										required="false"
+										styleClass="invoiceLineTable-edit">
+										<f:validateLength maximum="100" />
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+						<!-- ACTIVE -->
+						<p:column headerText="#{msg['message.withholding.active']}"
+							styleClass="col-lineNumber">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{labelUtil.isActive(tax.active)}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu styleClass="none transparent"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{tax.active}">
+										<f:selectItem itemLabel="Select one" itemValue="#{null}" />
+										<f:selectItem itemLabel="#{msg['message.common.true']}"
+											itemValue="#{true}" />
+										<f:selectItem itemLabel="#{msg['message.common.false']}"
+											itemValue="#{false}" />
+									</p:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+
+					</p:dataTable>
+
+					<div class="EmptyBox10"></div>
+					<div class="form-group">
+						<!-- BUTTONS -->
+						<!-- EDIT -->
+						<p:commandButton id="editTax"
+							value="#{msg['message.common.edit']}" resetValues="true"
+							icon="ui-icon-pencil" immediate="true"
+							actionListener="#{taxCRUDController.edit}"
+							process="@this taxForm" update="taxForm"
+							rendered="#{!taxCRUDController.onEditionMode}"
+							title="#{msg['message.withholding.tooltip.edit']}">
+						</p:commandButton>
+						<!-- SAVE-->
+						<p:commandButton id="accept" value="#{msg['message.common.save']}"
+							styleClass="dis-button-width"
+							action="#{taxCRUDController.createOrUpdate}"
+							validateClient="false" ajax="true" 
+							process="@this taxForm" update="taxForm"
+							icon="ui-icon-check"
+							rendered="#{taxCRUDController.onEditionMode}"
+							title="#{msg['message.withholding.tooltip.save']}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" global="true" hideEffect="fade" />
+						</p:commandButton>
+						<!-- CANCEL -->
+						<p:commandButton id="cancel"
+							value="#{msg['message.common.cancel']}" resetValues="true"
+							styleClass="dis-button-width" icon="ui-icon-cancel"
+							immediate="true" action="#{taxCRUDController.cancel}"
+							process="@this taxForm" update="taxForm"
+							rendered="#{taxCRUDController.onEditionMode}"
+							title="#{msg['message.withholding.tooltip.cancel']}">
+							<p:confirm message="#{msg['message.common.confirmation.cancel']}"
+								icon="ui-icon-alert" showEffect="fade" />
+						</p:commandButton>
+						<!-- BACK -->
+						<p:commandButton value="#{msg['message.common.back']}"
+							resetValues="true" id="backAdd" process="@this"
+							icon="ui-icon-arrowreturnthick-1-w"
+							title="#{msg['message.invoice.tooltip.createUpdate.back']}"
+							immediate="true" action="#{taxCRUDController.back}"
+							rendered="#{!taxCRUDController.onEditionMode}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</div>
+				</p:panel>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

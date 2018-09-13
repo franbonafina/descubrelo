@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.report.unbilledAR.name']}
+</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:panel>
+					<p:focus />
+
+					<h:form prependId="false">
+
+						<p:panelGrid styleClass="transparent no-border" columns="4">
+							<!-- COMPANY -->
+							<p:outputLabel for="companyFilter"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+								value="#{reportUnbilledARController.company}"
+								title="#{msg['message.customer.tooltip.filterCode']}"
+								converter="omnifaces.SelectItemsConverter"
+								required="true">
+
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel />
+							<p:outputLabel />
+
+							<!-- AS OF DATE -->
+							<p:outputLabel value="#{msg['message.report.unbilledAR.asOfDate']}"
+								for="asOfDateFilter" />
+							<p:calendar id="asOfDateFilter" required="true"
+								value="#{reportUnbilledARController.asOfDate}"
+								title="#{msg['message.report.unbilledAR.asOfDate.tooltip']}"
+								locale="#{languageController.language}"
+								pattern="#{languageController.localeDatePattern}"
+								styleClass="dis-input-width" />
+
+							<p:outputLabel />
+							<p:outputLabel />
+							
+							<!-- TRANSACTION STATUS -->
+							<p:outputLabel for="transctionStatus"
+								value="#{msg['message.report.unbilledAR.transactionStatus']}" />
+							<p:selectOneMenu id="transctionStatus" styleClass="dis-input-width"
+								converter="omnifaces.SelectItemsConverter"
+								value="#{reportUnbilledARController.transactionStatus}"
+								title="#{msg['message.report.unbilledAR.transactionStatus.tooltip']}">
+								<f:selectItem
+									itemLabel="#{msg['message.report.unbilledAR.transactionStatus.select']}"
+									itemValue="#{null}" />
+
+								<f:selectItems value="#{reportUnbilledARController.transactionStatusList}"
+									var="status" itemValue="#{status}" itemLabel="#{status}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel />
+							<p:outputLabel />
+						</p:panelGrid>
+
+						<ui:param name="controller" value="#{reportUnbilledARController}" />
+						<ui:include src="reportFooter.xhtml" />
+					</h:form>
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

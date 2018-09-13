@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
+	version="2.2">
+
+	<application>
+		<locale-config>
+			<default-locale>en</default-locale>
+			<supported-locale>es</supported-locale>
+		</locale-config>
+		<resource-bundle>
+			<base-name>com.discovery.dis.web.faces.i18n.ResourceBundleExt</base-name>
+			<var>msg</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>passay-messages</base-name>
+			<var>passay</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>ais-version</base-name>
+			<var>vmsg</var>
+		</resource-bundle>
+		<resource-bundle>
+			<base-name>ais</base-name>
+			<var>aismsg</var>
+		</resource-bundle>
+
+		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+		<action-listener>org.primefaces.application.DialogActionListener</action-listener>
+		<navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+		<view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+	</application>
+
+	<!-- Login Rule -->
+	<navigation-rule>
+		<from-view-id>/*</from-view-id>
+		<navigation-case>
+			<from-outcome>#{navigationRuler.loginOutcome}</from-outcome>
+			<to-view-id>#{navigationRuler.loginPage}</to-view-id>
+			<redirect />
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/login.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>changePassword</from-outcome>
+			<to-view-id>#{navigationRuler.changePasswordPage}</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<from-view-id>/*</from-view-id>
+
+		<navigation-case>
+			<from-outcome>home</from-outcome>
+			<to-view-id>#{navigationRuler.indexPage}</to-view-id>
+			<redirect></redirect>
+		</navigation-case>
+
+		<!-- USER -->
+		<navigation-case>
+			<from-outcome>userSettings</from-outcome>
+			<to-view-id>#{navigationRuler.userSettingsPage}</to-view-id>
+		</navigation-case>
+
+		<!-- SYSTEM_ADMINISTRATOR -->
+		<navigation-case>
+			<from-outcome>setting</from-outcome>
+			<to-view-id>/pages/configurator/setting/setting.xhtml</to-view-id>
+		</navigation-case>		
+
+		<!-- USER -->
+		<!-- Reemplazados por navegacion por outcome -->
+		<!-- 		
+		<navigation-case>
+			<from-outcome>users</from-outcome>
+			<to-view-id>#{navigationRuler.userListPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>createUpdateUser</from-outcome>
+			<to-view-id>#{navigationRuler.userCRUDPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>viewUser</from-outcome>
+			<to-view-id>#{navigationRuler.userViewPage}</to-view-id>
+		</navigation-case>
+ 		-->
+ 
+		<!-- ROLE -->
+		<navigation-case>
+			<from-outcome>roles</from-outcome>
+			<to-view-id>#{navigationRuler.roleListPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>createUpdateRole</from-outcome>
+			<to-view-id>#{navigationRuler.roleCRUDPage}</to-view-id>
+		</navigation-case>
+
+		<!-- PERMISSION -->
+		<navigation-case>
+			<from-outcome>permission</from-outcome>
+			<to-view-id>#{navigationRuler.permissionListPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>createUpdatePermission</from-outcome>
+			<to-view-id>#{navigationRuler.permissionCRUDPage}</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>passwordStandards</from-outcome>
+			<to-view-id>#{navigationRuler.passwordStandardsPage}</to-view-id>
+		</navigation-case>
+
+		<!-- C&C Billing -->
+		<navigation-case>
+			<from-outcome>customers</from-outcome>
+			<to-view-id>#{navigationRuler.customerListPage}</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>createUpdateCustomer</from-outcome>
+			<to-view-id>#{navigationRuler.customerCRUDPage}</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>changePasswordSetting</from-outcome>
+			<to-view-id>#{navigationRuler.changePasswordSenttingPage}</to-view-id>
+		</navigation-case>
+
+
+		<navigation-case>
+			<from-outcome>Batchs</from-outcome>
+			<to-view-id>#{navigationRuler.batchListPage}</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>detailBatch</from-outcome>
+			<to-view-id>#{navigationRuler.batchDetailPage}</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>batchImport</from-outcome>
+			<to-view-id>#{navigationRuler.batchImportPage}</to-view-id>
+		</navigation-case>
+
+		<!-- Transmission Orders -->		
+		<navigation-case>
+			<from-outcome>ordersSearch</from-outcome>
+			<to-view-id>#{navigationRuler.transmissionOrdersSearch}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>orders</from-outcome>
+			<to-view-id>#{navigationRuler.transmissionOrdersPage}</to-view-id>
+		</navigation-case>
+
+		<!-- Invoice -->
+		<navigation-case>
+			<from-outcome>invoices</from-outcome>
+			<to-view-id>#{navigationRuler.invoiceListPage}</to-view-id>
+		</navigation-case>
+
+		<navigation-case>
+			<from-outcome>createUpdateInvoice</from-outcome>
+			<to-view-id>#{navigationRuler.invoiceCRUDPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>invoiceConsumptions</from-outcome>
+			<to-view-id>#{navigationRuler.invoiceConsumptionsPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- Consumption -->
+		<navigation-case>
+			<from-outcome>consumptions</from-outcome>
+			<to-view-id>#{navigationRuler.consumptionListPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>createUpdateConsumption</from-outcome>
+			<to-view-id>#{navigationRuler.consumptionCRUDPage}</to-view-id>
+		</navigation-case>
+
+		<!-- Transmission Orders view-->
+		<navigation-case>
+			<from-outcome>ordersView</from-outcome>
+			<to-view-id>#{navigationRuler.transmissionOrdersViewPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- Transmission Orders detail-->
+		<navigation-case>
+			<from-outcome>ordersDetail</from-outcome>
+			<to-view-id>#{navigationRuler.transmissionOrdersDetailPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- Journal -->
+		<navigation-case>
+			<from-outcome>journal</from-outcome>
+			<to-view-id>#{navigationRuler.journalListPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>journalLines</from-outcome>
+			<to-view-id>#{navigationRuler.journalLinesPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- Reports -->
+		<navigation-case>
+			<from-outcome>reports</from-outcome>
+			<to-view-id>#{navigationRuler.reportsPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>reportCustomerIBMS</from-outcome>
+			<to-view-id>#{navigationRuler.reportCustomerIBMSPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportInvoiceIBMS</from-outcome>
+			<to-view-id>#{navigationRuler.reportInvoiceIBMSPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportTransmissionOrder</from-outcome>
+			<to-view-id>#{navigationRuler.reportTransmissionOrderPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportCustomerMaster</from-outcome>
+			<to-view-id>#{navigationRuler.reportCustomerMasterPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportUnbilledAR</from-outcome>
+			<to-view-id>#{navigationRuler.reportUnbilledARPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportSummaryBilling</from-outcome>
+			<to-view-id>#{navigationRuler.reportSummaryBillingPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportCustomerAudit</from-outcome>
+			<to-view-id>#{navigationRuler.reportCustomerAuditPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportInvoiceERP</from-outcome>
+			<to-view-id>#{navigationRuler.reportInvoiceERPPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportJournalERP</from-outcome>
+			<to-view-id>#{navigationRuler.reportJournalERPPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportDetailActivity</from-outcome>
+			<to-view-id>#{navigationRuler.reportDetailActivityPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportJournalEntry</from-outcome>
+			<to-view-id>#{navigationRuler.reportJournalEntryPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportPreBillAndConsumption</from-outcome>
+			<to-view-id>#{navigationRuler.reportPreBillAndConsumptionPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportTransmissionAffidavit</from-outcome>
+			<to-view-id>#{navigationRuler.reportTransmissionAffidavitPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>reportSAGE</from-outcome>
+			<to-view-id>#{navigationRuler.reportSAGEPage}</to-view-id>
+		</navigation-case>
+				
+		<!-- CONFIGURATION -->
+		<navigation-case>
+			<from-outcome>companies</from-outcome>
+			<to-view-id>#{navigationRuler.companyListPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>companyCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.companyCRUDPage}</to-view-id>
+		</navigation-case>	
+		<navigation-case>
+			<from-outcome>coaMapping</from-outcome>
+			<to-view-id>#{navigationRuler.coaListPage}</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>coaCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.coaCRUDPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>accounts</from-outcome>
+			<to-view-id>#{navigationRuler.accountListPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>accountCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.accountCRUDPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>geography</from-outcome>
+			<to-view-id>#{navigationRuler.geographyListPage}</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>geographyCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.geographyCRUDPage}</to-view-id>
+		</navigation-case>	
+		
+		<!-- PLATFORM -->
+		<navigation-case>
+			<from-outcome>platform</from-outcome>
+			<to-view-id>#{navigationRuler.platformListPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>platformCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.platformCRUDPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- PROFIT CENTER -->
+		<navigation-case>
+			<from-outcome>profitCenter</from-outcome>
+			<to-view-id>#{navigationRuler.profitCenterListPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>profitCenterCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.profitCenterCRUDPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- COST CENTER-->
+		<navigation-case>
+			<from-outcome>costCenter</from-outcome>
+			<to-view-id>#{navigationRuler.costCenterListPage}</to-view-id>
+		</navigation-case>
+		
+		<navigation-case>
+			<from-outcome>costCenterCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.costCenterCRUDPage}</to-view-id>
+		</navigation-case>
+		
+		<!-- CHANNEL-->
+		<navigation-case>
+			<from-outcome>channel</from-outcome>
+			<to-view-id>#{navigationRuler.channelListPage}</to-view-id>
+			</navigation-case>
+	
+		<navigation-case>
+			<from-outcome>channelCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.channelCRUDPage}</to-view-id>
+			
+		</navigation-case>
+		
+		<!-- COUNTRY-->
+		<navigation-case>
+			<from-outcome>country</from-outcome>
+			<to-view-id>#{navigationRuler.countryListPage}</to-view-id>
+			</navigation-case>
+	
+		<navigation-case>
+			<from-outcome>countryCRUD</from-outcome>
+			<to-view-id>#{navigationRuler.countryCRUDPage}</to-view-id>
+			
+		</navigation-case>
+		
+		<!-- TAX-->
+        <navigation-case>
+            <from-outcome>tax</from-outcome>
+            <to-view-id>#{navigationRuler.taxListPage}</to-view-id>
+            </navigation-case>
+    
+        <navigation-case>
+            <from-outcome>taxCRUD</from-outcome>
+            <to-view-id>#{navigationRuler.taxCRUDPage}</to-view-id>
+            
+        </navigation-case>
+		
+		<!-- SPLIT -->
+		<navigation-case>
+			<from-outcome>split</from-outcome>
+			<to-view-id>#{navigationRuler.splitPage}</to-view-id>
+		</navigation-case>
+		
+	</navigation-rule>
+
+	<component>
+		<component-type>org.primefaces.component.SentinelMenu</component-type>
+		<component-class>org.primefaces.sentinel.component.menu.SentinelMenu</component-class>
+	</component>
+
+	<render-kit>
+		<renderer>
+			<component-family>org.primefaces.component</component-family>
+			<renderer-type>org.primefaces.component.SentinelMenuRenderer</renderer-type>
+			<renderer-class>org.primefaces.sentinel.component.menu.SentinelMenuRenderer</renderer-class>
+			
+		</renderer>
+	</render-kit>
+
+	<factory>
+		<exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+	</factory>
+
+	<validator>
+		<validator-id>usernameValidator</validator-id>
+		<validator-class>com.discovery.dis.web.validator.UsernameValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>userEmailValidator</validator-id>
+		<validator-class>com.discovery.dis.web.validator.UserEmailValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>emailValidatorUpdate</validator-id>
+		<validator-class>com.discovery.dis.web.validator.EmailValidatorUpdate</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>roleNameValidator</validator-id>
+		<validator-class>com.discovery.dis.web.validator.RoleNameValidatorRole</validator-class>
+	</validator>
+	
+	<managed-bean>
+		<managed-bean-name>environmentController</managed-bean-name>
+		<managed-bean-class>com.discovery.dis.web.view.EnvironmentController</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+		<managed-property>
+			<property-name>environment</property-name>
+			<value>#{aismsg['ais.environment']}</value>
+		</managed-property>
+	</managed-bean>
+
+</faces-config>

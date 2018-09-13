@@ -1,0 +1,161 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.report.transmissionAffidavit.name']}
+</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:panel>
+					<p:focus />
+
+					<h:form prependId="false">
+						<p:messages id="messages" showDetail="false" autoUpdate="false" closable="true" />
+	
+						<p:panelGrid styleClass="transparent no-border" columns="4">
+
+							<!-- COMPANY -->
+							<p:outputLabel for="companyFilter"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+								value="#{reportTransmissionAffidavitController.company}"
+								title="#{msg['message.customer.tooltip.filterCode']}"
+								converter="omnifaces.SelectItemsConverter" required="true">
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+								<p:ajax update="advertiser agency sendEmailReportButton" listener="#{reportTransmissionAffidavitController.onCompanyChange}" />
+							</p:selectOneMenu>
+
+							<!-- PROPOSAL CLIENT -->
+							<p:outputLabel for="proposalClient"
+								value="#{msg['message.report.transmissionAffidavit.proposalClient']}" />
+							<p:inputText id="proposalClient"
+								value="#{reportTransmissionAffidavitController.proposalClient}"
+								title="#{msg['message.report.transmissionAffidavit.proposalClient.tooltip']}"
+								styleClass="dis-input-width" maxlength="20">
+							</p:inputText>
+
+							<!-- ERP INVOICE Number -->
+							<p:outputLabel for="erpInvoiceNumber"
+								value="#{msg['message.report.transmissionAffidavit.erpInvoice']}" />
+							<p:inputText id="erpInvoiceNumber"
+								value="#{reportTransmissionAffidavitController.erpInvoiceNumber}"
+								title="#{msg['message.report.transmissionAffidavit.erpInvoice.tooltip']}"
+								styleClass="dis-input-width" maxlength="20">
+							</p:inputText>
+
+							<!-- AGENCY -->
+							<p:outputLabel for="agency"
+								value="#{msg['message.common.agency']}" />
+							<p:selectOneMenu id="agency"
+								value="#{reportTransmissionAffidavitController.agency}"
+								effect="fade" var="agency" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.transmissionAffidavit.agency.tooltip']}">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.agency']}" itemValue="#{null}" />
+								<f:selectItems
+									value="#{selectorController.getAgencyList(reportTransmissionAffidavitController.company)}"
+									var="agency" itemValue="#{agency}" itemLabel="#{agency}" />
+								<p:column>
+									<p:outputLabel
+										value="#{agency != null ? agency : msg['message.select.agency']}" />
+								</p:column>
+								<p:ajax update="sendEmailReportButton" listener="#{reportTransmissionAffidavitController.onCompanyChange}" />
+							</p:selectOneMenu>
+
+							<!-- SALES CHANNEL -->
+							<p:outputLabel for="channel"
+								value="#{msg['message.report.transmissionAffidavit.salesChannel']}" />
+							<p:selectOneMenu id="channel"
+								title="#{msg['message.report.transmissionAffidavit.salesChannel.tooltip']}"
+								styleClass="dis-input-width"
+								value="#{reportTransmissionAffidavitController.salesChannel}"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem
+									itemLabel="#{msg['message.report.transmissionAffidavit.salesChannel.select']}"
+									itemValue="#{null}" />
+								<f:selectItems value="#{selectorController.channelList}"
+									var="channel" itemValue="#{channel}"
+									itemLabel="#{channel.code} - #{channel.description}" />
+							</p:selectOneMenu>
+
+							<!-- ADVERTISER -->
+							<p:outputLabel for="advertiser"
+								value="#{msg['message.common.advertiser']}" />
+							<p:selectOneMenu id="advertiser"
+								value="#{reportTransmissionAffidavitController.advertiser}"
+								effect="fade" var="advertiser" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.transmissionAffidavit.advertiser.tooltip']}">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.advertiser']}"
+									itemValue="#{null}" />
+								<f:selectItems
+									value="#{selectorController.getNonAgencyList(reportTransmissionAffidavitController.company)}"
+									var="advertiser" itemValue="#{advertiser}"
+									itemLabel="#{advertiser}" />
+								<p:column>
+									<p:outputLabel
+										value="#{advertiser != null ? advertiser : msg['message.select.advertiser']}" />
+								</p:column>
+								<p:ajax update="sendEmailReportButton" listener="#{reportTransmissionAffidavitController.onCompanyChange}" />
+							</p:selectOneMenu>
+
+							<!-- FROM TRANSMISSION DATE -->
+							<p:outputLabel
+								value="#{msg['message.report.transmissionAffidavit.fromTransmissionDate']}"
+								for="fromTransmissionDateFilter" />
+							<p:calendar id="fromTransmissionDateFilter"
+								value="#{reportTransmissionAffidavitController.fromTransmissionDate}"
+								title="#{msg['message.report.transmissionAffidavit.fromTransmissionDate.tooltip']}"
+								locale="#{languageController.language}"
+								pattern="#{languageController.localeDatePattern}"
+								styleClass="dis-input-width" />
+
+							<!-- TO TRANSMISSION DATE -->
+							<p:outputLabel
+								value="#{msg['message.report.transmissionAffidavit.toTransmissionDate']}"
+								for="toTransmissionDateFilter" />
+							<p:calendar id="toTransmissionDateFilter"
+								value="#{reportTransmissionAffidavitController.toTransmissionDate}"
+								title="#{msg['message.report.transmissionAffidavit.toTransmissionDate.tooltip']}"
+								locale="#{languageController.language}"
+								pattern="#{languageController.localeDatePattern}"
+								styleClass="dis-input-width" />
+
+							<!-- TO TRANSMISSION DATE -->
+							<p:outputLabel
+								value="#{msg['message.report.transmissionAffidavit.includeGrossAmountColumn']}"
+								for="includeGrossAmountColumn" />
+							<p:selectBooleanCheckbox id="includeGrossAmountColumn" value="#{reportTransmissionAffidavitController.includeGrossAmountColumn}" />
+
+
+						</p:panelGrid>
+
+						<ui:param name="controller"
+							value="#{reportTransmissionAffidavitController}" />
+						<ui:include src="reportFooter.xhtml" />
+					</h:form>
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

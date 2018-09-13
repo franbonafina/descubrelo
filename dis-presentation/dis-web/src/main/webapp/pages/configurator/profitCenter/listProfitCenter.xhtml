@@ -1,0 +1,223 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.menu.ProfitCenter']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:focus context="profitCenterFiltersForm" />
+
+				<h:form id="profitCenterFiltersForm">
+					<p:messages id="listProfitCenterMessages" closable="true"
+						showDetail="false" autoUpdate="false" />
+
+					<p:tabView id="filterTabView">
+						<p:tab title="#{msg['message.common.search']}">
+
+							<p:panelGrid styleClass="no-border" columns="4">
+
+								<!-- COMPANY -->
+								<p:outputLabel for="companyFilter"
+									value="#{msg['message.common.company']}" />
+
+								<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+									value="#{filterContainer.profitCenterFilterGenerator.company}"
+									title="#{msg['message.menu.profitCenter.tooltip.filterCode']}"
+									converter="omnifaces.SelectItemsConverter" required="true">
+
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company" itemValue="#{company}"
+										itemLabel="#{company.code} - #{company.description}" />
+								</p:selectOneMenu>
+
+								<!-- NUMBER -->
+								<p:outputLabel for="number"
+									value="#{msg['message.list.profitCenter.number']}" />
+
+								<p:inputText id="number" styleClass="dis-input-width"
+									label="#{msg['message.list.profitCenter.number']}"
+									title="#{msg['message.menu.profitCenter.tooltip.number']}"
+									value="#{filterContainer.profitCenterFilterGenerator.number}" />
+
+								<!-- COST CENTER -->
+								<p:outputLabel for="costCenterFilter"
+									value="#{msg['message.list.profitCenter.costCenter']}" />
+
+								<p:selectOneMenu id="costCenterFilter"
+									styleClass="dis-input-width"
+									value="#{filterContainer.profitCenterFilterGenerator.costCenter}"
+									title="#{msg['message.menu.profitCenter.filter.tooltip.costCenter']}"
+									converter="omnifaces.SelectItemsConverter">
+
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.profitCenter.null.costCenter']}" />
+
+									<f:selectItems value="#{selectorController.costCenters}"
+										var="costCenter" itemValue="#{costCenter}"
+										itemLabel="#{costCenter.number} - #{costCenter.description}" />
+								</p:selectOneMenu>
+
+								<!-- Channel -->
+								<p:outputLabel for="channel"
+									value="#{msg['message.common.channel']}" />
+
+								<p:inputText id="channel" styleClass="dis-input-width"
+									label="#{msg['message.common.channel']}"
+									title="#{msg['message.menu.profitCenter.tooltip.channel']}"
+									value="#{filterContainer.profitCenterFilterGenerator.IBMSChannel}" />
+									
+								<!-- ACTIVE -->
+								<p:outputLabel value="#{msg['message.common.active']}" />
+								<p:selectOneMenu id="activeFilter" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{filterContainer.profitCenterFilterGenerator.active}">
+									
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.common.selectOne']}" />
+									<f:selectItem itemValue="#{true}"
+										itemLabel="#{msg['message.common.true']}" />
+									<f:selectItem itemValue="#{false}"
+										itemLabel="#{msg['message.common.false']}" />									
+								</p:selectOneMenu>
+
+							</p:panelGrid>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="3"
+								styleClass="no-spacing no-border dis-spacing-small">
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									actionListener="#{profitCenterController.filterTable}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									oncomplete="PF('profitCenterDataTable').show();"
+									update=":listProfitCenterForm"
+									title="#{msg['message.profitCenter.tooltip.search']}" />
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}"
+									actionListener="#{profitCenterController.clearFilters}"
+									oncomplete="PF('profitCenterDataTable').close();"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									update="profitCenterFiltersForm"
+									title="#{msg['message.common.tooltip.clear.filters']}" />
+
+								<p:commandButton id="add" value="#{msg['message.common.add']}"
+									styleClass="dis-button-width" icon="ui-icon-plus"
+									action="#{profitCenterController.add}"
+									title="#{msg['message.profitCenter.tooltip.add']}" />
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+
+				</h:form>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+
+				<h:form id="listProfitCenterForm">
+
+					<p:panel id="profitCenterDataTable"
+						widgetVar="profitCenterDataTable" visible="false" closable="true"
+						toggleable="true" closeSpeed="0" styleClass="no-border no-spacing">
+
+						<p:dataTable id="listProfitCenter" widgetVar="listProfitCenter"
+							var="profitCenter" styleClass="dataTable-letters"
+							value="#{profitCenterController.profitCenterLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="multiple" rows="10" selectionMode="single"
+							selection="#{profitCenterController.selected}" lazy="true"
+							stickyHeader="false" rowKey="#{profitCenter.id}"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="edit"
+												styleClass="Fleft LightButton" icon="ui-icon-pencil"
+												process="@this" action="#{profitCenterController.edit}"
+												disabled="#{profitCenterController.selected == null}"
+												title="#{msg['message.profitCenter.tooltip.edit']}" /></td>
+
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.profitCenter.title.table']}" /></td>
+										<td></td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<p:ajax event="rowSelect" update="edit" />
+							<p:ajax event="rowUnselect" update="edit" />
+							<p:ajax event="rowDblselect" onstart="changeUserAction()" />
+
+							<!-- COMPANY -->
+							<p:column headerText="#{msg['message.common.company']}"
+								styleClass="col-user-user"
+								sortBy="#{profitCenter.company.description}">
+								<h:outputText value="#{profitCenter.company.description}" />
+							</p:column>
+
+							<!-- NUMBER -->
+							<p:column headerText="#{msg['message.list.profitCenter.number']}"
+								styleClass="" sortBy="#{profitCenter.number}">
+								<h:outputText value="#{profitCenter.number}" />
+							</p:column>
+
+							<!-- IBMSChannel -->
+							<p:column
+								headerText="#{msg['message.list.profitCenter.IBMSChannel']}"
+								styleClass="" sortBy="#{profitCenter.IBMSChannel}">
+								<h:outputText value="#{profitCenter.IBMSChannel}" />
+							</p:column>
+
+							<!-- COSTCENTER -->
+							<p:column
+								headerText="#{msg['message.list.profitCenter.costCenter']}"
+								styleClass="" sortBy="#{profitCenter.costCenter}">
+								<h:outputText value="#{profitCenter.costCenter}" />
+							</p:column>
+
+							<!-- ACTIVE -->
+							<p:column headerText="#{msg['message.list.profitCenter.active']}"
+								styleClass="" sortBy="#{profitCenter.active}">
+								<h:outputText
+									value="#{profitCenter.active ? msg['message.common.true'] : msg['message.common.false']}" />
+							</p:column>
+
+							<!-- DESCRIPTION -->
+							<p:column
+								headerText="#{msg['message.list.profitCenter.description']}"
+								styleClass="" sortBy="#{profitCenter.description}">
+								<h:outputText value="#{profitCenter.description}" />
+							</p:column>
+
+						</p:dataTable>
+					</p:panel>
+
+					<p:remoteCommand name="changeUserAction"
+						action="#{profitCenterController.edit}" />
+
+					<p:remoteCommand autoRun="true" update="profitCenterFiltersForm" />
+
+				</h:form>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

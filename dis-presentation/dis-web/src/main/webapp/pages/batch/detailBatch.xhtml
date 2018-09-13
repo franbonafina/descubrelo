@@ -1,0 +1,1144 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.detail']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+					navigationRuler.batchListPage, batchDetailController.batch)}" />
+		</h:form>
+
+		<c:if test="#{batchDetailController.batch != null}">
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+
+					<div class="FontBold Fs18 hardblue">
+						#{msg['message.header.detail.batch.title']}</div>
+
+					<p:panel>
+						<p:panelGrid columns="4" styleClass="no-border panelGrid-detail">
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.company']} :" />
+							<h:outputText
+								value="#{batchDetailController.batch.company.getDescriptionAndCode()}" />
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.batchFileID']} :" />
+							<h:outputText value="#{batchDetailController.batch.batchFileID}" />
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.type']} :" />
+							<h:outputText value="#{(labelUtil.getBatchTypeLabel(batchDetailController.batch.batchType))}" />
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.extractUserID']} :" />
+							<h:outputText
+								value="#{batchDetailController.batch.extractUserID}" />
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.startDate']} :" />
+							<h:outputText value="#{batchDetailController.batch.startDate}">
+								<f:convertDateTime dateStyle="short" timeStyle="default"
+									type="both" locale="#{languageController.locale}" />
+							</h:outputText>
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.extractStartDate']} :" />
+							<h:outputText
+								value="#{batchDetailController.batch.extractStartDate}">
+								<f:convertDateTime dateStyle="short" timeStyle="default"
+									type="both" locale="#{languageController.locale}" />
+							</h:outputText>
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.endDate']} :" />
+							<h:outputText value="#{batchDetailController.batch.endDate}">
+								<f:convertDateTime dateStyle="short" timeStyle="default"
+									type="both" locale="#{languageController.locale}" />
+							</h:outputText>
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.extractEndDate']} :" />
+							<h:outputText
+								value="#{batchDetailController.batch.extractEndDate}">
+								<f:convertDateTime dateStyle="short" timeStyle="default"
+									type="both" locale="#{languageController.locale}" />
+							</h:outputText>
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.numberOfRecords']} :" />
+							<h:outputText
+								value="#{batchDetailController.batch.numberOfRecords}" />
+
+							<p:outputLabel
+								value="#{batchDetailController.batch.transmissionOrderType ? 
+							msg['message.header.detail.batch.numberOfInvoices']	: 
+							msg['message.header.detail.batch.numberOfCustomers']} :" />
+							<h:outputText
+								value="#{batchDetailController.batch.transmissionOrderType ? 
+							batchDetailController.batch.numberOfInvoices : 
+							batchDetailController.batch.numberOfCustomers}" />
+
+							<p:outputLabel
+								value="#{msg['message.header.detail.batch.status']} :" />
+							<h:outputText
+								value="#{(labelUtil.getBatchStatusLabel(batchDetailController.batch.status))}" />
+						</p:panelGrid>
+					</p:panel>
+
+					<p:spacer styleClass="dis-spacer-small" />
+					
+					<!-- BATCH CUSTOMER LIST -->
+					<p:panel id="dataTableCustomer" widgetVar="dataTableCustomer"
+						closeSpeed="0"
+						rendered="#{batchDetailController.renderedCustomer}"
+						styleClass="dis-fake-tabview no-border-panel no-spacing">
+
+						<div class="FontBold Fs18 hardblue">
+							#{msg['message.detailBatch.accordionPanel.tab.content.customer']}
+						</div>
+
+						<h:form id="tabViewCustomerForm">
+							<p:tabView id="tabViewCustomer"
+								styleClass="dis-batch-customer-custom-tab-view"
+								activeIndex="#{batchDetailController.selectedBatchDetailTab}">
+								<p:ajax event="tabChange" process="@form"
+									update="dataTableCustomer" />
+
+								<p:tab title="#{msg['message.batchCustomer.customerMainInformation']}" />
+								<p:tab title="#{msg['message.batchCustomer.billing']}" />
+								<p:tab title="#{msg['message.batchCustomer.contact']}" />
+								<p:tab title="#{msg['message.batchCustomer.accountingClerk']}" />
+								<p:tab title="#{msg['message.batchCustomer.reportContact']}" />
+								<p:tab title="#{msg['message.batchCustomer.others']}" />
+
+							</p:tabView>
+						</h:form>
+
+						<h:form id="listBatchCustomersForm">
+							<p:dataTable id="listBatchCustomers"
+								widgetVar="listBatchCustomers" var="batchCustomer"
+								rowIndexVar="rowIndexVar"
+								value="#{batchDetailController.batchCustomerLazyDataModel}"
+								paginatorAlwaysVisible="true" paginator="true"
+								paginatorPosition="bottom"
+								currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+									{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+								sortMode="single" rows="10" lazy="true" stickyHeader="false"
+								emptyMessage="#{msg['message.datatable.emptyMessage']}"
+								reflow="true" styleClass="dataTable-letters"
+								editable="#{batchDetailController.batchEditable}"
+								editMode="cell">
+
+								<p:ajax event="cellEdit" process="@this" update="@this"
+									listener="#{batchDetailController.editBatchCustomer}" />
+
+								<!-- COLUMNS -->
+								<!--ROW INDEX -->
+								<p:column headerText="#{msg['message.common.line']}"
+									styleClass="col-index">
+									<h:outputText value="#{rowIndexVar + 1}" />
+								</p:column>
+
+								<!-- LAIS ID -->
+								<p:column headerText="#{msg['message.common.lais.id']}"
+									styleClass="col-index">
+									<h:outputText value="#{batchCustomer.id}" />
+								</p:column>
+
+								<!-- CUSTOMER MAIN INFORMATION -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.companyCode']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{batchCustomer.company.code}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.name']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{batchCustomer.name}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.customerType']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{batchCustomer.customerType}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.batchCustomer.table.bms']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{batchCustomer.IBMSCustomer}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.tax_id']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText
+										rendered="#{!batchDetailController.batchEditable}"
+										value="#{null != batchCustomer.taxID ? batchCustomer.taxID : ' - '}" />
+									<p:cellEditor rendered="#{batchDetailController.batchEditable}">
+										<f:facet name="output">
+											<h:outputText value="#{batchCustomer.taxID}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{batchCustomer.taxID}"
+												styleClass="invoiceLineTable-edit"
+												label="#{msg['message.batchCustomer.table.tax_id']}">
+												<p:ajax event="change" update="@this" process="@this" />
+											</p:inputText>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.businessNumber']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText
+										value="#{null != batchCustomer.organisationBusinessNumber ? batchCustomer.organisationBusinessNumber : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.organizationType']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{batchCustomer.organizationType}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.masterCompany']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{null != batchCustomer.masterCompany ? batchCustomer.masterCompany : ' - '}" />
+								</p:column>
+
+								<p:column headerText="#{msg['message.batchCustomer.status']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==0}">
+									<h:outputText value="#{(labelUtil.getBatchCustomerStatusLabel(batchCustomer.status))}" />
+								</p:column>
+
+								<!-- BILLING -->
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.language']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==1}">
+									<h:outputText value="#{batchCustomer.invoiceLanguage}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingScenario']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==1}">
+									<h:outputText value="#{null != batchCustomer.billingScenario ? batchCustomer.billingScenario : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.agencyCommissionRate']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==1}">
+									<h:outputText value="#{null != batchCustomer.agencyCommissionRate ? batchCustomer.agencyCommissionRate : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.agencyVolumeBonusRate']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==1}">
+									<h:outputText value="#{null != batchCustomer.agencyVolumeBonusRate ? batchCustomer.agencyVolumeBonusRate : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.invoiceDeliveryPreference']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==1}">
+									<h:outputText
+										value="#{null != batchCustomer.invoiceDeliveryPreference ? batchCustomer.invoiceDeliveryPreference : ' - '}" />
+								</p:column>
+
+
+								<!-- CONTACT -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.street']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{batchCustomer.officeAddressStreet}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.region']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{null != batchCustomer.officeAddressRegion ? batchCustomer.officeAddressRegion : ' - '}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.city']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{batchCustomer.officeAddressCity}" />
+								</p:column>
+
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.postalCode']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{batchCustomer.officeAddressPostalCode}" />
+								</p:column>
+
+								<!-- OFFICE ADDRESS COUNTRY -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.country']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{batchCustomer.officeAddressCountry}" />
+								</p:column>
+
+								<!-- TELEPHONE -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.telephone']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{null != batchCustomer.telephone ? batchCustomer.telephone : ' - '}" />
+								</p:column>
+
+								<!-- FAX -->
+								<p:column headerText="#{msg['message.batchCustomer.table.fax']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==2}">
+									<h:outputText value="#{null != batchCustomer.fax ? batchCustomer.fax : ' - '}" />
+								</p:column>
+
+								<!-- ACCOUNTING CLERK -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.name']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==3}">
+									<h:outputText value="#{null != batchCustomer.clerkName ? batchCustomer.clerkName : ' - '}" />
+								</p:column>
+
+								<!-- CLERK TELEPHONE -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.telephone']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==3}">
+									<h:outputText value="#{null != batchCustomer.clerkTelephone ? batchCustomer.clerkTelephone : ' - '}" />
+								</p:column>
+
+								<!-- CLERK FAX -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.fax']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==3}">
+									<h:outputText value="#{null != batchCustomer.clerkFax ? batchCustomer.clerkFax : ' - '}" />
+								</p:column>
+
+								<!-- CLERK EMAIL -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.email']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==3}">
+									<h:outputText value="#{null != batchCustomer.clerkEmail ? batchCustomer.clerkEmail : ' - '}" />
+								</p:column>
+
+								<!-- SALES GROUP -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.salesGroupType']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==3}">
+									<h:outputText value="#{null != batchCustomer.salesGroup ? batchCustomer.salesGroup : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactName']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText value="#{null != batchCustomer.reportContactName ? batchCustomer.reportContactName : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT EMAIL -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactEmail']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText value="#{null != batchCustomer.reportContactEmail ? batchCustomer.reportContactEmail : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT TELEPHONE -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactTelephone']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText value="#{null != batchCustomer.reportContactTelephone ? batchCustomer.reportContactTelephone  : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT ADDRESS COUNTRY -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactAddressCountry']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText
+										value="#{null != batchCustomer.reportContactAddressCountry ? batchCustomer.reportContactAddressCountry  : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT ADDRESS REGION -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactAddressRegion']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText
+										value="#{null != batchCustomer.reportContactAddressRegion ? batchCustomer.reportContactAddressRegion  : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT ADRESS CITY -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactAddressCity']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText value="#{null != batchCustomer.reportContactAddressCity ? batchCustomer.reportContactAddressCity  : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT ADDRESS STREET -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactAddressStreet']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText
+										value="#{null != batchCustomer.reportContactAddressStreet ? batchCustomer.reportContactAddressStreet  : ' - '}" />
+								</p:column>
+
+								<!-- REPORT CONTACT ADDRESS POSTAL CODE -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.reportContactAddressPostalCode']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==4}">
+									<h:outputText
+										value="#{null != batchCustomer.reportContactAddressPostalCode ? batchCustomer.reportContactAddressPostalCode  : ' - '}" />
+								</p:column>
+
+								<!-- OTHERS -->
+
+								<!-- SERVICE RECEIVED -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.serviceReceivedType']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==5}">
+									<h:outputText value="#{null != batchCustomer.serviceReceivedType ? batchCustomer.serviceReceivedType : ' - '}" />
+								</p:column>
+
+								<!-- PARENT AGENCY -->
+								<p:column
+									headerText="#{msg['message.batchCustomer.table.billingContact.parentAgency']}"
+									styleClass="col-user-user"
+									rendered="#{batchDetailController.selectedBatchDetailTab==5}">
+									<h:outputText value="#{null != batchCustomer.parentAgency ? batchCustomer.parentAgency : ' - '}" />
+								</p:column>
+
+							</p:dataTable>
+						</h:form>
+					</p:panel>
+					
+					<!-- TRANSMISSION ORDERS LIST -->
+					<p:panel id="dataTableInvoice" widgetVar="dataTableInvoice"
+						closeSpeed="0" rendered="#{batchDetailController.renderedInvoice}"
+						styleClass="no-border-panel">
+
+						<div class="FontBold Fs18 hardblue">
+							#{msg['message.detailBatch.accordionPanel.tab.content.invoice']}
+						</div>
+
+						<h:form id="tabViewInvoiceForm">
+							<p:tabView id="tabViewInvoice"
+								styleClass="dis-batch-customer-custom-tab-view"
+								activeIndex="#{batchDetailController.selectedBatchDetailTab}">
+								<p:ajax event="tabChange" process="@form"
+									update="dataTableInvoice" />
+
+								<p:tab title="#{msg['message.orders.tab.mainInformation']}" />
+								<p:tab title="#{msg['message.orders.tab.billing']}" />
+								<p:tab title="#{msg['message.orders.tab.edit']}" />
+								<p:tab title="#{msg['message.orders.tab.campaign']}" />
+								<p:tab title="#{msg['message.orders.tab.salesRepresentative']}" />
+								<p:tab title="#{msg['message.orders.tab.salesChannel']}" />
+								<p:tab title="#{msg['message.orders.tab.commissions']}" />
+								<p:tab title="#{msg['message.orders.tab.others']}" />
+
+							</p:tabView>
+						</h:form>
+
+						<p:dataTable id="listInvoice" widgetVar="listInvoice" var="toh"
+							rowIndexVar="rowIndexVar"
+							value="#{batchDetailController.tohBatchLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							paginatorPosition="bottom"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+									{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="single" lazy="true" rows="10" stickyHeader="false"
+							selectionMode="single"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true" styleClass="dataTable-letters" rowKey="#{toh.id}">
+
+							<!--ROW INDEX -->
+							<p:column headerText="#{msg['message.orders.table.line']}"
+								styleClass="col-index">
+								<h:outputText value="#{rowIndexVar+1}" />
+							</p:column>
+
+							<!-- LAIS ID -->
+							<p:column headerText="#{msg['message.common.lais.id']}"
+								styleClass="col-index">
+								<h:outputText value="#{toh.id}" />
+							</p:column>
+
+							<!--MAIN INFORMATION TAB-->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==0}">
+								<!-- BILL TO REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.billToReference']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.billToReference ? toh.billToReference : ' - '}" />
+								</p:column>
+
+								<!-- CUSTOMER REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.customerReference']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.customerReference ? toh.customerReference : ' - '}" />
+								</p:column>
+
+								<!-- AGENCY CLIENT REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.agencyClientReference']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.agencyclientreference ? toh.agencyclientreference : ' - '}" />
+								</p:column>
+
+								<!-- DOCT TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.docType']}">
+
+									<h:outputText value="#{null != toh.docType ? toh.docType : ' - '}" />
+								</p:column>
+
+								<!-- TAX CODE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.taxCode']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.taxCode ? toh.taxCode : ' - '}" />
+								</p:column>
+
+								<!-- INVOICE NUMBER -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.invoiceNumber']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.invoiceNumber ? toh.invoiceNumber : ' - '}" />
+								</p:column>
+
+								<!-- INVOICE DATE -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.invoiceDate']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.invoiceDate ? toh.invoiceDate : ' - '}" />
+								</p:column>
+
+								<!-- ORIGINAL INVOICE NUMBER -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.originalInvoiceNumber']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.originalInvoiceNumber ? toh.originalInvoiceNumber : ' - '}" />
+								</p:column>
+
+								<!-- DOCUMENT CREATION DATE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.docCreateDate']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.docCreateDate ? toh.docCreateDate : ' - '}" />
+								</p:column>
+								
+								<!-- CPE CODE -->
+								<p:column headerText="#{msg['message.orders.table.mainInformation.cpeCode']}" >					
+									<p:outputLabel value="#{null != toh.cpeCode ? toh.cpeCode : ' - '}" />
+								</p:column>
+
+								<!-- CURRENCY CODE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.currencyCode']}" >
+									<h:outputText value="#{null != toh.currency ? toh.currency.iso3Code : ' - '}" />
+								</p:column>
+
+								<!-- GROSS COST -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.grossCost']}" >
+									<h:outputText
+										value="#{!toh.reversal ? toh.grossCost : -1*toh.grossCost}"
+										styleClass="#{toh.reversal ? 'red-text' : '' }">
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+
+								<!-- STATUS -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.status']}" >
+									<h:outputText value="#{(labelUtil.getTransmissionOrderStatusLabel(toh.status))}" />
+								</p:column>
+							</c:if>
+
+							<!--BILLING TAB-->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==1}">
+
+								<!-- BILL ITEM TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.billItemType']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.billItemType ? toh.billItemType : ' - '}" />
+								</p:column>
+
+								<!-- BILLING ITEM ID -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.billingItemId']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.billingItemId ? toh.billingItemId : ' - '}" />
+								</p:column>
+
+								<!-- PAYMENT TERMS -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.paymentTerms']}" >
+									<h:outputText value="#{null != toh.paymentTerms ? toh.paymentTerms : ' - '}" />
+								</p:column>
+
+								<!-- PERIOD TYPE DESCRIPTION -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.periodTypeDescription']}" >
+									<h:outputText value="#{null != toh.periodTypeDescription ? toh.periodTypeDescription : ' - '}" />
+								</p:column>
+
+								<!-- INVOICE START DATE -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.invoiceStartDate']}" >
+									<h:outputText value="#{null != toh.invoiceStartDate ? toh.invoiceStartDate : ' - '}" />
+								</p:column>
+
+								<!-- INVOICE END DATE -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.invoiceEndDate']}" >
+									<h:outputText value="#{null != toh.invoiceEndDate ? toh.invoiceEndDate : ' - '}" />
+								</p:column>
+
+								<!-- SCHEDULE GROUP TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.scheduleGroupType']}" >
+									<h:outputText value="#{null != toh.scheduleGroupType ? toh.scheduleGroupType : ' - '}" />
+								</p:column>
+
+								<!-- REASON CODE -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.reasonCode']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.reasonCode ? toh.reasonCode : ' - '}" />
+								</p:column>
+
+								<!-- LANGUAGE CODE TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.billing.languageCode']}" >
+									<h:outputText value="#{null != toh.language ? toh.language : ' - '}" />
+								</p:column>
+
+							</c:if>
+
+
+							<!-- COMBINATION TAB -->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==2}">
+
+								<!-- BILLING SCENARIO -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.billingScenario']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.billingScenario ? toh.billingScenario.number : ' - '}" />
+								</p:column>
+
+								<!-- INSERTION ORDER -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.insertionOrder']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.insertionOrder ? toh.insertionOrder : ' - '}" />
+								</p:column>
+
+								<!-- PURCHASE ORDER -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.purchaseOrder']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.purchaseOrder ? toh.purchaseOrder : ' - '}" />
+								</p:column>
+
+								<!-- PRE-BILL REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.prebillReference']}"
+									styleClass="">
+									<h:outputText value="#{null != toh.prebill ? toh.prebill.invoiceNumber : ' - '}" />
+								</p:column>
+
+								<!-- DELAY REASON -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.delayReason']}"
+									styleClass="">
+
+									<h:outputText value="#{null != toh.delayReason ? toh.delayReason.code : ' - '}" />
+								</p:column>
+
+								<!-- BILLABLE -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.billable']}"
+									styleClass="">
+
+									<h:outputText
+										value="#{toh.billable ? 
+											msg['message.common.true']:msg['message.common.false']}" />
+								</p:column>
+
+								<!-- STATUS -->
+								<p:column
+									headerText="#{msg['message.orders.table.edit.status']}" >
+									<h:outputText value="#{(labelUtil.getTransmissionOrderStatusLabel(toh.status))}" />
+								</p:column>
+
+							</c:if>
+
+
+							<!-- CAMPAIGN -->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==3}">
+
+								<!-- NUMBER OF UNIT -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.numberOfUnit']}" >									<h:outputText value="#{null != toh.numberOfUnit ? toh.numberOfUnit : ' - '}" />
+								</p:column>
+
+								<!-- UNIT DESCRIPTION -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.unitDescription']}" >
+									<h:outputText value="#{null != toh.unitDescription ? toh.unitDescription : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN START DATE -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignStartDate']}" >
+									<h:outputText value="#{null != toh.campaignStartDate ? toh.campaignStartDate : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN END DATE -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignEndDate']}" >
+									<h:outputText value="#{null != toh.campaignEndDate ? toh.campaignEndDate : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignReference']}" >
+									<h:outputText value="#{null != toh.campaignReference ? toh.campaignReference : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignName']}" >
+									<h:outputText value="#{null != toh.campaignName ? toh.campaignName : ' - '}" />
+								</p:column>
+
+								<!-- ORDER REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.orderRef']}" >
+									<h:outputText value="#{null != toh.orderRef ? toh.orderRef : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN BILLING TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignBillingType']}" >
+									<h:outputText value="#{null != toh.campaignBillingType ? toh.campaignBillingType : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignType']}" >
+									<h:outputText value="#{null != toh.campaignType ? toh.campaignType : ' - '}" />
+								</p:column>
+
+								<!-- CAMPAIGN ID -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignId']}" >
+									<h:outputText value="#{null != toh.campaignId ? toh.campaignId : ' - '}" />
+								</p:column>
+
+							</c:if>
+
+
+							<!--SALES REPRESENTATIVE TAB-->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==4}">
+
+								<!-- SALES REPRESENTATIVE COMPANY REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.salesRepCompanyReference']}" >
+									<h:outputText value="#{null != toh.salesRepCompanyReference ? toh.salesRepCompanyReference : ' - '}" />
+								</p:column>
+
+								<!-- SALES PERSON -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.salesPerson']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.salesPerson ? toh.salesRepresentatives.salesPerson : ' - '}" />
+								</p:column>
+
+								<!-- SALES REPRESENTATIVE NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.salesRepName']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.salesRepName ? toh.salesRepresentatives.salesRepName : ' - '}" />
+								</p:column>
+
+								<!-- SALES REP TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.type']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.type ? toh.salesRepresentatives.type : ' - '}" />
+								</p:column>
+
+								<!-- SALES OFFICE -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.salesOffice']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.salesOffice ? oh.salesRepresentatives.salesOffice : ' - '}" />
+								</p:column>
+
+								<!-- SALES GROUP -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.salesGroup']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.salesGroup ? toh.salesRepresentatives.salesGroup : ' - '}" />
+								</p:column>
+
+								<!-- SALES GROUP TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.salesGroupType']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.salesGroupType ? toh.salesRepresentatives.salesGroupType : ' - '}" />
+								</p:column>
+
+								<!-- SALES REP PERCENTAGE -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesRepresentative.percentage']}" >
+									<h:outputText value="#{null != toh.salesRepresentatives.percentage ? toh.salesRepresentatives.percentage : ' - '}">
+										<f:convertNumber type="percent" pattern="#0.00"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+
+							</c:if>
+
+
+							<!--SALES CHANNEL-->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==5}">
+
+								<!-- SALES CHANNEL NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesChannel.salesChannelName']}" >
+									<h:outputText value="#{null != toh.salesChannel.salesChannelName ? toh.salesChannel.salesChannelName : ' - '}" />
+								</p:column>
+
+								<!-- SALES CHANNEL CALL SIGN -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesChannel.salesChannelCallSign']}" >
+									<h:outputText value="#{null != toh.salesChannel.salesChannelCallSign ? toh.salesChannel.salesChannelCallSign : ' - '}" />
+								</p:column>
+
+								<!-- SALES CHANNEL DEMOGRAPHIC NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesChannel.demographicName']}" >
+									<h:outputText value="#{null != toh.salesChannel.demographicName ? toh.salesChannel.demographicName : ' - '}" />
+								</p:column>
+
+								<!-- GROSS COST PER SALES CHANNEL -->
+								<p:column
+									headerText="#{msg['message.orders.table.salesChannel.grossCostPerSalesChannel']}" >
+									<h:outputText
+										value="#{!toh.reversal ? toh.salesChannel.grossCostPerSalesChannel : -1*toh.salesChannel.grossCostPerSalesChannel }"
+										styleClass="#{toh.reversal ? 'red-text' : '' }" >
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+
+								<!-- CONTRACT TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.contractType']}" >
+									<h:outputText value="#{null != toh.contractType ? toh.contractType : ' - '}" />
+								</p:column>
+
+							</c:if>
+
+							<!--COMISSION-->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==6}">
+
+								<!-- AGENCY CLIENT REFERENCE -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.agencyClientReference']}" >
+									<h:outputText value="#{null != toh.agencyclientreference ? toh.agencyclientreference : ' - '}" />
+								</p:column>
+
+								<!-- PRODUCT NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.transmissionProduct.productName']}" >
+									<h:outputText value="#{null != toh.transmissionProduct.productName ? toh.transmissionProduct.productName : ' - '}" />
+								</p:column>
+
+								<!-- COMMISSION TYPE -->
+								<p:column
+									headerText="#{msg['message.orders.table.commission.type']}" >
+									<p:dataList value="#{toh.commissions}" id="commissionsType"
+										var="commission" type="definition"
+										styleClass="datalist-border"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}">
+										<h:outputText id="commissionsTypeLabel"
+											value="#{null != commission.type ? commission.type : ' - '}" />
+									</p:dataList>
+								</p:column>
+
+
+								<!--NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.commission.name']}" >
+									<p:dataList value="#{toh.commissions}" id="commissionsName"
+										var="commission" type="definition"
+										styleClass="datalist-border"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}">
+										<h:outputText id="commissionsNameLabel"
+											value="#{null != commission.name ? commission.name : ' - '}" />
+									</p:dataList>
+								</p:column>
+
+								<!-- PERCENTAGE -->
+								<p:column
+									headerText="#{msg['message.orders.table.commission.percentage']}" >
+									<p:dataList value="#{toh.commissions}"
+										id="commissionsPercentage" var="commission" type="definition"
+										styleClass="datalist-border"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}">
+										<h:outputText id="commissionsPercentageLabel"
+											value="#{null != commission.percentage ? commission.percentage : ' - '}">
+											<f:convertNumber type="percent" pattern="#0.00"
+												maxFractionDigits="2" />
+										</h:outputText>
+
+									</p:dataList>
+
+								</p:column>
+
+								<!-- AMOUNT -->
+								<p:column
+									headerText="#{msg['message.orders.table.commission.amount']}" >
+									<p:dataList value="#{toh.commissions}" id="commissionsAmount"
+										var="commission" type="definition"
+										styleClass="datalist-border #{toh.reversal ? 'light-red-text' : '' }"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}">
+
+										<h:outputText
+											value="#{!toh.reversal? commission.amount : -1*commission.amount }" >
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</h:outputText>
+
+									</p:dataList>
+
+								</p:column>
+
+								<!-- CAMPAIGN NAME -->
+								<p:column
+									headerText="#{msg['message.orders.table.campaign.campaignName']}" >
+									<h:outputText value="#{null != toh.campaignName ? toh.campaignName : ' - '}" />
+								</p:column>
+
+							</c:if>
+
+
+							<!--OTHERS-->
+							<c:if test="#{batchDetailController.selectedBatchDetailTab==7}">
+
+								<!-- TEXT LINE -->
+								<p:column
+									headerText="#{msg['message.orders.table.others.textLine']}" >
+									<h:outputText value="#{(null != toh.textLine) and (not empty toh.textLine) ? toh.textLine : ' - '}" />
+								</p:column>
+
+								<!-- SUMMARY INDICATOR -->
+								<p:column
+									headerText="#{msg['message.orders.table.mainInformation.summaryIndicator']}" >
+									<h:outputText
+										value="#{toh.summaryIndicator ? msg['message.common.true']:msg['message.common.false']}" />
+								</p:column>
+
+							</c:if>
+
+						</p:dataTable>
+
+					</p:panel>
+
+					<p:spacer styleClass="dis-spacer-small" />
+
+					<p:accordionPanel id="content" widgetVar="content" multiple="true"
+						activeIndex="0" >
+
+						<p:tab
+							title="#{msg['message.detailBatch.accordionPanel.tab.log']}">
+
+							<p:panel styleClass="dis-fake-tabview no-border-panel no-spacing">
+
+								<ui:param name="batchLogTab" value="1" />
+								<h:form id="tabViewBatchLogForm">
+									<p:tabView id="batchLogTabView"
+										styleClass="dis-batch-customer-custom-tab-view"
+										activeIndex="#{batchDetailController.selectedBatchLogTab}">
+
+										<p:ajax event="tabChange" process="@form"
+											update="content:batchLogErrorForm"
+											listener="#{batchDetailController.onBatchLogTabChange}" />
+
+										<p:tab title="Error">
+										</p:tab>
+
+										<p:tab title="Log">
+										</p:tab>
+									</p:tabView>
+								</h:form>
+
+								<h:form id="batchLogErrorForm">
+									<p:dataTable id="listBatchLog" widgetVar="listBatchLog"
+										var="batchLog"
+										value="#{batchDetailController.batchLogLazyDataModel}"
+										styleClass="dataTable-letters" paginatorAlwaysVisible="true"
+										paginator="true" paginatorPosition="bottom"
+										currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+										paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+										{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+										rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+										sortMode="single" rows="10" lazy="true" stickyHeader="false"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}"
+										reflow="true">
+
+										<!-- LAIS ID -->
+										<p:column headerText="#{msg['message.common.lais.id']}"
+											styleClass="column-size-record"
+											filterBy="#{batchLog.message}">
+
+											<f:facet name="filter">
+												<p:inputText
+													value="#{batchDetailController.batchLogFilterErrorGenerator.laisId}"
+													styleClass="hover-color"
+													onchange="PF('listBatchLog').filter()" />
+											</f:facet>
+
+											<h:outputText value="#{null != batchLog.laisId ? batchLog.laisId : ' - '}" />
+										</p:column>
+
+										<p:column
+											headerText="#{msg['message.column.error.batch.record']}"
+											styleClass="column-size-record">
+											<h:outputText value="#{null != batchLog.record ? batchLog.record : ' - '}" />
+										</p:column>
+
+										<p:column
+											headerText="#{msg['message.column.error.batch.message']}"
+											styleClass="column-size-message col-left"
+											filterBy="#{batchLog.message}">
+
+											<f:facet name="filter">
+												<p:inputText
+													value="#{batchDetailController.batchLogFilterErrorGenerator.message}"
+													styleClass="hover-color"
+													onchange="PF('listBatchLog').filter()" />
+											</f:facet>
+
+											<h:outputText value="#{null != batchLog.message ? batchLog.message : ' - '}" />
+										</p:column>
+
+										<p:column filterBy="#{batchLog.batchLogType}"
+											styleClass="column-size-errorType"
+											headerText="#{msg['message.column.error.batch.errorType']}">
+
+											<f:facet name="filter">
+												<p:selectCheckboxMenu
+													value="#{batchDetailController.batchLogFilterErrorGenerator.batchLogTypes}"
+													label="#{msg['message.common.types']}"
+													styleClass="hover-color-combo"
+													onchange="PF('listBatchLog').filter()">
+
+													<o:converter converterId="omnifaces.SelectItemsConverter"
+														list="#{batchDetailController.selectedBatchLogTab == batchLogTab ?
+														batchDetailController.batchLogTypes :
+														batchDetailController.batchErrorTypes}" />
+
+													<f:selectItems
+														value="#{batchDetailController.selectedBatchLogTab == batchLogTab ?
+														selectorController.batchLogTypes :
+														selectorController.batchErrorTypes}"
+														var="type" itemLabel="#{(labelUtil.getBatchLogTypeLabel(type))}" />
+												</p:selectCheckboxMenu>
+											</f:facet>
+
+											<h:outputText value="#{(labelUtil.getBatchLogTypeLabel(batchLog.batchLogType))}"
+												title="#{batchLog.batchLogType.description}" />
+										</p:column>
+									</p:dataTable>
+								</h:form>
+							</p:panel>
+						</p:tab>
+					</p:accordionPanel>
+
+					<p:spacer styleClass="dis-spacer-small" />
+
+					<p:panelGrid styleClass="no-border no-spacing transparent"
+						columns="2">
+
+						<p:commandButton id="back" process="@this"
+							icon="ui-icon-arrowreturnthick-1-w"
+							value="#{msg['message.common.back']}"
+							action="#{batchDetailController.back}" />
+
+						<p:commandButton id="saveBatchButton"
+							value="#{msg['message.common.save']}" icon="ui-icon-check"
+							action="#{batchDetailController.saveBatch}" process="@this"
+							title="#{msg['message.invoice.tooltip.createUpdate.save']}"
+							rendered="#{batchDetailController.batchEditable}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html" locale="#{languageController.locale}">
+    <h:head>
+    	<link rel="shortcut icon" href="#{resource['images/favicon.ico']}" type="image/x-icon" />
+        
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        
+        <title>#{msg['message.application']}</title>
+        
+        <h:outputScript name="js/layout.js" library="sentinel-layout" />
+        <h:outputScript name="js/primefaces-locales.js" />
+        <h:outputText value="&lt;!--[if gte IE 9]&gt;" escape="false" />
+            <style type="text/css">
+                .ui-tabs-top .ui-tabs-nav li,
+                .ui-tabs .ui-tabs-nav li{margin-bottom: 0px !important;}
+            </style>
+        <h:outputText value="&lt;![endif]--&gt;" escape="false" />
+
+        <ui:insert name="head" />
+    </h:head>
+
+    <h:body>        
+     	<!-- GLOBAL TOOLTIP -->
+		<p:tooltip globalSelector="a,:input,:button,label,div" showDelay="0" />
+							
+     	<!-- GLOBAL CONFIRM DIALOG -->
+   		<p:confirmDialog global="true" showEffect="fade">
+			<p:commandButton value="#{msg['message.common.true']}" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="#{msg['message.common.false']}" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<!-- SPINNER TARGET DIV -->
+		<div id="spinner-target" class="spinner-targett" />
+		
+		<!-- SECTIONS -->        
+        <div id="layout-portlets-cover-2" class="fontRegular">
+            <ui:insert name="content">
+               Template
+            </ui:insert>
+        </div>
+
+		<!-- JS & CSS -->
+        <h:outputStylesheet name="css/font-icon-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/sentinel-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="css/core-layout.css" library="sentinel-layout" />
+        <h:outputStylesheet name="ais-style.css" library="css"/>
+        <h:outputStylesheet name="hover.css" library="css"/>
+        <h:outputScript name="js/spin.js"/>
+        <h:outputScript name="js/dis.js"/>
+        <h:outputScript name="js/validation.js"/>
+        <h:outputScript name="js/report.js"/>
+        
+        <!-- GLOBAL AJAX ERROR HANDLING FROM error.xhtml -->
+        <div id="ajaxErrorPage" class="fontRegular red-back" style="display: none;">
+			<div class="Container100 Top20Percent PosAbsolute MarAuto OvHidden error-page">
+				<div class="Wid50 MarAuto OvHidden TexAlCenter">
+					<h:graphicImage name="images/error-face.svg"
+						library="sentinel-layout" style="width: 100px;" />
+					<div class="EmptyBox20"></div>
+					<span class="white Fs100 Wid100 DispBlock">#{msg['message.page.error']}</span> <span
+						class="white Wid100 DispBlock Fs24">#{msg['message.page.error.summary']}</span><br />
+					<span class="white Wid100 DispBlock Fs12">#{msg['message.page.error.detail']}<br />
+					</span>
+					<div class="EmptyBox20"></div>
+					<p:button value="#{msg['message.common.back']}" styleClass="Fs24"
+						href="/faces/index.xhtml"></p:button>
+					<div class="EmptyBox50"></div>
+				</div>
+			</div>
+		</div>
+        
+        
+        <!-- GLOBAL WAITING THINGY (AJAX STATUS) -->
+     	<p:ajaxStatus 
+     		onstart="globalSpinner.spin(spinnerTarget)" 
+     		onsuccess="globalSpinner.stop()"
+     		onerror="ajaxStatusError()" />
+     		       
+    </h:body>
+</f:view>
+</html>

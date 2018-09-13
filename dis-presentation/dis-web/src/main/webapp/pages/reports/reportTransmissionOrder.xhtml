@@ -1,0 +1,255 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.report.transmissionOrder.name']}
+</ui:define>
+
+	<!-- REPORT Transmission Order -->
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:panel>
+
+					<o:importConstants
+						type="com.discovery.dis.domain.billing.impl.Invoice$INVOICE_STATUS"
+						var="INVOICE_STATUS" />
+
+					<h:form prependId="false" id="reportForm">
+						<p:messages id="messages" showDetail="false" autoUpdate="true"
+							closable="true" />
+
+						<p:panelGrid styleClass="transparent no-border" columns="4">
+
+							<!-- COMPANY -->
+							<p:outputLabel for="companyFilter"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+								value="#{reportTransmissionOrderController.company}"
+								title="#{msg['message.customer.tooltip.filterCode']}"
+								converter="omnifaces.SelectItemsConverter" required="true">
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+								<p:ajax update="billTo agency advertiser" />
+							</p:selectOneMenu>
+							<!-- FROM ERP INVOICE NUMBER -->
+							<p:outputLabel for="invoiceERPFrom"
+								value="#{msg['message.report.invoiceFromERP']}" />
+							<p:inputText id="invoiceERPFrom"
+								value="#{reportTransmissionOrderController.invoiceERPNumberFrom}"
+								title="#{msg['message.report.invoiceFromERP.tooltip']}"
+								styleClass="dis-input-width" maxlength="30">
+							</p:inputText>
+
+							<!-- START DATE -->
+							<p:outputLabel
+								value="#{msg['message.report.startTransmissionDate']}"
+								for="startDateFilter" />
+							<p:calendar id="startDateFilter"
+								value="#{reportTransmissionOrderController.startDate}"
+								title="#{msg['message.report.startTransmissionDate.tooltip']}"
+								locale="#{languageController.language}"
+								pattern="#{languageController.localeDatePattern}"
+								styleClass="dis-input-width" />
+
+							<!-- TO ERP INVOICE NUMBER -->
+							<p:outputLabel for="invoiceERPTo"
+								value="#{msg['message.report.invoiceToERP']}" />
+							<p:inputText id="invoiceERPTo"
+								value="#{reportTransmissionOrderController.invoiceERPNumberTo}"
+								title="#{msg['message.report.invoiceToERP.tooltip']}"
+								styleClass="dis-input-width" maxlength="30">
+							</p:inputText>
+
+							<!-- END DATE -->
+							<p:outputLabel
+								value="#{msg['message.report.endTransmissionDate']}"
+								for="endDateFilter" />
+							<p:calendar id="endDateFilter"
+								value="#{reportTransmissionOrderController.endDate}"
+								title="#{msg['message.report.endTransmissionDate.tooltip']}"
+								locale="#{languageController.language}"
+								pattern="#{languageController.localeDatePattern}"
+								styleClass="dis-input-width" />
+
+							<!-- FROM IBMS INVOICE ID -->
+							<p:outputLabel for="invoiceFrom"
+								value="#{msg['message.report.invoiceFrom']}" />
+							<p:inputText id="invoiceFrom"
+								value="#{reportTransmissionOrderController.invoiceFrom}"
+								title="#{msg['message.report.invoiceFrom.tooltip']}"
+								styleClass="dis-input-width" maxlength="20">
+								<f:convertNumber integerOnly="true" type="number" />
+							</p:inputText>
+
+							<!-- BILL TO -->
+							<p:outputLabel for="billTo"
+								value="#{msg['message.common.billTo']}" />
+							<p:selectOneMenu id="billTo"
+								value="#{reportTransmissionOrderController.billTo}"
+								effect="fade" var="billTo" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.transmissionOrder.billTo.tooltip']}"
+								disabled="#{empty reportTransmissionOrderController.company}">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.billTo']}" itemValue="#{null}" />
+								<f:selectItems
+									value="#{selectorController.getCustomerList(reportTransmissionOrderController.company)}"
+									var="billTo" itemValue="#{billTo}"
+									itemLabel="#{(labelUtil.getCustomerLabel(billTo))}" />
+								<p:column>
+									<p:outputLabel
+										value="#{billTo != null ? (labelUtil.getCustomerLabel(billTo)) : msg['message.select.billTo']}" />
+								</p:column>
+							</p:selectOneMenu>
+
+							<!-- TO IBMS INVOICE ID -->
+							<p:outputLabel for="invoiceTo"
+								value="#{msg['message.report.invoiceTo']}" />
+							<p:inputText id="invoiceTo"
+								value="#{reportTransmissionOrderController.invoiceTo}"
+								title="#{msg['message.report.invoiceTo.tooltip']}"
+								styleClass="dis-input-width" maxlength="20">
+
+								<f:convertNumber integerOnly="true" type="number" />
+							</p:inputText>
+
+							<!-- ADVERTISER -->
+							<p:outputLabel for="advertiser"
+								value="#{msg['message.common.advertiser']}" />
+							<p:selectOneMenu id="advertiser"
+								value="#{reportTransmissionOrderController.advertiser}"
+								effect="fade" var="advertiser" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.transmissionOrder.advertiser.tooltip']}">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.advertiser']}"
+									itemValue="#{null}" />
+								<f:selectItems
+									value="#{selectorController.getNonAgencyList(reportTransmissionOrderController.company)}"
+									var="advertiser" itemValue="#{advertiser}"
+									itemLabel="#{advertiser}" />
+								<p:column>
+									<p:outputLabel
+										value="#{advertiser != null ? advertiser : msg['message.select.advertiser']}" />
+								</p:column>
+							</p:selectOneMenu>
+
+							<!-- FORM IBMS BATCH -->
+							<p:outputLabel for="ibmsBatchFrom"
+								value="#{msg['message.report.ibmsBatchFrom']}" />
+							<p:inputText id="ibmsBatchFrom"
+								value="#{reportTransmissionOrderController.ibmSBatchFrom}"
+								title="#{msg['message.report.ibmsBatchFrom.tooltip']}"
+								styleClass="dis-input-width" maxlength="30"
+								validatorMessage="#{msg['message.report.transmissionOrder.invalid.ibmsBatchFrom']}"
+								>
+								<f:validateRegex pattern="^[0-9]*$" />
+							</p:inputText>
+
+							<!-- AGENCY -->
+							<p:outputLabel for="agency"
+								value="#{msg['message.common.agency']}" />
+							<p:selectOneMenu id="agency"
+								value="#{reportTransmissionOrderController.agency}"
+								effect="fade" var="agency" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.transmissionOrder.agency.tooltip']}"
+								disabled="#{empty reportTransmissionOrderController.company}">
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.agency']}" itemValue="#{null}" />
+								<f:selectItems
+									value="#{selectorController.getAgencyList(reportTransmissionOrderController.company)}"
+									var="agency" itemValue="#{agency}" itemLabel="#{agency}" />
+								<p:column>
+									<p:outputLabel
+										value="#{agency != null ? agency : msg['message.select.agency']}" />
+								</p:column>
+							</p:selectOneMenu>
+
+							<!-- TO IBMS BATCH -->
+							<p:outputLabel for="ibmsBatchTo"
+								value="#{msg['message.report.ibmsBatchTo']}" />
+							<p:inputText id="ibmsBatchTo"
+								value="#{reportTransmissionOrderController.ibmSBatchTo}"
+								title="#{msg['message.report.ibmsBatchTo.tooltip']}"
+								styleClass="dis-input-width" maxlength="30"
+								validatorMessage="#{msg['message.report.transmissionOrder.invalid.ibmsBatchTo']}">
+								<f:validateRegex pattern="^[0-9]*$" />
+							</p:inputText>
+
+							<!-- TRANSMISSION ORDER STATUS -->
+							<p:outputLabel value="#{msg['message.filter.orders.status']}"
+								for="toStatus" />
+							<p:selectCheckboxMenu id="toStatus"
+								value="#{reportTransmissionOrderController.transmOrderStatusList}"
+								label="#{msg['message.select.transmissionOrderStatus']}"
+								styleClass="dis-input-width dis-input-responsive-height-fix"
+								panelStyleClass="dis-input-width"
+								converter="omnifaces.SelectItemsConverter"
+								title="#{msg['message.report.transmissionOrder.status.tooltip']}">
+								<f:selectItems value="#{selectorController.tohStatusList}"
+									var="status" itemValue="#{status}"
+									itemLabel="#{(labelUtil.getTransmissionOrderStatusLabel(status))}" />
+							</p:selectCheckboxMenu>
+
+							<!-- SALES CHANNEL -->
+							<p:outputLabel for="channel"
+								value="#{msg['message.report.transmissionOrder.salesChannel']}" />
+							<p:selectOneMenu id="channel"
+								title="#{msg['message.report.transmissionOrder.salesChannel.tooltip']}"
+								styleClass="dis-input-width"
+								value="#{reportTransmissionOrderController.salesChannel}"
+								converter="omnifaces.SelectItemsConverter">
+								<f:selectItem
+									itemLabel="#{msg['message.report.journalEntry.channel.select']}"
+									itemValue="#{null}" />
+								<f:selectItems value="#{selectorController.channelList}"
+									var="channel" itemValue="#{channel}"
+									itemLabel="#{channel.code} - #{channel.description}" />
+							</p:selectOneMenu>
+
+							<!--  INVOICE STATUS -->
+							<p:outputLabel value="#{msg['message.invoice.invoiceStatus']}"
+								for="invoiceStatus" />
+							<p:selectCheckboxMenu id="invoiceStatus"
+								value="#{reportTransmissionOrderController.tOInvoiceStatusList}"
+								label="#{msg['message.select.invoiceStatus']}"
+								styleClass="dis-input-width dis-input-responsive-height-fix"
+								panelStyleClass="dis-input-width"
+								converter="omnifaces.SelectItemsConverter"
+								title="#{msg['message.report.transmissionOrder.status.tooltip']}">
+								<f:selectItems value="#{selectorController.invoiceStatusList}"
+									var="statusIn" itemValue="#{statusIn}"
+									itemLabel="#{(labelUtil.getInvoiceStatusLabel(statusIn))}" />
+							</p:selectCheckboxMenu>
+
+						</p:panelGrid>
+
+						<ui:param name="controller"
+							value="#{reportTransmissionOrderController}" />
+						<ui:include src="reportFooter.xhtml" />
+					</h:form>
+
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

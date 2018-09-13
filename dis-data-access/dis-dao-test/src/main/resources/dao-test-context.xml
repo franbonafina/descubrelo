@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+    http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<import resource="test-properties.xml" />
+
+	<context:annotation-config />
+	<context:component-scan base-package="com.discovery.dis" />
+
+	<import resource="test-transaction.xml" />
+	<import resource="test-database.xml" />
+
+	<!-- STORE PROCEDURE -->
+	<bean id="batchProcedure" class="com.discovery.dis.dao.procedure.BatchProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+	
+	<bean id="batchCustomerProcedure" class="com.discovery.dis.dao.procedure.BatchCustomerProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+
+	<bean id="batchTransmissionOrderProcedure" class="com.discovery.dis.dao.procedure.BatchTransmissionOrderProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+	
+	<bean id="getInvoiceNumberProcedure" name="getInvoiceNumberProcedure"
+		class="com.discovery.dis.dao.procedure.GetInvoiceNumberProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+	
+	<!-- DAO -->
+	<bean name="userRoleDao" id="userRoleDao" class="com.discovery.dis.dao.security.UserRoleDao" />
+	<bean name="userCompanyDao" id="userCompanyDao" class="com.discovery.dis.dao.security.UserCompanyDao" />	
+	
+	<bean name="userDao" id="userDao" class="com.discovery.dis.dao.security.UserDao" depends-on="userRoleDao userCompanyDao">
+		<constructor-arg ref="userRoleDao"/>
+		<constructor-arg ref="userCompanyDao"/>
+	</bean>
+	
+	<bean name="rolePermissionDao" id="rolePermissionDao" class="com.discovery.dis.dao.security.RolePermissionDao" />
+	
+	<bean name="roleDao" id="roleDao" class="com.discovery.dis.dao.security.RoleDao" depends-on="userRoleDao rolePermissionDao">
+		<constructor-arg ref="userRoleDao"/>		
+		<constructor-arg ref="rolePermissionDao"/>
+	</bean>
+
+	<bean name="permissionDao" id="permissionDao"
+		class="com.discovery.dis.dao.security.PermissionDao" depends-on="rolePermissionDao">
+		<constructor-arg ref="rolePermissionDao"/>
+	</bean>
+
+	<bean name="settingsDao" id="settingsDao"
+		class="com.discovery.dis.dao.configuration.SettingsDao" />
+	
+	<bean name="taxStatusDao" id="taxStatusDao"
+		class="com.discovery.dis.dao.domain.TaxStatusDao" />
+
+	<bean name="delayReasonDao" id="delayReasonDao"
+		class="com.discovery.dis.dao.domain.DelayReasonDao" />
+
+	<bean name="companyDao" id="companyDao"
+		class="com.discovery.dis.dao.domain.CompanyDao" depends-on="userDao">
+		<constructor-arg ref="userDao" />
+	</bean>
+
+	<bean name="batchCustomerDao" id="batchCustomerDao"
+		class="com.discovery.dis.dao.domain.BatchCustomerDao" depends-on="batchDao">
+		<constructor-arg ref="batchDao" />
+	</bean>	
+	
+	<bean name="serviceReceivedTypeCustomerDao" id="serviceReceivedTypeCustomerDao"
+		class="com.discovery.dis.dao.domain.ServiceReceivedTypeCustomerDao" />
+	<bean name="advertiserCustomerDao" id="advertiserCustomerDao"
+		class="com.discovery.dis.dao.domain.AdvertiserCustomerDao" />	
+
+	<bean name="customerDao" id="customerDao"
+		class="com.discovery.dis.dao.domain.CustomerDao" depends-on="batchDao serviceReceivedTypeCustomerDao advertiserCustomerDao">
+		<constructor-arg ref="batchDao" />
+		<constructor-arg ref="serviceReceivedTypeCustomerDao" />
+		<constructor-arg ref="advertiserCustomerDao" />
+	</bean>
+
+	<bean name="countryDao" id="countryDao"
+		class="com.discovery.dis.dao.domain.CountryDao" />
+
+	<bean name="addressDao" id="addressDao"
+		class="com.discovery.dis.dao.domain.AddressDao" />
+
+	<bean name="serviceReceivedTypeDao" id="serviceReceivedTypeDao"
+		class="com.discovery.dis.dao.domain.ServiceReceivedTypeDao" />
+		
+	<bean name="paymentMethodDao" id="paymentMethodDao"
+		class="com.discovery.dis.dao.domain.PaymentMethodDao" />
+	
+	<bean name="paymentTermDao" id="paymentTermDao"
+		class="com.discovery.dis.dao.domain.PaymentTermDao" />
+
+	<bean name="billingScenarioDao" id="billingScenarioDao"
+		class="com.discovery.dis.dao.domain.BillingScenarioDao" depends-on="companyDao">
+		<constructor-arg ref="companyDao"/>
+	</bean>
+
+	<bean name="languageDao" id="languageDao"
+		class="com.discovery.dis.dao.domain.LanguageDao" />
+
+	<bean name="erpTypeDao" id="erpTypeDao"
+		class="com.discovery.dis.dao.domain.ERPTypeDao" />
+		
+	<bean name="emailTypeDao" id="emailTypeDao"
+		class="com.discovery.dis.dao.domain.EmailTypeDao" />
+		
+	<bean name="telephoneTypeDao" id="telephoneTypeDao"
+		class="com.discovery.dis.dao.domain.TelephoneTypeDao" />
+		
+	<bean name="streetTypeDao" id="streetTypeDao"
+		class="com.discovery.dis.dao.domain.StreetTypeDao" />
+
+	<bean name="currencyDao" id="currencyDao"
+		class="com.discovery.dis.dao.domain.CurrencyDao" />
+
+	<bean name="batchDao" id="batchDao" class="com.discovery.dis.dao.domain.BatchDao" />
+
+	<bean name="batchLogDao" id="batchLogDao"
+		class="com.discovery.dis.dao.domain.BatchLogDao" depends-on="batchDao">
+		<constructor-arg ref="batchDao" />
+	</bean>
+
+	<bean name="tinValidationDao" id="tinValidationDao"
+		class="com.discovery.dis.dao.domain.TinValidationDao" />
+
+	<bean name="transmissionOrderHeaderDao" id="transmissionOrderHeaderDao"
+		class="com.discovery.dis.dao.domain.transmissionOrder.TransmissionOrderHeaderDao"
+		depends-on="batchDao">
+		<constructor-arg ref="batchDao" />
+	</bean>
+
+	<bean name="reportContactDao" id="reportContactDao"
+		class="com.discovery.dis.dao.domain.ReportContactDao" />
+
+	<bean name="batchLogTypeDao" id="batchLogTypeDao"
+		class="com.discovery.dis.dao.domain.BatchLogTypeDao" />
+
+	<bean name="invoiceDao" id="invoiceDao"
+		class="com.discovery.dis.dao.domain.InvoiceDao" />
+		
+	<bean name="invoiceTypeMappingDao" id="invoiceTypeMappingDao"
+		class="com.discovery.dis.dao.domain.InvoiceTypeMappingDao" />
+
+	<bean name="invoiceTypeDao" id="invoiceTypeDao"
+		class="com.discovery.dis.dao.domain.InvoiceTypeDao" />
+
+	<bean name="invoiceSubTypeDao" id="invoiceSubTypeDao"
+		class="com.discovery.dis.dao.domain.InvoiceSubTypeDao" />
+		
+	<bean name="coaTransactionMappingDao" id="coaTransactionMappingDao"
+		class="com.discovery.dis.dao.domain.CoATransactionMappingDao" />
+
+	<bean name="accountDao" id="accountDao"
+		class="com.discovery.dis.dao.domain.AccountDao" />
+
+	<bean name="geographyDao" id="geographyDao"
+		class="com.discovery.dis.dao.domain.GeographyDao" />
+
+	<bean name="platformDao" id="platformDao"
+		class="com.discovery.dis.dao.domain.PlatformDao" />
+
+	<bean name="profitCenterDao" id="profitCenterDao"
+		class="com.discovery.dis.dao.domain.ProfitCenterDao" />
+		
+	<bean name="costCenterDao" id="costCenterDao"
+		class="com.discovery.dis.dao.domain.CostCenterDao" />
+
+	<bean name="journalDao" id="journalDao"
+		class="com.discovery.dis.dao.domain.JournalDao" depends-on="invoiceDao">
+		<constructor-arg ref="invoiceDao" />
+	</bean>
+
+	<bean name="journalLineDao" id="journalLineDao"
+		class="com.discovery.dis.dao.domain.JournalLineDao" depends-on="journalDao">
+		<constructor-arg ref="journalDao" />
+	</bean>
+	
+	<bean name="journalEntryRuleDao" id="journalEntryRuleDao"
+		class="com.discovery.dis.dao.domain.JournalEntryRuleDao"/>
+	
+	<bean name="channelDao" id="channelDao"
+		class="com.discovery.dis.dao.domain.ChannelDao" />
+		
+	<bean name="commissionDao" id="commissionDao"
+		class="com.discovery.dis.dao.domain.transmissionOrder.CommissionDao" 
+		depends-on="transmissionOrderHeaderDao invoiceLineDao" >
+		<constructor-arg ref="transmissionOrderHeaderDao" />
+		<constructor-arg ref="invoiceLineDao" />
+	</bean>
+
+	<bean name="invoiceLineDao" id="invoiceLineDao"
+		class="com.discovery.dis.dao.domain.InvoiceLineDao" 
+		depends-on="transmissionOrderHeaderDao invoiceDao">
+		<constructor-arg ref="transmissionOrderHeaderDao" />
+		<constructor-arg ref="invoiceDao" />
+	</bean>
+		
+	<bean name="erpLogDao" id="erpLogDao"
+		class="com.discovery.dis.dao.domain.ErpLogDao" />
+		
+	<bean name="erpLogTypeDao" id="erpLogTypeDao"
+		class="com.discovery.dis.dao.domain.ErpLogTypeDao" />		
+		
+	<bean name="entityCacheDao" id="entityCacheDao"
+		class="com.discovery.dis.dao.domain.EntityCacheDao" depends-on="jdbctemplate" >
+		<constructor-arg ref="jdbctemplate" />
+	</bean>
+	
+	<bean name="regionDao" id="regionDao"
+		class="com.discovery.dis.dao.domain.RegionDao" />
+	
+	
+	<bean id="SAGEInvoiceCustomerProcedure" class="com.discovery.dis.dao.procedure.SAGEInvoiceCustomerProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+	
+	<bean id="SAGEInvoiceCustomerOptFieldProcedure" class="com.discovery.dis.dao.procedure.SAGEInvoiceCustomerOptFieldProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean>
+	
+	<bean name="customerBankInformationDao" id="customerBankInformationDao"
+		class="com.discovery.dis.dao.domain.CustomerBankInformationDao" />
+		
+	<!--bean id="journalLineProcedure" class="com.discovery.dis.dao.procedure.JournalLineProcedure">
+		<property name="template">
+			<ref bean="jdbctemplate" />
+		</property>
+	</bean-->
+
+	<bean id="stringEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor"
+		lazy-init="false">
+		<property name="algorithm" value="PBEWithMD5AndDES" />
+		<property name="password" value="L41sP4sw0rd" />
+	</bean>
+
+	<bean id="hibernateEncryptor"
+		class="org.jasypt.hibernate4.encryptor.HibernatePBEStringEncryptor"
+		lazy-init="false">
+		<property name="registeredName" value="disEncryptor" />
+		<property name="encryptor" ref="stringEncryptor" />
+	</bean>
+	
+	<bean name="reportNotificationDao" id="reportNotificationDao"
+		class="com.discovery.dis.dao.domain.ReportNotificationDao" />
+        
+         <bean name="taxDao" id="taxDao" 
+    class="com.discovery.dis.dao.domain.TaxDao" />
+
+</beans>

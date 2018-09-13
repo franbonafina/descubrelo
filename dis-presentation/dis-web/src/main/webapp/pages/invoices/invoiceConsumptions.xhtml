@@ -1,0 +1,462 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.header.invoice.consumptions']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+			
+				<h:form id="prebillConsumptionsForm">
+				
+				<span class="FontBold Fs18 hardblue">#{msg['message.invoice.header']}</span>
+				<div class="EmptyBox10"></div>
+
+					<p:panel id="iprebillConsumptionsPanel">
+						<p:panelGrid id="prebillConsumptionsPanelGrid" styleClass="transparent no-border">
+
+							<p:row styleClass="dis-input-row">
+								<!-- ID INTERNO -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.disId']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{null == invoiceConsumptionsController.prebill.id ? 
+										'-' : invoiceConsumptionsController.prebill.id}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- NUMBER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.number']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{empty invoiceConsumptionsController.prebill.invoiceNumber ? 
+										'-' : invoiceConsumptionsController.prebill.invoiceNumber}" />
+								</p:column>
+
+								<!-- ISSUE DATE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.issueDate']}" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{null != invoiceConsumptionsController.prebill.issueDate? invoiceConsumptionsController.prebill.issueDate: ' - '}"
+										styleClass="dis-input-width" >
+										<f:convertDateTime dateStyle="short" type="date"
+											locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.company']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										style="font-weight: bold;"
+										value="#{invoiceConsumptionsController.prebill.company}" />
+								</p:column>
+
+								<!-- INVOICE DATE-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.form.date']}" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{invoiceConsumptionsController.prebill.invoiceDate}"
+										styleClass="dis-input-width" >
+										<f:convertDateTime dateStyle="short" type="date"
+											locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!--BILL TO CUSTOMER-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.billToCustomer']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{labelUtil.getCustomerLabel(invoiceConsumptionsController.prebill.customer)}" />
+								</p:column>
+
+								<!-- DUE DATE-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.form.dueDate']}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{invoiceConsumptionsController.prebill.dueDate}"
+										styleClass="dis-input-width" >
+										<f:convertDateTime dateStyle="short" type="date"
+											locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- AGENCY -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.agency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{labelUtil.getCustomerLabel(invoiceConsumptionsController.prebill.agency)}" />
+								</p:column>
+
+								<!-- SERVICE TYPE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.serviceType']}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{labelUtil.getServiceReceivedTypeLabel(invoiceConsumptionsController.prebill.serviceReceivedType)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- ADVERTISER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.advertiser']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{invoiceConsumptionsController.prebill.customer.otherCustomer ? 
+										' - ' : labelUtil.getCustomerLabel(invoiceConsumptionsController.prebill.advertiser) }" />
+								</p:column>
+
+								<!-- INVOICE TYPE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.invoiceType']}" />
+								</p:column>
+								<p:column>									
+									<h:outputText value="#{labelUtil.getInvoiceTypeLabel(invoiceConsumptionsController.company, invoiceConsumptionsController.prebill.invoiceType)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY CURRENCY -->
+								<p:column>
+									<p:outputLabel
+										value="#{msg['message.invoice.companyCurrency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{invoiceConsumptionsController.prebill.company.currency.labelDescripcion}" />
+								</p:column>
+								
+								<!-- INVOICE STATUS-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.status']}" />
+								</p:column>
+								<p:column>
+									<h:outputLabel value="#{labelUtil.getInvoiceStatusLabel(invoiceConsumptionsController.prebill.status)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- INVOICE CURRENCY-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.currency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{invoiceConsumptionsController.prebill.transactionCurrency.labelDescripcion}" />
+								</p:column>
+								
+								<!-- BILLING SCENARIO -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.billingScenario']}" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{invoiceConsumptionsController.prebill.billingScenario.number }" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- EXCHANGE RATE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.form.rate']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{invoiceConsumptionsController.prebill.exchangeRate}" >
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+										<!-- <f:validateDoubleRange minimum="0.00001">
+										</f:validateDoubleRange> -->
+									</h:outputText>
+								</p:column>
+								
+								<!-- PREBILL STATUS -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.prebillStatus']}" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{labelUtil.getPrebillStatusLabel(invoiceConsumptionsController.prebill.prebillStatus)}" >
+									</h:outputText>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- DESCRIPTION -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.description']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea autoResize="false"
+										value="#{invoiceConsumptionsController.prebill.description}"
+										style="width: 90%;"
+										title="#{msg['message.invoice.tooltip.description']}"
+										maxlength="#{validationConstants.invoiceHeaderMaxLength}"
+										disabled="true">
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- INTERNAL NOTES -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.internalNotes']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea autoResize="false"
+										value="#{invoiceConsumptionsController.prebill.internalNote}"
+										style="width: 90%;"
+										disabled="true"
+										title="#{msg['message.invoice.tooltip.invoiceInternalNotes']}"
+										maxlength="#{validationConstants.internalNoteMaxLength}">
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+
+							<p:row rendered="#{invoiceConsumptionsController.prebill.isAdditionalInvoiceComments()}">
+								<!-- ADDITIONAL DESCRIPTION -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.customer.governmental.additional.comments']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea autoResize="false"
+										value="#{invoiceConsumptionsController.prebill.additionalComments}"
+										style="width: 90%;"
+										disabled="true"
+										title="#{msg['message.customer.governmental.tooltip.additional.description']}"
+										maxlength="#{validationConstants.customerAdditionalDescription}">
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+							
+							<p:row styleClass="dis-input-row">
+								<!-- TRANSACTION REMAINING -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.transactionRemaining']} (#{invoiceConsumptionsController.prebill.transactionCurrency})" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{invoiceConsumptionsController.transactionRemaining}" >
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+								
+								<!-- BASE REMAINING -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.baseRemaining']} (#{invoiceConsumptionsController.prebill.company.currency})" />
+								</p:column>
+								<p:column>
+									<h:outputText styleClass="dis-input-width"
+										value="#{invoiceConsumptionsController.baseRemaining}" >
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+					
+					<!-- PREBILL CONSUMPTIONS -->
+					<div class="EmptyBox30"></div>
+					<span class="FontBold Fs18 hardblue">#{msg['message.header.invoice.consumptions']}</span>
+					<div class="EmptyBox10"></div>
+
+					<p:panel id="prebillConsumptionsDataTablePanel"
+						widgetVar="invoiceDataTablePanel" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="prebillConsumptionsDataTable" widgetVar="listInvoiceLines"
+							var="consumption" rowIndexVar="rowIndexVar"
+							value="#{invoiceConsumptionsController.consumptions}"
+							paginatorAlwaysVisible="true" paginator="true"
+							paginatorPosition="top"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100"
+							sortMode="single" rows="10" lazy="true" stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							styleClass="dataTable-letters"
+							selection="#{invoiceConsumptionsController.selectedConsumption}"
+							rowKey="#{consumption.id}"
+							selectionMode="single" >
+							
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td>
+											<p:commandButton id="viewConsumptionButton"
+												styleClass="Fleft LightButton"
+												icon="ui-icon-zoomin"
+												disabled="#{null == invoiceConsumptionsController.selectedConsumption}"
+												action="#{invoiceConsumptionsController.viewConsumption}"
+												process="@this"
+												title="#{msg['message.invoice.viewConsumption']}" />
+										</td>
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.header.invoice.consumptions']}" />
+										</td>
+										<td>
+										</td>
+									</tr>
+								</table>
+							</f:facet>
+							
+							<p:ajax event="rowDblselect" oncomplete="viewConsumption()" />							
+							<p:ajax event="rowSelect" update="viewConsumptionButton" />
+							<p:ajax event="rowUnselect" update="viewConsumptionButton" />
+							
+							<!-- LAIS ID -->
+							<p:column headerText="#{msg['message.invoice.table.id']}"
+								styleClass="col-customer-code">
+								<h:outputText value="#{consumption.id}" />
+							</p:column>
+
+							<!-- CUSTOMER -->
+							<p:column headerText="#{msg['message.invoice.table.customer']}"
+								styleClass="col-customer-name">
+								<h:outputText value="#{consumption.customer}" />
+							</p:column>
+							
+							<!-- CONSUMPTION TYPE-->
+							<p:column headerText="#{msg['message.invoice.table.type']}"
+								styleClass="col-customer-invoiceType">
+								<h:outputText
+									value="#{labelUtil.getInvoiceTypeLabel(invoiceConsumptionsController.company, consumption.invoiceType)}" />
+							</p:column>
+
+							<!-- OPERATION -->
+							<p:column headerText="#{msg['message.consumption.table.operation']}"
+								styleClass="col-customer-invoiceType">
+								<h:outputText
+									value="#{labelUtil.getConsumptionOperationLabel(consumption.billingScenario)}" />
+							</p:column>
+
+							<!-- INVOICE DATE -->
+							<p:column headerText="#{msg['message.invoice.table.date']}"
+								styleClass="col-customer-invoiceDate">
+								<h:outputText value="#{consumption.invoiceDate}">
+									<f:convertDateTime dateStyle="short" timeStyle="short"
+										locale="#{languageController.locale}" />
+								</h:outputText>
+							</p:column>
+
+							<!-- INVOICE SOURCE -->
+							<p:column
+								headerText="#{msg['message.invoice.table.invoiceSource']}"
+								styleClass="col-transaction-currency">
+								<h:outputText value="#{labelUtil.getInvoiceSourceLabel(consumption.invoiceSource)}" />
+							</p:column>
+
+							<!-- TRANSACTION CURRENCY -->
+							<p:column headerText="#{msg['message.invoice.table.currency']}"
+								styleClass="col-transaction-currency">
+								<h:outputText
+									value="#{consumption.transactionCurrency.iso3Code}" />
+							</p:column>
+
+							<!-- TRANSACTION NET AMOUNT -->
+							<p:column
+								headerText="#{msg['message.invoice.table.transactionNetAmount']} (#{invoiceConsumptionsController.prebill.transactionCurrency})"
+								styleClass="col-amount right">
+								<h:outputText value="#{consumption.transactionNetAmount}">
+									<f:convertNumber 
+											type="currency" currencySymbol="" locale="#{languageController.locale}" />	
+								</h:outputText>
+							</p:column>
+
+							<!-- STATUS -->
+							<p:column headerText="#{msg['message.invoice.table.status']}"
+								styleClass="col-status">
+								<h:outputText value="#{labelUtil.getInvoiceStatusLabel(consumption.status)}" />
+							</p:column>
+
+						</p:dataTable>
+						
+					</p:panel>
+					
+					<p:messages id="prebillConsumptionsFormMessages" closable="true"
+						showDetail="false" autoUpdate="false" />
+					
+					<div class="EmptyBox10"></div>
+					<div class="form-group">
+						<p:commandButton id="prebillConsumptionsBackButton"
+							value="#{msg['message.common.back']}"
+							action="#{invoiceConsumptionsController.back}"
+							process="@this"
+							styleClass="dis-button-width"
+							icon="ui-icon-arrowreturnthick-1-w"
+							title="#{msg['message.invoice.tooltip.backToPrebill']}">
+						</p:commandButton>
+						<p:commandButton id="prebillConsumptionsCloseButton"
+							value="#{msg['message.invoice.prebill.close']}"
+							action="#{invoiceConsumptionsController.close}"
+							process="@this"
+							update="@form"
+							styleClass="dis-button-width"
+							icon="ui-icon-locked"
+							title="#{msg['message.invoice.tooltip.closePrebill']}"
+							rendered="#{invoiceConsumptionsController.prebill.open}" >
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton id="prebillConsumptionsOpenButton"
+							value="#{msg['message.invoice.prebill.open']}"
+							action="#{invoiceConsumptionsController.open}"
+							process="@this"
+							update="@form"
+							styleClass="dis-button-width"
+							icon="ui-icon-unlocked"
+							title="#{msg['message.invoice.tooltip.openPrebill']}"
+							rendered="#{invoiceConsumptionsController.prebill.close}" >
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+					</div>
+					
+					<p:remoteCommand name="viewConsumption"
+						action="#{invoiceConsumptionsController.viewConsumption}" />
+
+				</h:form>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

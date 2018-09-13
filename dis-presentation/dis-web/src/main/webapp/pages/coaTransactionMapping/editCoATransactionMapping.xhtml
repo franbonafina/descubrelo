@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.menu.CoAMapping']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<c:if test="#{coatmCRUDController.selected != null}">
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<p:focus context="updateCoatmForm" />
+
+					<h:form id="updateCoatmForm">
+
+						<f:facet name="header">
+							<p:outputLabel
+								value="#{msg['message.coatm.header.modificate']}" />
+						</f:facet>
+
+						<p:messages autoUpdate="true" id="indexMessagesCoatm"
+							showDetail="false" showSummary="true" closable="true" />
+
+						<p:panel styleClass="" id="selectCoatmPanel" style="background-color: #FBFCFD;">
+
+							<p:panelGrid id="pGrid" styleClass="no-border" columns="4"
+								columnClasses="label, value">
+
+								<!-- ID -->
+								<p:outputLabel
+									value="#{msg['message.list.coatm.id']}" />
+								<h:outputText
+									value="#{coatmCRUDController.selected.id != null ? coatmCRUDController.selected.id : '-'}" />
+								
+								<!-- COMPANY -->
+								<p:outputLabel
+									value="#{msg['message.list.coatm.company']}" />
+								<h:outputText
+									value="#{coatmCRUDController.selected.company.descriptionAndCode}" />
+								
+								<!-- SERVICE RECEIVED TYPE -->
+								<p:outputLabel
+									value="#{msg['message.list.coatm.serviceReceivedType']}" />
+								<h:outputText
+									value="#{coatmCRUDController.selected.serviceReceivedType.serviceType}" />
+									
+								<!-- LINETYPE -->
+								<p:outputLabel  for="lineType"
+									value="#{msg['message.list.coatm.lineType']}" />
+								<p:selectOneMenu id="lineType"
+									label="#{msg['message.coatm.lineType']}"
+									value="#{coatmCRUDController.selected.lineType}"
+									required="true" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.coatm.tooltip.lineType']}">
+									
+									<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.coatm.edit.linetype']}" />
+											
+									<f:selectItems itemValue="#{lineType}" var="lineType"
+										itemLabel="#{lineType}"
+										value="#{selectorController.lineTypeList}"/>
+								</p:selectOneMenu>
+										
+								<!-- PREBILL -->
+								<p:outputLabel
+									value="#{msg['message.list.coatm.prebill']}" />
+								<h:outputText
+								value="#{coatmCRUDController.selected.prebill ? msg['message.common.true'] : msg['message.common.false']}" />
+								
+								<!-- LINESUBTYPE -->
+								<p:outputLabel
+									value="#{msg['message.list.coatm.lineSubType']}" />
+								<h:outputText
+									value="#{coatmCRUDController.selected.lineSubtype != null ? coatmCRUDController.selected.lineSubtype : '-'}" />
+										
+								<!-- ACCOUNT -->
+								<p:outputLabel for="account"
+									value="#{msg['message.coatm.account']}" />
+
+								<p:selectOneMenu id="account"
+									label="#{msg['message.coatm.account']}"
+									value="#{coatmCRUDController.selected.account}"
+									required="true" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.coatm.tooltip.account']}">
+									
+									<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.coatm.edit.account']}" />
+											
+									<f:selectItems itemValue="#{account}" var="account"
+										itemLabel="#{account.type} - #{account.number}"
+										value="#{selectorController.getAccountList(coatmCRUDController.selected.company)}"/>
+								</p:selectOneMenu>
+
+								<!-- GEOGRAPHY -->
+								<p:outputLabel value="#{msg['message.coatm.geography']}"
+									for="geography" />
+
+								<p:selectOneMenu id="geography"
+									label="#{msg['message.coatm.geography']}"
+									value="#{coatmCRUDController.selected.geography}"
+									required="true" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.coatm.tooltip.geography']}">
+									
+									<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.coatm.edit.geographie']}" />
+											
+									<f:selectItems itemValue="#{geographie}" var="geographie"
+										itemLabel="#{geographie.code} - #{geographie.description}"
+										value="#{selectorController.geographiesCOA(coatmCRUDController.selected)}" />
+								</p:selectOneMenu>
+
+								<!-- PLATFORM -->
+								<p:outputLabel for="platform"
+									value="#{msg['message.coatm.platform']}" />
+
+								<p:selectOneMenu id="platform"
+									label="#{msg['message.coatm.platform']}"
+									value="#{coatmCRUDController.selected.platform}"
+									required="true" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.coatm.tooltip.platform']}">
+									
+									<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.coatm.edit.platform']}" />
+											
+									<f:selectItems itemValue="#{platform}" var="platform"
+										itemLabel="#{platform.code} - #{platform.description}"
+										value="#{selectorController.platformsCOA(coatmCRUDController.selected)}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+							
+							<p:panelGrid columns="2" styleClass="no-border" >
+							<!-- DESCRIPTION -->
+								<p:outputLabel value="#{msg['message.common.description']}" />
+
+								<p:inputTextarea id="description" autoResize="false"
+									value="#{coatmCRUDController.selected.description}"
+									style="width: 370px; max-width: 800px"
+									title="#{msg['message.coatm.tooltip.description']}"
+									maxlength="2000">
+								</p:inputTextarea>
+								
+							
+							</p:panelGrid>
+							
+						</p:panel>
+
+						<p:spacer styleClass="dis-spacer-small" />
+
+						<div class="form-group">
+							<div style="margin-top: 5px;">
+								<p:commandButton value="#{msg['message.common.save']}"
+									id="aceptar" action="#{coatmCRUDController.update}"
+									icon="ui-icon-check" validateClient="true" process="@form"
+									update="updateCoatmForm" title="#{msg['message.coatm.tooltip.update']}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+
+								</p:commandButton>
+
+								<p:commandButton value="#{msg['message.common.cancel']}"
+									resetValues="true" id="cancel" process="@this"
+									icon="ui-icon-cancel" update="updateCoatmForm"
+									title="#{msg['message.coatm.tooltip.back']}" 
+									immediate="true"
+									action="#{coatmCRUDController.cancel}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.cancel']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+
+							</div>
+						</div>
+						<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+							disabled="true" />
+						<p:defaultCommand target="buttonDefault" />
+					</h:form>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+</ui:composition>

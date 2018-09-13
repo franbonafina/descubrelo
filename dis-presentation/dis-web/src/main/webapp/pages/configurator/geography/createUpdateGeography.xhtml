@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{ (geographyCRUD.geography != null) ? (geographyCRUD.new ?
+			msg['message.geography.header.create'] : msg['message.geography.header.update']) : null}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+					navigationRuler.geographyListPage, geographyCRUD.geography)}" />
+		</h:form>
+
+		<c:if test="#{geographyCRUD.geography != null}">
+
+			<div class="ContainerIndent Responsive">
+				<p:focus context="createUpdateGeographyForm" />
+
+				<h:form id="createUpdateGeographyForm">
+
+					<p:messages autoUpdate="false" id="indexMessagesGeography"
+						showDetail="false" showSummary="true" closable="true" />
+
+					<p:panel>
+
+						<p:panelGrid columns="2" id="geographyForm"
+							styleClass="no-internal-border">
+
+							<!-- COMPANY -->
+							<p:outputLabel for="company"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="company" styleClass="dis-input-width"
+								value="#{geographyCRUD.geography.company}"
+								title="#{msg['message.common.select.company']}"
+								converter="omnifaces.SelectItemsConverter" required="true">
+
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+							</p:selectOneMenu>
+
+							<!-- CODE -->
+							<p:outputLabel value="#{msg['message.common.code']} :"
+								for="inputGeographyCode" />
+							<p:inputText maxlength="30" id="inputGeographyCode"
+								required="true" label="#{msg['message.common.code']}"
+								value="#{geographyCRUD.geography.code}"
+								disabled="#{not geographyCRUD.new}"
+								styleClass="dialog-size-input"
+								title="#{msg['message.geography.tooltip.code']}">
+								<f:validator
+									validatorId="com.discovery.dis.web.validator.GeographyValidator" />
+							</p:inputText>
+
+							<!-- DESCRIPTION -->
+							<p:outputLabel value="#{msg['message.common.description']} :"
+								for="inputDescription" />
+							<p:inputText maxlength="30" id="inputDescription"
+								label="#{msg['message.common.description']}"
+								value="#{geographyCRUD.geography.description}"
+								styleClass="dialog-size-input"
+								title="#{msg['message.geography.tooltip.description']}" />
+
+							<!-- ACTIVE -->
+							<p:outputLabel value="#{msg['message.common.active']} :	"
+								for="inputSwitchActive" />
+							<p:inputSwitch id="inputSwitchActive"
+								label="#{msg['message.common.active']}"
+								value="#{geographyCRUD.geography.active}"
+								offLabel="#{msg['message.common.false']}"
+								onLabel="#{msg['message.common.true']}"
+								title="#{msg['message.geography.tooltip.active']}">
+								<p:tooltip for="inputSwitchActive"
+									value="#{msg['message.geography.tooltip.active']}" />
+							</p:inputSwitch>
+						</p:panelGrid>
+
+						<div class="EmptyBox30"></div>
+						<div class="form-group">
+							<p:commandButton value="#{msg['message.common.save']}"
+								id="accept" process="@form" styleClass="dis-button-width"
+								action="#{geographyCRUD.createOrUpdate}"
+								update="geographyForm indexMessagesGeography"
+								icon="ui-icon-check" oncomplete="scrollOnMessageToTop()"
+								title="#{msg['message.geography.tooltip.update']}">
+
+								<p:confirm
+									message="#{msg['message.common.confirmation.continue']}"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+							<p:commandButton value="#{msg['message.common.cancel']}"
+								resetValues="true" id="cancelar" process="@this"
+								styleClass="dis-button-width" icon="ui-icon-cancel"
+								immediate="true" action="#{geographyCRUD.cancel}"
+								title="#{msg['message.geography.tooltip.back']}">
+
+								<p:confirm
+									message="#{msg['message.common.confirmation.cancel']}"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+						</div>
+					</p:panel>
+
+					<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+						disabled="true" />
+					<p:defaultCommand target="buttonDefault" />
+
+				</h:form>
+
+			</div>
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

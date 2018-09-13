@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.report.sage.name']}
+	</ui:define>
+
+	<!-- REPORT SAGE -->
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:panel>
+					<h:form prependId="false" id="reportForm">
+						<p:messages id="messages" showDetail="false" autoUpdate="true"
+							closable="true" />
+
+						<p:panelGrid styleClass="transparent no-border" columns="2">
+
+							<!-- COMPANY -->
+							<p:outputLabel for="company"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="company" styleClass="dis-input-width"
+								value="#{reportSAGECustomerInvoiceController.company}"
+								title="#{msg['message.customer.tooltip.filterCode']}"
+								converter="omnifaces.SelectItemsConverter" required="true">
+								<f:selectItems value="#{reportSAGECustomerInvoiceController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+							</p:selectOneMenu>
+							
+						</p:panelGrid>
+
+						<ui:param name="controller" value="#{reportSAGECustomerInvoiceController}" />
+						<ui:include src="reportFooter.xhtml" />
+					</h:form>
+
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

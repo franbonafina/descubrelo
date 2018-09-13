@@ -1,0 +1,289 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.batch']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:focus context="batchFiltersForm" />
+
+				<h:form id="batchFiltersForm">
+					<p:tabView>
+						<p:tab title="#{msg['message.common.filters']}">
+
+							<p:panelGrid styleClass="no-border" columns="4">
+							
+								<!-- COMPANY -->
+								<p:outputLabel value="#{msg['message.common.company']}"
+									for="companyFilter" />
+								<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+									label="#{msg['message.common.company']}"
+									value="#{batchFilterGenerator.company}"
+									title="#{msg['message.filter.tooltip.company.batch']}"
+									converter="omnifaces.SelectItemsConverter" required="true">
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company"
+										itemLabel="#{company.code} - #{company.description}" />
+								</p:selectOneMenu>
+							
+								<!-- LAIS ID -->
+								<p:outputLabel value="#{msg['message.filter.lasId']}" />
+								<p:inputText styleClass="dis-input-width" 
+									id="lasID"
+									label="#{msg['message.filter.lasId']}"
+									value="#{batchFilterGenerator.lasId}"
+									title="#{msg['message.filter.lasId']}" />
+							
+
+								<!-- BATCH FIELD ID -->
+								<p:outputLabel
+									value="#{msg['message.filter.batchFileID.batch']}" />
+								<p:inputText id="batchFileID" styleClass="dis-input-width"
+									label="#{msg['message.filter.batchFileID.batch']}"
+									value="#{batchFilterGenerator.batchFileID}"
+									title="#{msg['message.filter.tooltip.batchFileID.batch']}" />
+									
+								<!-- TYPE -->
+								<p:outputLabel value="#{msg['message.common.type']}" />
+								<p:selectCheckboxMenu id="type"
+									value="#{batchFilterGenerator.batchTypes}"
+									label="#{msg['message.common.type']}"
+									styleClass="dis-input-width" panelStyleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.filter.tooltip.type.batch']}">
+
+									<o:converter converterId="omnifaces.SelectItemsConverter"
+										list="#{batchController.batchTypes}" />
+
+									<f:selectItems value="#{selectorController.batchTypeList}"
+										var="batchType"
+										itemValue="#{batchType}"
+										itemLabel="#{(labelUtil.getBatchTypeLabel(batchType))}" />
+								</p:selectCheckboxMenu>
+
+
+								<!-- START DATE -->
+								<p:outputLabel value="#{msg['message.filter.startDate.batch']}" />
+								<p:calendar id="batchStartDate"
+									value="#{batchFilterGenerator.startDate}"
+									title="#{msg['message.filter.tooltip.startDate.batch']}"
+									locale="#{languageController.language}"
+									pattern="#{languageController.localeDatePattern} HH:mm:ss"
+									styleClass="dis-input-width" />
+
+								<!-- STATUS -->
+								<p:outputLabel value="#{msg['message.filter.status.batch']}" />
+								<p:selectCheckboxMenu id="status"
+									value="#{batchFilterGenerator.batchStatuses}"
+									label="#{msg['message.common.status']}"
+									styleClass="dis-input-width dis-input-responsive-height-fix"
+									panelStyleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									title="#{msg['message.filter.tooltip.status.batch']}">
+
+									<o:converter converterId="omnifaces.SelectItemsConverter"
+										list="#{batchController.batchStatuses}" />
+									<f:selectItems value="#{selectorController.batchStatusList}"
+										var="status"
+										itemValue="#{status}"
+										itemLabel="#{(labelUtil.getBatchStatusLabel(status))}"  />
+								</p:selectCheckboxMenu>
+
+
+								<!-- END DATE -->
+								<p:outputLabel value="#{msg['message.filter.endDate.batch']}" />
+								<p:calendar id="batchEndDate"
+									value="#{batchFilterGenerator.endDate}"
+									title="#{msg['message.filter.tooltip.endDate.batch']}"
+									locale="#{languageController.language}"
+									pattern="#{languageController.localeDatePattern} HH:mm:ss"
+									styleClass="dis-input-width" />
+							</p:panelGrid>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="4"
+								styleClass="no-spacing no-border dis-spacing-small">
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									oncomplete="PF('batchDataTablePanel').show();"
+									update=":listBatchForm batchFiltersForm"
+									title="#{msg['message.batch.tooltip.searchBatch']}" />
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}"
+									process="@this"
+									actionListener="#{batchFilterGenerator.clearFilters}"
+									oncomplete="PF('batchDataTablePanel').close();"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									update="batchFiltersForm" resetValues="true"
+									title="#{msg['message.common.tooltip.clear.filters']}" />
+									
+<!-- 								<p:commandButton id="generate" -->
+<!-- 									value="#{msg['message.common.generate']}" -->
+<!-- 									actionListener="#{batchController.generate}" -->
+<!-- 									oncomplete="PF('batchDataTablePanel').show();" -->
+<!-- 									styleClass="dis-button-width" icon="ui-icon-transfer-e-w" -->
+<!-- 									update=":listBatchForm" -->
+<!-- 									title="#{msg['message.common.tooltip.generate.data']}" /> -->
+									
+<!-- 								<p:commandButton id="generateTransmissionOrder" -->
+<!-- 									value="#{msg['message.common.generateTransmissionOrder']}" -->
+<!-- 									actionListener="#{batchController.generateInvoice}" -->
+<!-- 									oncomplete="PF('batchDataTablePanel').show();" -->
+<!-- 									styleClass="dis-button-width" icon="ui-icon-transfer-e-w" -->
+<!-- 									update=":listBatchForm" -->
+<!-- 									title="#{msg['message.common.tooltip.generateTransmissionOrder']}"/> -->
+							</p:panelGrid>
+
+						</p:tab>
+					</p:tabView>
+				</h:form>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+				<h:form id="listBatchForm">
+					
+					<p:messages autoUpdate="true" id="messagesbatch"
+							showDetail="false" showSummary="true" closable="true" />
+					
+					<p:panel id="batchDataTablePanel" widgetVar="batchDataTablePanel"
+						visible="false" closable="true" toggleable="true" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="listBatch" widgetVar="listBatch" var="batch"
+							styleClass="dataTable-letters"
+							value="#{batchController.batchLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000" sortMode="single"
+							rows="10" selectionMode="single"
+							selection="#{batchController.selected}" lazy="true"
+							stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="cancelButton"
+												styleClass="Fleft LightButton" icon="ui-icon-closethick"
+												actionListener="#{batchController.cancel}" process="@this"
+												disabled="#{batchController.disabledCancel()}"
+												title="#{msg['message.batch.button.cancel']}">
+												<p:confirm
+													message="#{msg['message.common.confirmation.continue']}"
+													icon="ui-icon-alert" />
+											</p:commandButton> 
+											
+											<p:commandButton id="acceptButton" styleClass="Fleft LightButton"
+												icon="ui-icon-arrowthickstop-1-s" process="@this"
+												disabled="#{batchController.disabledAccept()}"
+												action="#{batchController.acceptBatch}"
+												title="#{msg['message.batch.button.accept']}"/>
+											
+											<p:commandButton id="viewButton" styleClass="Fleft LightButton"
+												icon="ui-icon-zoomin" process="@this"
+												disabled="#{empty batchController.selected}"
+												action="#{batchController.actionView}"
+												title="#{msg['message.common.viewDetails']}"/>
+										</td>
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.header.batch']}" /></td>
+										<td>
+											<p:commandButton 
+												id="toggler" type="button" 
+												styleClass="LightButton Fright" 
+												icon="ui-icon-wrench" />
+       										<p:columnToggler 
+       											widgetVar="columnToggler" 
+       											datasource="listBatch" 
+       											trigger="toggler" />
+										</td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<p:ajax event="page" oncomplete="updateToggles(PF('columnToggler'))" />										
+							<p:ajax event="rowSelect" update="cancelButton acceptButton viewButton" />
+							<p:ajax event="rowUnselect" update="cancelButton acceptButton viewButton" />
+							<p:ajax event="rowDblselect" onstart="changeBatchAction()" />
+							
+							<!-- LAIS ID -->
+							<p:column headerText="#{msg['message.common.lais.id']}"
+								styleClass="">
+								<h:outputText value="#{batch.id}" />
+							</p:column>
+							
+							<!-- COMPANY -->
+							<p:column headerText="#{msg['message.common.company']}"
+								styleClass="">
+								<h:outputText value="#{batch.company}" />
+							</p:column>
+
+							<!-- BATCHFILEID -->
+							<p:column headerText="#{msg['message.filter.batchFileID.batch']}"
+								styleClass="">
+								<h:outputText value="#{batch.batchFileID}" />
+							</p:column>
+
+							<!-- STATUS -->
+							<p:column headerText="#{msg['message.filter.status.batch']}"
+								styleClass="">
+								<h:outputText value="#{(labelUtil.getBatchStatusLabel(batch.status))}" />
+							</p:column>
+
+							<!-- START_DATE -->
+							<p:column headerText="#{msg['message.filter.startDate.batch']}"
+								styleClass="">
+								<h:outputText value="#{batch.startDate}">
+									<f:convertDateTime dateStyle="short" timeStyle="default"
+										type="both" locale="#{languageController.locale}" />
+								</h:outputText>
+							</p:column>
+
+							<!-- END_DATE -->
+							<p:column headerText="#{msg['message.filter.endDate.batch']}"
+								styleClass="">
+								<h:outputText value="#{batch.endDate}">
+									<f:convertDateTime dateStyle="short" timeStyle="default"
+										type="both" locale="#{languageController.locale}" />
+								</h:outputText>
+							</p:column>
+
+							<!-- TYPE -->
+							<p:column headerText="#{msg['message.filter.type.batch']}"
+								styleClass="">
+								<h:outputText value="#{(labelUtil.getBatchTypeLabel(batch.batchType))}" />
+							</p:column>
+						</p:dataTable>
+
+					</p:panel>
+
+					<p:remoteCommand name="changeBatchAction"
+						action="#{batchController.actionView}" />
+					
+					<p:remoteCommand autoRun="true"
+							actionListener="#{batchController.showTable}" />
+				</h:form>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

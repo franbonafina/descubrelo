@@ -1,0 +1,852 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		<h:outputText />
+		#{(null != consumptionCRUDController.consumption and null != consumptionCRUDController.consumption.id) ? msg['message.header.consumption.edit'] : msg['message.header.consumption.create']}
+		</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+				navigationRuler.invoiceListPage, consumptionCRUDController.consumption)}" />
+		</h:form>
+
+		<c:if test="#{consumptionCRUDController.consumption != null}">
+
+			<div class="ContainerIndent">
+				<h:form id="createUpdateConsumptionForm">
+
+					<span class="FontBold Fs18 hardblue">#{msg['message.consumption.CRUD.header']}</span>
+					<div class="EmptyBox10"></div>
+
+					<p:panel id="consumptionHeaderPanel">
+						<p:panelGrid id="pGrid" styleClass="transparent no-border">
+
+							<p:row styleClass="dis-input-row">
+								<!-- LAIS ID -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.disId']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumtionLaisId"
+										styleClass="dis-input-width"
+										value="#{null == consumptionCRUDController.consumption.id ? 
+										'-' : consumptionCRUDController.consumption.id}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.company']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionCompany"
+										styleClass="dis-input-width"
+										style="font-weight: bold;"
+										value="#{consumptionCRUDController.consumption.company}" />
+								</p:column>
+								
+								<!-- ISSUE DATE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.issueDate']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionIssueDate"
+										value="#{null != consumptionCRUDController.consumption.issueDate? consumptionCRUDController.consumption.issueDate : ' - '}"
+										styleClass="dis-input-width" >
+										<f:convertDateTime dateStyle="short" type="date"
+											locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- BILL TO CUSTOMER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.billToCustomer']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionCustomer"
+										styleClass="dis-input-width"
+										value="#{labelUtil.getCustomerLabel(consumptionCRUDController.consumption.customer)}" />
+								</p:column>
+								
+								<!-- CONSUMPTION DATE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.consumption.CRUD.date']}"
+										for="consumptionDate" />
+								</p:column>
+								<p:column>
+									<p:calendar id="consumptionDate"
+										styleClass="dis-input-width"
+										required="true"
+										label="#{msg['message.invoice.form.date']}"										
+										locale="#{languageController.language}"
+										value="#{consumptionCRUDController.consumption.invoiceDate}"
+										title="#{msg['message.invoice.tooltip.invoiceDate']}"
+										disabled="#{consumptionCRUDController.invoiceDateDisable}"
+										mindate="#{consumptionCRUDController.minDate}"
+										maxdate="#{consumptionCRUDController.maxDate}" >
+										<p:ajax event="dateSelect"
+											process="@this" update="@this"
+											listener="#{consumptionCRUDController.dateChangeListener}" />
+									</p:calendar>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- AGENCY -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.agency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionAgency"
+										styleClass="dis-input-width"
+										value="#{labelUtil.getCustomerLabel(consumptionCRUDController.consumption.agency)}" />
+								</p:column>
+								
+								<!-- SERVICE TYPE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.serviceType']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionServiceType"
+										styleClass="dis-input-width"
+										value="#{labelUtil.getServiceReceivedTypeLabel(consumptionCRUDController.consumption.serviceReceivedType)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- ADVERTISER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.advertiser']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionAdvertiser"
+										styleClass="dis-input-width"
+										value="#{consumptionCRUDController.consumption.customer.otherCustomer ? 
+										' - ' : labelUtil.getCustomerLabel(consumptionCRUDController.consumption.advertiser) }" />
+								</p:column>
+								
+								<!-- CONSUMPTION TYPE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.consumption.filter.type']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionType"
+										styleClass="dis-input-width"
+										value="#{(labelUtil.getInvoiceTypeLabel(consumptionCRUDController.company, consumptionCRUDController.consumption.invoiceType))}" />
+								</p:column>								
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY CURRENCY -->
+								<p:column>
+									<p:outputLabel
+										value="#{msg['message.invoice.companyCurrency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionCompanyCurrency"
+										styleClass="dis-input-width"
+										value="#{consumptionCRUDController.consumption.company.currency.labelDescripcion}" />
+								</p:column>
+								
+								<!-- OPERATION-->
+								<p:column>
+									<p:outputLabel for="consumptionOperation"
+										value="#{msg['message.consumption.filter.operation']}" />
+								</p:column>
+								<p:column>
+									<h:outputLabel id="consumptionOperation"
+										styleClass="dis-input-width"
+										value="#{labelUtil.getConsumptionOperationLabel(consumptionCRUDController.consumption.billingScenario)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- INVOICE CURRENCY-->
+								<p:column>
+									<p:outputLabel for="consumptionCurrency"
+										value="#{msg['message.consumption.CRUD.currency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="consumptionCurrency"
+										styleClass="dis-input-width"
+										value="#{consumptionCRUDController.consumption.transactionCurrency.labelDescripcion}" />
+								</p:column>
+								
+								<!-- CONSUMPTION STATUS-->
+								<p:column>
+									<p:outputLabel for="consumptionStatus"
+										value="#{msg['message.invoice.status']}" />
+								</p:column>
+								<p:column>
+									<h:outputLabel id="consumptionStatus"
+										styleClass="dis-input-width"
+										value="#{labelUtil.getInvoiceStatusLabel(consumptionCRUDController.consumption.status)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- EXCHANGE RATE -->
+								<p:column>
+									<p:outputLabel for="consumptionExchangeRate"
+										value="#{msg['message.invoice.form.rate']}" />
+								</p:column>
+								<p:column>
+									<p:inputText id="consumptionExchangeRate"
+										label="#{msg['message.invoice.form.rate']}"
+										value="#{consumptionCRUDController.consumption.exchangeRate}"
+										styleClass="dis-input-width"										
+										title="#{msg['message.invoice.tooltip.rate']}"
+										required="true"
+										disabled="#{consumptionCRUDController.exchangeRateDisable}" >
+										<p:ajax event="valueChange"
+											process="@this"
+											listener="#{consumptionCRUDController.exchangeRateChange}"
+											update="@form:consumptionLinesDataTable:consumptionPrebillAmountsPanel
+												@form:consumptionLinesDataTable:consumptionAmountsPanel" />
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+										<f:validateDoubleRange minimum="0.00001">
+										</f:validateDoubleRange>
+									</p:inputText>
+								</p:column>
+								
+								<!-- PREBILL REFERENCE -->
+								<p:column>
+									<p:outputLabel for="consumptionPrebill"
+										value="#{msg['message.consumption.add.prebill']}" />
+								</p:column>
+								<p:column>								
+									<h:outputText id="consumptionPrebill"
+										styleClass="dis-input-width-button"
+										value="#{labelUtil.getInvoiceLabel(consumptionCRUDController.consumption.prebillInvoice)}" />
+								</p:column>
+								
+								<!-- VIEW PREBILL BUTTON -->
+								<p:column>
+									<p:commandButton id="consumptionPrebillButton"
+										value="#{msg['message.consumption.CRUD.viewPrebill']}"
+										action="#{consumptionCRUDController.viewPrebill}"
+										process="@this" />
+								</p:column>
+							</p:row>
+							<p:row styleClass="dis-input-row"
+								rendered="#{consumptionCRUDController.consumption.prebillReversalConsumption}">
+								<!-- PREBILL REFERENCE -->
+								<p:column></p:column>
+								<p:column></p:column>
+								
+								<!-- PARENT CONSUMPTION REFERENCE -->
+								<p:column>
+									<p:outputLabel for="consumptionParent"
+										value="#{msg['message.consumption.add.prebillConsumption']}" />
+								</p:column>
+								<p:column>								
+									<h:outputText id="consumptionParent"
+										styleClass="dis-input-width-button"
+										value="#{labelUtil.getConsumptionLabel(consumptionCRUDController.consumption.invoiceParent, languageController.locale)}" />
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- DESCRIPTION -->
+								<p:column>
+									<p:outputLabel for="consumptionDescription"
+									value="#{msg['message.common.description']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea id="consumptionDescription" autoResize="false"
+										value="#{consumptionCRUDController.consumption.description}"
+										style="width: 90%;"
+										title="#{msg['message.consumption.CRUD.tooltip.description']}"
+										maxlength="#{validationConstants.invoiceHeaderMaxLength}"
+										disabled="#{consumptionCRUDController.descriptionDisable}" >
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- INTERNAL NOTES -->
+								<p:column>
+									<p:outputLabel for="consumptionInternalNotes"
+										value="#{msg['message.invoice.internalNotes']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea id="consumptionInternalNotes" autoResize="false"
+										value="#{consumptionCRUDController.consumption.internalNote}"
+										style="width: 90%;"										
+										title="#{msg['message.invoice.tooltip.invoiceInternalNotes']}"
+										maxlength="#{validationConstants.internalNoteMaxLength}"
+										disabled="#{consumptionCRUDController.descriptionDisable}" >
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+
+						</p:panelGrid>
+					</p:panel>
+
+					<!-- CONSUMPTION LINES -->
+					<div class="EmptyBox30"></div>
+					<span class="FontBold Fs18 hardblue">#{msg['message.consumption.CRUD.lines']}</span>
+					<div class="EmptyBox10"></div>
+
+					<p:panel id="consumptionLinesDataTablePanel"
+						widgetVar="invoiceDataTablePanel" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="consumptionLinesDataTable"
+							widgetVar="consumptionLinesDataTable"
+							var="consumptionLine" rowIndexVar="rowIndexVar"
+							value="#{consumptionCRUDController.consumptionLines}"
+							paginatorAlwaysVisible="true" paginator="true"
+							paginatorPosition="top"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} 
+								#{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} 
+								#{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+								{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100"
+							sortMode="single" rows="10" stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							styleClass="dataTable-letters"
+							rowKey="#{consumptionLine.lineNumber}"
+							editable="#{consumptionCRUDController.tableEditable}"
+							editMode="cell" >
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td>
+										</td>
+										<td class="ui-datatable ui-datatable-header">
+											<h:outputText value="#{msg['message.consumption.CRUD.lines']}" />
+										</td>
+										<td>
+										</td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<!-- ROW INDEX -->
+							<p:column headerText="#{msg['message.common.line']}"
+								styleClass="col-lineNumber">
+								<h:outputText value="#{rowIndexVar+1}" />
+							</p:column>
+
+							<!-- QUANTITY -->
+							<p:column headerText="#{msg['message.common.quantity']}"
+								styleClass="col-Qty">
+								<h:outputText value="#{consumptionLine.quantity}" />
+							</p:column>
+
+							<!-- DESCRIPTION -->
+							<p:column styleClass="col-description-line" required="true">
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.common.description']}
+									</p:outputLabel>
+									<p:panelGrid styleClass="none transparent"
+										rendered="#{consumptionCRUDController.tableEditable}" >
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{consumptionLine.itemDescription}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea rows="1" value="#{consumptionLine.itemDescription}"
+											required="#{consumptionCRUDController.consumption.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}"
+											label="#{msg['message.consumption.line.description']}"
+											styleClass="invoiceLineTable-edit">
+											<p:ajax event="change" update="@this" process="@this" />
+											<f:validateLength minimum="1" 
+												disabled="#{not consumptionCRUDController.consumption.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}"
+												maximum="#{validationConstants.getInvoiceLineMaxLength(consumptionCRUDController.company)}" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- SCHEDULE GROUP TYPE -->
+							<p:column headerText="#{msg['message.invoice.scheduleGroupType']}"
+								styleClass="col-schedule-group-line">
+								<h:outputText
+									value="#{null != consumptionLine.scheduleGroupType ? 
+ 										consumptionLine.scheduleGroupType : ' - '}" />
+							</p:column>
+
+							<!-- CHANNEL -->
+							<p:column headerText="#{msg['message.invoice.channel']}"
+								styleClass="col-channel-line" required="true">
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.channel']}
+									</p:outputLabel>
+									<p:panelGrid styleClass="none transparent"
+										rendered="#{consumptionCRUDController.tableEditable and not consumptionCRUDController.prebillClosed}" >
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+
+								</f:facet>
+								<h:outputText
+									value="#{null != consumptionLine.channel ? consumptionLine.channel : '-'}"
+									rendered="#{not consumptionLine.editable or consumptionCRUDController.prebillClosed}" />
+								<p:cellEditor rendered="#{consumptionLine.editable and not consumptionCRUDController.prebillClosed}">
+									<f:facet name="output">
+										<h:outputText
+											value="#{null != consumptionLine.channel ? consumptionLine.channel : '-'}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:selectOneMenu value="#{consumptionLine.channel}"
+											styleClass="invoiceLineTable-edit"
+											converter="omnifaces.SelectItemsConverter" 
+											label="#{msg['message.consumption.line.channel']}"
+											required="true">
+											<f:selectItem itemValue="#{null}"
+												itemLabel="#{msg['message.common.selectOne']}" />
+											<f:selectItems value="#{selectorController.channelList}"
+												var="channel"
+												itemLabel="#{channel.code} - #{channel.description}" />
+											<p:ajax event="change" process="@this"
+												update="@form:consumptionLinesDataTablePanel" />
+										</p:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- SERVICE RECEIVED TYPE -->
+							<p:column headerText="#{msg['message.invoice.createUpdate.table.serviceReceivedType']}"
+								styleClass="col-channel-line">
+								<h:outputText
+									value="#{labelUtil.getServiceReceivedTypeLabel(consumptionLine.serviceReceivedType)}" />
+							</p:column>
+							
+							<!-- UNIT PRICE -->
+							<p:column styleClass="col-unit-price">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.createUpdate.table.unitPrice']} (#{consumptionCRUDController.consumption.transactionCurrency})
+									</p:outputLabel>
+									<p:panelGrid styleClass="none transparent"
+										rendered="#{consumptionCRUDController.tableEditable and not consumptionCRUDController.prebillClosed}" >
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<h:outputText rendered="#{not consumptionLine.editable or consumptionCRUDController.prebillClosed}"
+									value="#{consumptionLine.unitPrice}">
+								<f:convertNumber locale="#{languageController.locale}"
+									type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+								<p:cellEditor rendered="#{consumptionLine.editable and not consumptionCRUDController.prebillClosed}">
+									<f:facet name="output">
+										<h:outputText value="#{consumptionLine.unitPrice}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{consumptionLine.unitPrice}"
+											styleClass="invoiceLineTable-edit"
+											label="#{msg['message.consumption.line.unitPrice']}">											
+											<p:ajax event="change"
+												update="@form:consumptionLinesDataTablePanel
+													@form:consumptionLinesDataTable:consumptionAmountsPanel"
+												process="@this"
+												listener="#{consumptionCRUDController.recalculateConsumption}"
+												oncomplete="updateSaveButton();" />
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- TOTAL PRICE -->
+							<p:column
+								headerText="#{consumptionCRUDController.consumption.prebillConsumption ? msg['message.consumption.CRUD.consumptionAmount'] : msg['message.consumption.CRUD.reversalConsumptionAmount']} (#{consumptionCRUDController.consumption.transactionCurrency})"
+								styleClass="col-index">
+								<h:outputText value="#{consumptionLine.transactionUnitAmount}" >
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							
+							<!-- PARENT CONSUMPTION ORIGINAL AMOUNT -->
+							<p:column
+								headerText="#{msg['message.consumption.CRUD.consumptionOriginalAmount']} (#{consumptionCRUDController.consumption.transactionCurrency})"
+								styleClass="col-index"
+								rendered="#{consumptionCRUDController.consumption.prebillReversalConsumption and (not consumptionCRUDController.consumption.ibms)}" >
+								<h:outputText value="#{(consumptionCRUDController.getParentOriginalLineAmount(consumptionLine))}" >
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							
+							<!-- PARENT CONSUMPTION REMAINING AMOUNT -->
+							<p:column
+								headerText="#{msg['message.consumption.CRUD.consumptionRemainingAmount']} (#{consumptionCRUDController.consumption.transactionCurrency})"
+								styleClass="col-index"
+								rendered="#{consumptionCRUDController.consumption.prebillReversalConsumption and (not consumptionCRUDController.consumption.ibms)}" >
+								<h:outputText styleClass="#{(consumptionCRUDController.getParentRemainingLineColor(consumptionLine.lineNumber))}"
+									value="#{(consumptionCRUDController.getParentRemainingLineAmount(consumptionLine))}" >
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							
+							<!-- PREBILL ORIGINAL AMOUNT -->
+							<p:column
+								headerText="#{msg['message.consumption.CRUD.originalAmount']} (#{consumptionCRUDController.consumption.transactionCurrency})"
+								styleClass="col-index"
+								rendered="#{not consumptionCRUDController.consumption.ibms}" >
+								<h:outputText value="#{(consumptionCRUDController.getPrebillOriginalLineAmount(consumptionLine))}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							
+							<!-- PREBILL REMAINING AMOUNT -->
+							<p:column
+								headerText="#{msg['message.consumption.CRUD.remainingAmount']} (#{consumptionCRUDController.consumption.transactionCurrency})"
+								styleClass="col-index"
+								rendered="#{not consumptionCRUDController.consumption.ibms}" >
+								<h:outputText styleClass="#{(consumptionCRUDController.getPrebillRemainingLineColor(consumptionLine.lineNumber))}"
+									value="#{(consumptionCRUDController.getPrebillRemainingLineAmount(consumptionLine))}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							
+							<!-- COMMISSION RATE -->
+							<p:column headerText="#{msg['message.invoice.createUpdate.table.commissionRate']}"
+								styleClass="col-commission-rate">
+								<h:outputText
+									value="#{empty consumptionLine.commission or empty consumptionLine.commission.percentage ? ' - ' : consumptionLine.commission.percentage}" >
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- COMMISSION AMOUNT -->
+							<p:column
+								headerText="#{msg['message.invoice.createUpdate.table.commissionAmount']} (#{consumptionCRUDController.consumption.transactionCurrency})"
+								styleClass="col-commission-amount"
+								rendered="#{consumptionCRUDController.commisionsRendered}">
+								<h:outputText value="#{empty consumptionLine.commission or empty consumptionLine.commission.amount ? '-' : consumptionLine.commission.amount}">								
+								<f:convertNumber locale="#{languageController.locale}"
+									type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>								
+							</p:column>
+
+							<!-- PANEL TOTALES & REMAINING PREBILL -->
+							<f:facet name="footer">
+							
+								<!-- PANEL TOTALES -->
+								<p:panel id="consumptionAmountsPanel"
+									styleClass="panelGrid-totalInvoice">
+									<p:panelGrid id="consumptionAmountsPanelGrid" cellpadding="5"
+										styleClass="panelGridSubTotalInvoice no-border">
+										<f:facet name="header">
+											<p:row>
+												<p:column colspan="1">#{msg['message.common.subtotal']}</p:column>
+												<p:column>#{consumptionCRUDController.consumption.transactionCurrency}</p:column>
+												<p:column
+													rendered="#{!(consumptionCRUDController.consumption.transactionCurrency
+													== consumptionCRUDController.consumption.company.currency)}">
+												#{consumptionCRUDController.consumption.baseCurrency}												
+											</p:column>
+											</p:row>
+										</f:facet>
+
+										<!-- TOTAL GROSS AMOUNT -->
+										<p:row>
+											<p:column>
+												<p:outputLabel value="#{msg['message.common.total']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="totalTransaction"
+													value="#{consumptionCRUDController.transactionNetAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+											<p:column
+												rendered="#{!(consumptionCRUDController.consumption.transactionCurrency 
+												== consumptionCRUDController.consumption.company.currency)}">
+												<h:outputText id="totalBase"
+													value="#{consumptionCRUDController.baseNetAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+								
+								<!-- PANEL REMAINING PREBILL -->
+								<p:panel id="consumptionPrebillAmountsPanel"
+									styleClass="panelGrid-totalInvoice">
+									<p:panelGrid id="consumptionPrebillAmountsPanelGrid" cellpadding="5"
+										styleClass="panelGridSubTotalInvoice no-border">
+										<f:facet name="header">
+											<p:row>
+												<p:column colspan="1">#{msg['message.common.prebill']}</p:column>
+												<p:column>#{consumptionCRUDController.consumption.transactionCurrency}</p:column>
+												<p:column
+													rendered="#{!(consumptionCRUDController.consumption.transactionCurrency
+													== consumptionCRUDController.consumption.company.currency)}">
+												#{consumptionCRUDController.consumption.baseCurrency}												
+											</p:column>
+											</p:row>
+										</f:facet>
+
+										<!-- TOTAL ORIGINAL PREBILL NET AMOUNT -->
+										<p:row>
+											<p:column>
+												<p:outputLabel value="#{msg['message.consumption.CRUD.originalAmount']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="prebillNetAmount"
+													value="#{consumptionCRUDController.prebillOriginalAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+											<p:column
+												rendered="#{!(consumptionCRUDController.consumption.transactionCurrency 
+													==consumptionCRUDController.consumption.company.currency)}">
+												<h:outputText id="prebillBaseAmount"
+													value="#{consumptionCRUDController.prebillOriginalBaseAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+										
+										<!-- TOTAL REMAINING AMOUNT -->
+										<p:row>
+											<p:column>
+												<p:outputLabel value="#{msg['message.consumption.CRUD.remainingAmount']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="currentRemainingAmount"
+													value="#{consumptionCRUDController.remainingNetAmount}"
+													styleClass="#{consumptionCRUDController.getRemainingColor()}" >
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+											<p:column
+												rendered="#{!(consumptionCRUDController.consumption.transactionCurrency 
+													== consumptionCRUDController.consumption.company.currency)}" >
+												<h:outputText id="currentRemainingBaseAmount"
+													value="#{consumptionCRUDController.baseRemainingNetAmount}"
+													styleClass="#{consumptionCRUDController.getRemainingColor()}" >
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</f:facet>
+						</p:dataTable>
+
+					</p:panel>
+
+					<p:messages id="consumptionMessages" closable="true"
+						showDetail="false" autoUpdate="true" />
+
+					<div class="EmptyBox10"></div>
+					<div class="form-group">
+					
+						<!-- BACK -->
+						<p:commandButton id="consumptionCRUDBackButton"
+							value="#{msg['message.common.back']}"
+							resetValues="true" process="@this"
+							icon="ui-icon-arrowreturnthick-1-w"
+							title="#{msg['message.invoice.tooltip.createUpdate.back']}"
+							immediate="true" action="#{consumptionCRUDController.back}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- EDIT -->
+						<p:commandButton id="consumptionCRUDEditButton"
+							value="#{consumptionCRUDController.onEditionMode ? msg['message.invoice.createUpdate.button.exitEdit'] : msg['message.common.edit'] }"							
+							title="#{consumptionCRUDController.onEditionMode ? msg['message.invoice.tooltip.createUpdate.exitEdit'] : msg['message.consumption.CRUD.tooltip.edit'] }"
+							icon="ui-icon-pencil"
+							immediate="true"
+							resetValues="true" 
+							process="@this"
+							actionListener="#{consumptionCRUDController.editButtonListener}"
+							disabled="#{consumptionCRUDController.onTransmit or consumptionCRUDController.onPost}"
+							rendered="#{consumptionCRUDController.editButtonRendered}"
+							update="@form">
+						</p:commandButton>
+						
+						<!-- SAVE -->
+						<p:commandButton id="consumptionCRUDSaveButton"
+							value="#{msg['message.common.save']}" icon="ui-icon-check"
+							action="#{consumptionCRUDController.save}"
+							process="@this @form"
+							disabled="#{consumptionCRUDController.onTransmit or consumptionCRUDController.onPost}"
+							title="#{msg['message.consumption.CRUD.tooltip.save']}"
+							rendered="#{consumptionCRUDController.onEditionMode}">
+							<p:confirm message="#{consumptionCRUDController.confirmSaveMessage}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- SUBMIT -->
+						<p:commandButton id="consumptionCRUDSubmitButton"
+							value="#{msg['message.common.submit']}"
+							action="#{consumptionCRUDController.submit}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.submit']}"
+							icon="ui-icon-mail-closed"
+							rendered="#{consumptionCRUDController.submitRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- APPROVE -->
+						<p:commandButton id="consumptionCRUDApproveButton"
+							value="#{msg['message.common.approve']}"
+							action="#{consumptionCRUDController.approve}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.approve']}"
+							icon="ui-icon-circle-check"
+							rendered="#{consumptionCRUDController.approveRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- REJECT -->
+						<p:commandButton id="consumptionCRUDRefuseButton"
+							value="#{msg['message.common.reject']}"
+							action="#{consumptionCRUDController.refuse}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.reject']}"
+							icon="ui-icon-circle-close"
+							rendered="#{consumptionCRUDController.refuseRendered}">
+							<p:confirm
+								message="#{msg['message.consumption.confirm.createUpdate.reject']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- TRANSMIT -->
+						<p:commandButton id="consumptionCRUDTransmitButton"
+							value="#{msg['message.common.transmit']}"
+							action="#{consumptionCRUDController.transmit}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.transmit']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{consumptionCRUDController.transmitRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- BOTONES SAGE (Integracion Manual) -->
+						
+						<!-- TRANSMIT MANUAL -->
+						<p:commandButton id="consumptionCRUDTransmitManualButton"
+							value="#{msg['message.common.transmit']}"
+							action="#{consumptionCRUDController.transmitManual}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.transmit.manual']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{consumptionCRUDController.transmitManualRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- POST MANUAL -->
+						<p:commandButton id="consumptionCRUDPostButton"
+							value="#{msg['message.common.post']}"
+							action="#{consumptionCRUDController.post}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.transmit.post']}"
+							icon="ui-icon-flag"
+							rendered="#{consumptionCRUDController.postRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- VIEW JOURNAL ENTRIES -->
+						<p:commandButton id="consumptionCRUDViewJournalButton"
+							value="#{msg['message.invoice.viewJournalEntries']}"
+							action="#{consumptionCRUDController.viewJournalEntries}"
+							process="@this @form"
+							styleClass="dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.viewJournalEntries']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{!consumptionCRUDController.onEditionMode and !consumptionCRUDController.new}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<!-- DELETE -->
+						<p:commandButton id="consumptionCRUDDeleteButton"
+							value="#{msg['message.common.delete']}"
+							action="#{consumptionCRUDController.cancel}"
+							process="@this @form"
+							styleClass="lais-delete-button dis-button-width"
+							title="#{msg['message.consumption.CRUD.tooltip.delete']}"
+							icon="ui-icon-trash"
+							rendered="#{consumptionCRUDController.cancelRendered}">
+							<p:confirm
+								message="#{msg['message.consumption.confirm.createUpdate.delete']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+						
+					</div>
+
+					<p:commandButton id="buttonDefault"
+						styleClass="buttonDefault"
+						disabled="true" />
+					<p:defaultCommand target="buttonDefault" />
+
+					<p:remoteCommand name="updateSaveButton"
+						update="@form:consumptionCRUDSaveButton"/>
+				</h:form>
+
+			</div>
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

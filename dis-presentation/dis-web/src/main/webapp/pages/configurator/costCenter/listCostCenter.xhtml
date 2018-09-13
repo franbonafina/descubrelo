@@ -1,0 +1,185 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.costCenter']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:focus context="costCenterFiltersForm" />
+
+				<h:form id="costCenterFiltersForm">
+					<p:messages id="listCostCenterMessages" closable="true"
+						showDetail="false" autoUpdate="false" />
+
+					<p:tabView id="filterTabView">
+						<p:tab title="#{msg['message.common.search']}">
+
+							<p:panelGrid styleClass="no-border" columns="4">
+
+								<!-- COMPANY -->
+								<p:outputLabel for="companyFilter"
+									value="#{msg['message.common.company']}" />
+								<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+									value="#{costCenterFilterGenerator.company}"
+									title="#{msg['message.costCenter.tooltip.company']}"
+									converter="omnifaces.SelectItemsConverter" required="true">
+
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company" itemValue="#{company}"
+										itemLabel="#{company.code} - #{company.description}" />
+								</p:selectOneMenu>
+
+								<!-- NUMBER -->
+								<p:outputLabel value="#{msg['message.common.number']} :" />
+								<p:inputText id="inputAccountNumber"
+									label="#{msg['message.common.number']}"
+									value="#{costCenterFilterGenerator.number}"
+									styleClass="dis-input-width"
+									title="#{msg['message.costCenter.tooltip.number']}">
+								</p:inputText>
+
+								<!-- ACTIVE -->
+								<p:outputLabel value="#{msg['message.common.active']}" />
+								<p:selectOneMenu id="activeFilter" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{costCenterFilterGenerator.active}"
+									title="#{msg['message.costCenter.tooltip.active']}">
+									
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.common.selectOne']}" />
+									<f:selectItem itemValue="#{true}"
+										itemLabel="#{msg['message.common.true']}" />
+									<f:selectItem itemValue="#{false}"
+										itemLabel="#{msg['message.common.false']}" />
+									
+								</p:selectOneMenu>
+
+							</p:panelGrid>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="3"
+								styleClass="no-spacing no-border dis-spacing-small">
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									oncomplete="PF('costCenterDataTablePanel').show();"
+									process="@form" update=":listCostCenterForm"
+									title="#{msg['message.account.tooltip.searchButton']}" />
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}"
+									actionListener="#{costCenterFilterGenerator.clearFilters}"
+									oncomplete="PF('costCenterDataTablePanel').close();"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									update="costCenterFiltersForm"
+									title="#{msg['message.common.tooltip.clear.filters']}" />
+
+								<p:commandButton id="add" value="#{msg['message.common.add']}"
+									styleClass="dis-button-width" icon="ui-icon-plus"
+									action="#{costCenterController.add}"
+									title="#{msg['message.costCenter.tooltip.add']}" />
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+
+				</h:form>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+
+				<h:form id="listCostCenterForm">
+
+					<p:panel id="costCenterDataTablePanel"
+						widgetVar="costCenterDataTablePanel" visible="false"
+						closable="true" toggleable="true" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="listCostCenter" widgetVar="listCostCenter"
+							var="costCenter" styleClass="dataTable-letters"
+							value="#{costCenterController.costCenterLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="multiple" rows="10" selectionMode="single"
+							selection="#{costCenterController.selected}" lazy="true"
+							stickyHeader="false" rowKey="#{costCenter.id}"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="edit"
+												styleClass="Fleft LightButton" icon="ui-icon-pencil"
+												process="@this" action="#{costCenterController.edit}"
+												disabled="#{costCenterController.selected == null}"
+												title="#{msg['message.costCenter.tooltip.edit']}" /></td>
+
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.costCenter.list.table.header']}" /></td>
+										<td></td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<p:ajax event="rowSelect" update="edit" />
+							<p:ajax event="rowUnselect" update="edit" />
+							<p:ajax event="rowDblselect" onstart="changeCostCenterAction()" />
+
+							<!-- COMPANY -->
+							<p:column headerText="#{msg['message.common.company']}"
+								styleClass="col-user-user" sortBy="#{costCenter.company.code}">
+								<h:outputText value="#{costCenter.company.code}" />
+							</p:column>
+
+							<!-- NUMBER -->
+							<p:column headerText="#{msg['message.common.number']}"
+								styleClass="" sortBy="#{costCenter.number}">
+								<h:outputText value="#{costCenter.number}" />
+							</p:column>
+
+							<!-- ACTIVE -->
+							<p:column headerText="#{msg['message.common.active']}"
+								styleClass="" sortBy="#{costCenter.active}">
+
+								<h:outputText
+									value="#{costCenter.active ? 
+										msg['message.common.true'] : msg['message.common.false']}" />
+							</p:column>
+
+							<!-- DESCRIPTION -->
+							<p:column headerText="#{msg['message.common.description']}"
+								styleClass="" sortBy="#{costCenter.description}">
+
+								<h:outputText value="#{costCenter.description}" />
+							</p:column>
+
+						</p:dataTable>
+					</p:panel>
+
+					<p:remoteCommand autoRun="true"
+						actionListener="#{costCenterController.showTable}" />
+					<p:remoteCommand name="changeCostCenterAction"
+						action="#{costCenterController.edit}" />
+
+				</h:form>
+
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

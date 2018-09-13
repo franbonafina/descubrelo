@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/SAP/customer/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:custns="http://xmlns.discovery.com/EnterpriseObjects/LAIS/SAP/customer/"
+	xmlns:commns="http://xmlns.discovery.com/EnterpriseObjects/LAIS/SAP/common/">
+
+	<xsd:import
+		namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/SAP/common/"
+		schemaLocation="./lais-sap-common.xsd" />
+
+	<xsd:complexType name="CustomerType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="CompanyCode" nillable="true"
+				type="xsd:string" />
+
+			<xsd:element name="CustomerLegalName" nillable="true"
+				type="xsd:string" />
+			<xsd:element name="CustomerName" nillable="true" type="xsd:string" />
+
+			<xsd:element name="CustomerIdentificacion" nillable="true">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="CustomerERPId" minOccurs="0"
+							nillable="true" type="xsd:string" />
+						<xsd:element name="CustomerId" nillable="true" type="xsd:long" />
+						<xsd:element name="CustomerExternalIds" minOccurs="0"
+							nillable="true">
+							<xsd:complexType>
+								<xsd:sequence>
+									<xsd:element name="CustomerExternalId" minOccurs="0"
+										maxOccurs="unbounded" nillable="true">
+										<xsd:complexType>
+											<xsd:sequence>
+												<xsd:element name="ExternalId" type="xsd:string" />
+												<xsd:element name="ExternalIdType" type="xsd:string" />
+											</xsd:sequence>
+										</xsd:complexType>
+									</xsd:element>
+								</xsd:sequence>
+							</xsd:complexType>
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="TaxId" nillable="true" type="xsd:string" />
+
+			<xsd:element name="CustomerType" nillable="true" type="xsd:string" />
+
+			<xsd:element name="VatType" nillable="true" type="xsd:string" />
+
+			<xsd:element minOccurs="0" name="PaymentMethod" nillable="true"
+				type="commns:PaymentMethodType" />
+			<xsd:element minOccurs="0" name="PaymentTerm" nillable="true"
+				type="commns:PaymentTermType" />
+
+
+			<xsd:element name="Address" nillable="true" type="commns:AddressType" />
+
+			<xsd:element name="CustomerContactInformation" nillable="true">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Email" nillable="true" type="xsd:string" />
+						<xsd:element name="Fax" nillable="true" minOccurs="0"
+							type="xsd:string" />
+						<xsd:element name="InvoiceDeliveryPreference"
+							minOccurs="0" nillable="true" type="xsd:string" />
+						<xsd:element name="Language" nillable="true"
+							minOccurs="0" type="xsd:string" />
+
+						<xsd:element name="Telephone" nillable="true" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="CustomerBankInformation" nillable="true">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="CustomerBankCountry" nillable="true"
+							minOccurs="0" type="commns:CountryType" />
+						<xsd:element name="CustomerBankAccount" minOccurs="0"
+							nillable="true" type="xsd:string" />
+						<xsd:element name="CustomerBankKeyAccount" minOccurs="0"
+							nillable="true" type="xsd:string" />
+						<xsd:element name="CustomerBankAccountNumberLastDigits"
+							minOccurs="0" nillable="true" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

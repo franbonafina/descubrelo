@@ -1,0 +1,418 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{ (companyCRUDController.company != null) ? (companyCRUDController.new ?
+			msg['message.company.header.create'] : msg['message.company.header.update']) : null}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+					navigationRuler.companyListOutcome, companyCRUDController.company)}" />
+		</h:form>
+
+		<c:if test="#{null != companyCRUDController.company}">
+
+			<div class="ContainerIndent Responsive">
+				<p:focus context="createUpdateCompanyForm" />
+
+				<h:form id="createUpdateCompanyForm">
+
+					<p:messages autoUpdate="false" id="indexMessagesUser"
+						showDetail="false" showSummary="true" closable="true" />
+
+					<p:tabView id="companyTabView">
+
+						<!-- COMPANY MAIN INFORMATION -->
+						<p:tab id="companyMainInfoTab"
+							title="#{msg['message.company.tabview.info']}">
+							<p:panel styleClass="no-border-panel" id="companyMainInfoPanel">
+								<p:panelGrid id="companyMainInfoPanelGrid"
+									styleClass="no-border" columns="4" columnClasses="label, value">
+
+									<!-- COMPANY CODE -->
+									<p:outputLabel for="companyCodeInput"
+										value="#{msg['message.company.code']}" />
+									<h:outputText id="companyCode"
+										value="#{companyCRUDController.company.code}"
+										rendered="#{not companyCRUDController.new}" />
+									<p:inputText id="companyCodeInput"
+										label="#{msg['message.company.code']}"
+										value="#{companyCRUDController.company.code}" required="true"
+										styleClass="dis-input-width"
+										title="#{msg['message.company.code']}"
+										rendered="#{companyCRUDController.new}" />
+
+									<!-- DESCRIPTION -->
+									<p:outputLabel for="companyDescription"
+										value="#{msg['message.company.description']}" />
+									<p:inputText id="companyDescription"
+										label="#{msg['message.company.description']}"
+										value="#{companyCRUDController.company.description}"
+										required="true" styleClass="dis-input-width"
+										title="#{msg['message.company.tooltip.description']}" />
+
+									<!-- COUNTRY -->
+									<p:outputLabel for="companyCountry"
+										value="#{msg['message.company.country']}" />
+									<p:selectOneMenu id="companyCountry"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{companyCRUDController.company.country}"
+										styleClass="dis-input-width"
+										title="#{msg['message.company.tooltip.country']}"
+										required="true">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="country" itemValue="#{country}"
+											itemLabel="#{country.isoAlpha3Code.concat(' - ').concat(country.name)}"
+											value="#{selectorController.countryList}" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+
+									<!-- CURRENCY -->
+									<p:outputLabel for="companyCurrency"
+										value="#{msg['message.company.currency']}" />
+									<p:selectOneMenu id="companyCurrency"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{companyCRUDController.company.currency}"
+										styleClass="dis-input-width"
+										title="#{msg['message.company.tooltip.currency']}"
+										required="true">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="currency" itemValue="#{currency}"
+											itemLabel="#{currency.iso3Code} - #{labelUtil.getCurrencyDescriptionLabel(currency)}"
+											value="#{selectorController.allCurrenciesList}" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+
+									<!-- TAX ID -->
+									<p:outputLabel for="companyTaxId"
+										value="#{msg['message.company.taxId']}" />
+									<p:inputText id="companyTaxId"
+										label="#{msg['message.company.taxId']}"
+										value="#{companyCRUDController.company.taxID}" required="true"
+										styleClass="dis-input-width"
+										title="#{msg['message.company.tooltip.taxId']}" />
+
+									<!-- VAT TREATMENT -->
+									<p:outputLabel for="companyTaxStatus"
+										value="#{msg['message.company.vatTreatment']}" />
+									<p:selectOneMenu id="companyTaxStatus"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{companyCRUDController.company.taxStatus}"
+										styleClass="dis-input-width"
+										title="#{msg['message.company.tooltip.vatTreatment']}"
+										required="true">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="taxStatus" itemValue="#{taxStatus}"
+											itemLabel="#{taxStatus.description}"
+											value="#{companyCRUDController.activeTaxStatuses}" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+
+									<!-- ERP TYPE -->
+									<p:outputLabel for="companyErpType"
+										value="#{msg['message.company.ERPType']}" />
+									<p:selectOneMenu id="companyErpType"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{companyCRUDController.company.erpType}"
+										styleClass="dis-input-width"
+										title="#{msg['message.company.tooltip.ERPType']}"
+										required="true">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="erpType" itemValue="#{erpType}"
+											itemLabel="#{erpType}"
+											value="#{selectorController.erpTypeList}" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+
+									<!-- ACTIVE -->
+									<p:outputLabel for="companyActive"
+										value="#{msg['message.common.active']}" />
+									<p:inputSwitch id="companyActive"
+										value="#{companyCRUDController.company.active}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.active']}">
+									</p:inputSwitch>
+								</p:panelGrid>
+
+								<p:panelGrid id="companyMainInfoPanelGrid2"
+									styleClass="no-border" columns="2" columnClasses="label, value">
+
+									<!-- BILLING SCENARIOS -->
+									<p:outputLabel for="companyBillingScenarios"
+										value="#{msg['message.company.billingScenarios']}" />
+									<p:selectManyMenu id="companyBillingScenarios"
+										showCheckbox="true" converter="omnifaces.SelectItemsConverter"
+										value="#{companyCRUDController.activeBillingScenarios}"
+										styleClass="dis-input-width-large dis-checkbox-fix"
+										title="#{msg['message.company.tooltip.billingScenarios']}">
+										<f:selectItems var="billingScenario"
+											itemValue="#{billingScenario}"
+											itemLabel="#{labelUtil.getBillingScenarioLabel(billingScenario)}"
+											value="#{companyCRUDController.billingScenarios}" />
+										<p:ajax process="@this" update="@this" />
+									</p:selectManyMenu>
+
+								</p:panelGrid>
+							</p:panel>
+						</p:tab>
+
+						<!-- COMPANY SETTINGS -->
+						<p:tab id="companySettingsTab"
+							title="#{msg['message.company.tabview.settings']}">
+							<p:panel styleClass="no-border-panel" id="companySettingsPanel">
+								<p:panelGrid id="companySettingsPanelGrid"
+									styleClass="no-border" columns="2" columnClasses="label, value">
+
+									<!-- DEFAULT GEOGRAPHY -->
+									<p:outputLabel for="companyGeography"
+										value="#{msg['message.company.defaultGeography']}" />
+									<p:selectOneMenu id="companyGeography"
+										converter="omnifaces.SelectItemsConverter"
+										label="#{msg['message.company.defaultGeography']}"
+										value="#{companyCRUDController.company.companySettings.defaultGeography}"
+										styleClass="dis-input-width" required="true"
+										title="#{msg['message.company.tooltip.defaultGeography']}">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="geography" itemValue="#{geography}"
+											itemLabel="#{geography.code.concat(' - ').concat(geography.description)}"
+											value="#{selectorController.getGeographyListByCompany(companyCRUDController.company)}" />
+										<p:ajax process="@this" />
+									</p:selectOneMenu>
+
+									<!-- SAME PO VALIDATION -->
+									<p:outputLabel for="companySamePO"
+										value="#{msg['message.company.samePO']}" />
+									<p:inputSwitch id="companySamePO"
+										value="#{companyCRUDController.company.companySettings.samePOValidation}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.samePO']}">
+										<p:tooltip for="companySamePO"
+											value="#{msg['message.company.tooltip.samePO']}" />
+									</p:inputSwitch>
+
+									<!-- SPLITING TO -->
+									<p:outputLabel for="companySplittingTO"
+										value="#{msg['message.company.splittingTO']}" />
+									<p:inputSwitch id="companySplittingTO"
+										value="#{companyCRUDController.company.companySettings.splittingTO}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.splittingTO']}">
+										<p:tooltip for="companySplittingTO"
+											value="#{msg['message.company.tooltip.splittingTO']}" />
+									</p:inputSwitch>
+
+									<!-- INVOICE DATE VALIDATION -->
+									<p:outputLabel for="companyInvoideDate"
+										value="#{msg['message.company.invoiceDate']}" />
+									<p:inputSwitch id="companyInvoideDate"
+										value="#{companyCRUDController.company.companySettings.invoiceDateValidation}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.invoiceDate']}">
+										<p:tooltip for="companyInvoideDate"
+											value="#{msg['message.company.tooltip.invoiceDate']}" />
+									</p:inputSwitch>
+
+									<!-- ADDITIONAL INVOICE COMMENTS -->
+									<p:outputLabel for="companyAdditionalComments"
+										value="#{msg['message.company.additionalCommments']}" />
+									<p:inputSwitch id="companyAdditionalComments"
+										value="#{companyCRUDController.company.companySettings.additionalInvoiceComments}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.additionalCommments']}">
+										<p:tooltip for="companyAdditionalComments"
+											value="#{msg['message.company.tooltip.additionalCommments']}" />
+									</p:inputSwitch>
+
+									<!-- INVOICE HEADER AND INVOICE LINE DESCRIPTION REQUIRED -->
+									<p:outputLabel
+										for="invoiceHeaderAndInvoiceLineDescriptionRequired"
+										value="#{msg['message.company.invoiceHeaderAndInvoiceLineDescriptionRequired']}" />
+									<p:inputSwitch
+										id="invoiceHeaderAndInvoiceLineDescriptionRequired"
+										value="#{companyCRUDController.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.invoiceHeaderAndInvoiceLineDescriptionRequired']}">
+										<p:tooltip
+											for="invoiceHeaderAndInvoiceLineDescriptionRequired"
+											value="#{msg['message.company.tooltip.invoiceHeaderAndInvoiceLineDescriptionRequired']}" />
+									</p:inputSwitch>
+
+									<!-- ADDITIONAL INVOICE FIELDS -->
+									<p:outputLabel for="additionalInvoiceFields"
+										value="#{msg['message.company.additionalInvoiceFields']}" />
+									<p:inputSwitch id="additionalInvoiceFields"
+										value="#{companyCRUDController.company.companySettings.additionalInvoiceFields}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										title="#{msg['message.company.tooltip.additionalInvoiceFields']}">
+										<p:tooltip for="additionalInvoiceFields"
+											value="#{msg['message.company.tooltip.additionalInvoiceFields']}" />
+									</p:inputSwitch>
+
+									<!--WITHHOLDING APPICLABLE -->
+									<p:outputLabel for="withholdingApplicable"
+										value="#{msg['message.withholding.applicable']}" />
+									<p:inputSwitch id="withholdingApplicable"
+										value="#{companyCRUDController.company.companySettings.withholdingApplicable}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}">
+									</p:inputSwitch>
+								</p:panelGrid>
+							</p:panel>
+						</p:tab>
+
+						<!-- TAX STATUS TAB -->
+						<p:tab id="companyTaxStatusTab"
+							title="#{msg['message.company.tabview.taxStatus']}">
+							<p:panel id="companyTaxStatusPanel" styleClass="no-border-panel">
+								<p:panelGrid id="companyTaxStatusPanelGrid"
+									styleClass="no-border" columns="4" columnClasses="label, value">
+
+									<p:panel id="companyTaxStatusDatatablePanel"
+										widgetVar="customerEmailsDataTablePanel" closeSpeed="0"
+										styleClass="no-border no-spacing">
+
+										<!-- EMAILS -->
+										<p:dataTable id="companyTaxStatusDatatable"
+											widgetVar="companyVatTreatmentDatatable"
+											value="#{companyCRUDController.taxStatuses}" var="taxStatus"
+											selection="#{customerCRUDController.selectedEmails}"
+											rowIndexVar="rowIndexVar" stickyHeader="false"
+											emptyMessage="#{msg['message.datatable.emptyMessage']}"
+											styleClass="dataTable-letters" rowKey="#{taxStatus.code}"
+											editable="true" editMode="cell">
+
+											<f:facet name="header">
+												<table class="no-border dis-table-header">
+													<tr>
+														<td></td>
+														<td class="ui-datatable ui-datatable-header"><h:outputText
+																value="#{msg['message.company.taxStatus.table.title']}" />
+														</td>
+														<td></td>
+													</tr>
+												</table>
+											</f:facet>
+
+											<!-- TAX STATUS CODE -->
+											<p:column headerText="#{msg['message.common.code']}"
+												styleClass="col-channel-line">
+												<h:outputText
+													value="#{labelUtil.getTaxStatusCodeLabel(taxStatus.code)}" />
+											</p:column>
+
+											<!-- DESCRIPTION -->
+											<p:column styleClass="col-description-line">
+												<f:facet name="header">
+													<p:outputLabel>
+														#{msg['message.common.description']}
+													</p:outputLabel>
+													<p:panelGrid styleClass="none transparent">
+														<i class="icon-pencil Wid25 facebookblue"></i>
+													</p:panelGrid>
+												</f:facet>
+
+												<p:cellEditor>
+													<f:facet name="output">
+														<h:outputText value="#{taxStatus.description}" />
+													</f:facet>
+													<f:facet name="input">
+														<p:inputText value="#{taxStatus.description}"
+															styleClass="invoiceLineTable-edit"
+															label="#{msg['message.common.description']}">
+															<p:ajax event="change" process="@this" />
+														</p:inputText>
+													</f:facet>
+												</p:cellEditor>
+											</p:column>
+
+											<!-- ACTIVE -->
+											<p:column styleClass="col-single-line">
+												<f:facet name="header">
+													<p:outputLabel>
+														#{msg['message.common.active']}
+													</p:outputLabel>
+													<p:panelGrid styleClass="none transparent">
+														<i class="icon-pencil Wid25 facebookblue"></i>
+													</p:panelGrid>
+												</f:facet>
+
+												<p:selectBooleanCheckbox value="#{taxStatus.active}">
+													<p:ajax process="@this"
+														listener="#{companyCRUDController.updateActiveTaxStatuses}"
+														update="@form:companyTabView:companyTaxStatus" />
+												</p:selectBooleanCheckbox>
+											</p:column>
+
+										</p:dataTable>
+									</p:panel>
+
+								</p:panelGrid>
+							</p:panel>
+						</p:tab>
+					</p:tabView>
+
+					<p:spacer styleClass="dis-spacer-small" />
+
+					<div class="form-group">
+						<div style="margin-top: 5px;">
+							<p:commandButton value="#{msg['message.common.back']}"
+								resetValues="true" id="cancelCompanyBtn" process="@this"
+								icon="ui-icon-arrowreturnthick-1-w"
+								title="#{msg['message.company.tooltip.back']}" immediate="true"
+								action="#{companyCRUDController.cancel}">
+								<p:confirm
+									message="#{msg['message.common.confirmation.continue']}"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+							<p:commandButton value="#{msg['message.common.save']}"
+								id="acceptCompanyBtn"
+								action="#{companyCRUDController.createOrUpdate}"
+								icon="ui-icon-check" validateClient="true" process="@form"
+								oncomplete="scrollOnMessageToTop()"
+								update="createUpdateCompanyForm"
+								title="#{msg['message.company.tooltip.save']}">
+
+								<p:confirm
+									message="#{msg['message.common.confirmation.continue']}"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+						</div>
+					</div>
+					<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+						disabled="true" />
+					<p:defaultCommand target="buttonDefault" />
+
+				</h:form>
+
+			</div>
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

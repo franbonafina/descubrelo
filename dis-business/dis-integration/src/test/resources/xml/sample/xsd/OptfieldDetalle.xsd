@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="" elementFormDefault="unqualified"
+	attributeFormDefault="unqualified">
+
+	<xs:complexType name="OptfieldDetalle">
+		<xs:attribute name="IREFERENCE" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido, deberá de ir como
+					000.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:decimal">
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="NETWORK" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido, aquí se coloca la
+					información del campo del IBMS llamado Sales Channel
+					Name.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:whiteSpace value="collapse" />
+					<xs:minLength value="0" />
+					<xs:maxLength value="60" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="SNOTES" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido, aquí se coloca el
+					comentario de factura (se repite en cada linea).
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:maxLength value="60" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="SOFFICE" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar la
+					Sales office (SR) del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="SPERSON" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar la
+					Sales Person (SR) del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="CAMPAING" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar el
+					valor concatenado de los siguientes campos del IBMS
+					Campaign start date to Campaign end date.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="CAMPAINGREF" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar el
+					valor del campo Campaign reference del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="CANTIDADD" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido, deberá de ir vacío.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="PERFACTURA" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar el
+					valor concatenado de los siguientes campos del IBMS
+					Invoice start date to Invoice end date.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="OC" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar el
+					valor de la orden de compra
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="OPTFIELD">
+		<xs:attribute name="AGID" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar el valor del
+					campo Agency Client Reference del IBMS (Id de cleinte asignado
+					a la agencia mas el codigo de moneda)
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:maxLength value="60" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="AGNAME" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar el valor del
+					Nombre de la Agencia segun el Agency Client Reference del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:maxLength value="60" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="CAMPAING" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para precisar el
+					valor concatenado de los siguientes campos del IBMS
+					Invoice start date to Invoice end date.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:maxLength value="60" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="CANTIDADD" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido, deberá de ir vacío.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="CID" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar el valor del
+					campo Customer Reference del IBMS (Id de cleinte asignado al
+					Customer mas el codigo de moneda).
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="CNAME" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar el valor del
+					Nombre del cliente segun el Customer Reference del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="NETWORK" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido con valor prefijado a N/A
+					si no es un Manual Entry, de lo contrario mandar el nombre del
+					canal.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="SNOTES" use="required">
+			<xs:annotation>
+				<xs:documentation> Atributo requerido con valor prefijado a N/A
+					si no es un Manual Entry, de lo contrario mandar los
+					Comentarios de factura.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:maxLength value="20" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="SOFFICE" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar el valor del
+					campo Sales office (SR) del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="SPERSON" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar el valor del
+					campo Sales Person (SR) del IBMS.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="REQDATE" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido para colocar la fecha del
+					dia en que se genera el XML. Se expresa en la forma aaaa-mm-dd.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="CONSEP" use="required">
+			<xs:annotation>
+				<xs:documentation>Atributo requerido, deberá de ir vacío.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:minLength value="0" />
+					<xs:whiteSpace value="collapse" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+
+</xs:schema>

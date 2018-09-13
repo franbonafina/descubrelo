@@ -1,0 +1,175 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.common.channel']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<p:focus context="channelform" />
+                <h:form id="msgForm">
+					<p:messages id="listchannelFormMessages" closable="true" 
+						showDetail="false" autoUpdate="false" />
+				</h:form>
+				<h:form id="channelform">
+					<p:tabView>
+						<p:tab title="#{msg['message.common.channel']}">
+						
+							<p:panelGrid styleClass="no-border" columns="2">
+
+
+								<!-- CODE CHANNEL -->
+								<p:outputLabel for="codeFilter"
+									value="#{msg['message.channel.code']}" />
+								<p:selectOneMenu id="codeFilter"
+									value="#{filterContainer.channelFilterGenerator.code}"
+									converter="omnifaces.SelectItemsConverter"
+									styleClass="dis-input-width" title="#{msg['message.channel.tooltip.channel.code']}">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.channel.edit.code']}" />
+
+									<f:selectItems value="#{selectorController.channelList}"
+										var="channel" itemValue="#{channel.code}"
+										itemLabel="#{channel.code}" />
+									<p:ajax process="@this" />
+								</p:selectOneMenu>
+
+								<!-- DESCRIPTION -->
+								<p:outputLabel for="descriptionFilter"
+									value="#{msg['message.channel.description']}" />
+								<p:inputText id="descriptionFilter" styleClass="dis-input-width" 
+								title="#{msg['message.channel.tooltip.channel.desc']}"
+								value="#{filterContainer.channelFilterGenerator.description}" 	/>
+
+								<!-- PROFITCENTER-->
+								<p:outputLabel for="profitFilter"
+									value="#{msg['message.channel.profitCenter']}" />
+								<p:selectOneMenu id="profitFilter"
+									value="#{filterContainer.channelFilterGenerator.profitCenter}"
+									converter="omnifaces.SelectItemsConverter"
+									styleClass="dis-input-width" title="#{msg['message.channel.tooltip.channel.prof']}">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.channel.edit.profitcenter']}" />
+
+									<f:selectItems value="#{selectorController.profitCenterList}"
+										var="profitCenter" itemValue="#{profitCenter}"
+										itemLabel="#{profitCenter.number}- #{profitCenter.description}" />
+									<p:ajax process="@this" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+
+							<p:panelGrid columns="3"
+								styleClass="no-spacing no-border dis-spacing-small">
+
+								<!-- BUTTON -->
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									actionListener="#{channelController.filterTable}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									oncomplete="PF('channelDataTablePanel').show();"
+									update=":listChannelForm" title="#{msg['message.channel.tooltip.channel.search']}" />
+
+
+								<p:commandButton id="add" value="#{msg['message.common.add']}"
+									styleClass="dis-button-width" icon="ui-icon-plus"
+									process="@this" action="#{channelController.add}" title="#{msg['message.channel.tooltip.channel.add']}"/>
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									process="@this"
+									actionListener="#{filterContainer.channelFilterGenerator.clearFilters}"
+									oncomplete="PF('channelDataTablePanel').close();"
+									update=":channelform :msgForm" resetValues="true" title="#{msg['message.channel.tooltip.channel.clear']}"/>
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+				</h:form>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+				<h:form id="listChannelForm">
+					<p:panel id="channelDataTablePanel"
+						widgetVar="channelDataTablePanel" visible="false" closable="true"
+						toggleable="true" closeSpeed="0" styleClass="no-border no-spacing">
+
+						<p:dataTable id="listChannel" widgetVar="listChannelVar"
+							var="channel" value="#{channelController.channelLazyModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="multiple" rows="10" selectionMode="single"
+							selection="#{channelController.selectedChannel}"
+							rowKey="#{channel.code}" lazy="true" stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="edit"
+												styleClass="Fleft LightButton" icon="ui-icon-pencil"
+												process="@this" action="#{channelController.edit}"
+												disabled="#{channelController.selectedChannel == null}" 
+												title="#{msg['message.channel.tooltip.channel.edit']}"/>
+
+											<p:commandButton id="delete"
+												styleClass="Fleft LightButton" icon="ui-icon-closethick"
+												actionListener="#{channelController.delete}" process="@this"
+												disabled="#{channelController.selectedChannel == null}" update=":channelform"
+												title="#{msg['message.channel.tooltip.channel.delete']}">
+												<p:confirm
+													message="#{msg['message.common.confirmation.continue']}"
+													icon="ui-icon-alert" />
+											</p:commandButton></td>
+
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.channe.channel']}" /></td>
+
+										<td></td>
+									</tr>
+								</table>
+							</f:facet>
+                            <p:ajax event="rowSelect" update="delete" />
+							<p:ajax event="rowUnselect" update="delete" />
+							<p:ajax event="rowSelect" update="edit" />
+							<p:ajax event="rowUnselect" update="edit" />
+							<p:ajax event="rowDblselect" onstart="selectChannelAction()" />
+							<!-- CODE -->
+							<p:column headerText="#{msg['message.common.code']}"
+								styleClass="col-user-user" sortBy="#{channel.code}">
+								<h:outputText value="#{channel.code}" />
+							</p:column>
+							<!-- DESCRIPTION-->
+							<p:column headerText="#{msg['message.common.description']}"
+								styleClass="col-user-user" sortBy="#{channel.description}">
+								<h:outputText value="#{channel.description}" />
+							</p:column>
+
+							<!--  PROFITCENTER-->
+							<p:column headerText="#{msg['message.common.profitcenter']}"
+								styleClass="col-user-user" sortBy="#{channel.profitCenter}">
+								<h:outputText value="#{channel.profitCenter}-#{channel.description}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					<p:remoteCommand autoRun="true"
+						actionListener="#{channelController.showTable}" />
+					<p:remoteCommand name="selectChannelAction"
+						action="#{channelController.edit}" />
+				</h:form>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

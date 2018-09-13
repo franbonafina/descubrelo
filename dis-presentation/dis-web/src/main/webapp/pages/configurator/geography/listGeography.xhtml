@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.common.geography']}
+</ui:define>
+
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+	<div class="Container100">
+		<div class="ContainerIndent">
+
+			<p:focus context="geographyFiltersForm"/>
+
+			<h:form id="geographyFiltersForm">
+				<p:tabView>
+					<p:tab title="#{msg['message.common.filters']}">
+
+						<p:panelGrid styleClass="no-border" columns="2">
+							
+							<!-- COMPANY -->
+							<p:outputLabel for="companyFilter"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+								value="#{filterContainer.geographyFilterGenerator.company}"
+								title="#{msg['message.geography.tooltip.filterCompany']}"
+								required="true" converter="omnifaces.SelectItemsConverter">
+								
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}" 
+									itemLabel="#{company.code} - #{company.description}"/>								
+							</p:selectOneMenu>
+						
+							<!-- CODE -->
+							<p:outputLabel for="codeFilter"
+								value="#{msg['message.common.code']}" />
+							<p:inputText id="codeFilter" styleClass="dis-input-width"
+								value="#{filterContainer.geographyFilterGenerator.code}"
+								title="#{msg['message.geography.tooltip.filterCode']}">
+								<p:ajax process="@this"/>
+							</p:inputText>
+								
+						</p:panelGrid>
+
+						<p:spacer styleClass="dis-spacer-small" />
+						
+						<p:panelGrid columns="3" styleClass="no-spacing no-border dis-spacing-small">
+							<p:commandButton id="search"
+								value="#{msg['message.common.search']}"
+								actionListener="#{geographyController.filterTable}"
+								styleClass="dis-button-width" icon="ui-icon-search"
+								oncomplete="PF('geographyDataTablePanel').show();"
+								update=":listGeographyForm"
+								title="#{msg['message.geography.tooltip.searchGeography']}" />
+
+							<p:commandButton id="clear"
+								value="#{msg['message.common.clear']}"
+								actionListener="#{geographyController.clearFilters}"
+								oncomplete="PF('geographyDataTablePanel').close();"
+								styleClass="dis-button-width" icon="ui-icon-refresh"
+								update="geographyFiltersForm"
+								title="#{msg['message.common.tooltip.clear.filters']}" />
+
+							<p:commandButton id="add" value="#{msg['message.common.add']}"
+								styleClass="dis-button-width" icon="ui-icon-plus"
+								process="@this" action="#{geographyController.add}"
+								title="#{msg['message.geography.tooltip.addGeography']}" />
+						</p:panelGrid>
+						
+					</p:tab>
+				</p:tabView>
+			</h:form>
+
+			<p:spacer styleClass="dis-spacer-small"/>
+				
+			<h:form id="listGeographyForm">
+				<p:panel 
+					id="geographyDataTablePanel" widgetVar="geographyDataTablePanel"
+					visible="false" closable="true" toggleable="true" closeSpeed="0"
+					styleClass="no-border no-spacing">
+					
+					<p:dataTable id="listGeography" widgetVar="listGeographyVar" var="geography"
+						value="#{geographyController.geographyLazyModel}"
+						paginatorAlwaysVisible="true" paginator="true"
+						currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+						rows="10" selectionMode="single"
+						selection="#{geographyController.selectedGeography}" lazy="true"
+						stickyHeader="false"
+						emptyMessage="#{msg['message.datatable.emptyMessage']}"
+						reflow="true" 
+						sortMode="multiple">
+						
+						<f:facet name="header">
+							<table class="no-border dis-table-header">
+								<tr>
+									<td>
+										<p:commandButton
+											id="edit" 
+											styleClass="Fleft LightButton"
+											icon="ui-icon-pencil" process="@this"
+											action="#{geographyController.edit}"
+											disabled="#{geographyController.selectedGeography == null}"
+											title="#{msg['message.geography.tooltip.editGeography']}" />
+										</td>
+									<td class="ui-datatable ui-datatable-header">
+										<h:outputText
+											value="#{msg['message.geography.title.table']}" />
+									</td>
+									<td></td>
+								</tr>
+							</table>
+						</f:facet>
+
+						<p:ajax event="rowSelect" update="edit"/>
+						<p:ajax event="rowUnselect" update="edit"/>
+						<p:ajax event="rowDblselect" onstart="changeGeographyAction()" />
+
+						<!-- COMPANY -->
+						<p:column headerText="#{msg['message.common.company']}"
+							styleClass="col-user-user"
+							sortBy="#{account.company.code}">
+							<h:outputText value="#{geography.company.code}" />
+						</p:column>
+							
+						<!-- CODE -->
+						<p:column headerText="#{msg['message.common.code']}"
+							styleClass="col-user-user"
+							sortBy="#{geography.code}">
+							<h:outputText value="#{geography.code}" />
+						</p:column>
+
+						<!-- DESCRIPTION -->
+						<p:column headerText="#{msg['message.common.description']}"
+							styleClass="col-user-user"
+							sortBy="#{geography.description}">
+							<h:outputText value="#{geography.description}" />
+						</p:column>
+
+						<!-- ACTIVE -->
+						<p:column headerText="#{msg['message.common.active']}"
+							styleClass="col-user-user"
+							sortBy="#{geography.active}">							
+							<h:outputText value="#{geography.active ? msg['message.common.true'] : msg['message.common.false']}" />
+						</p:column>						
+
+					</p:dataTable>
+				</p:panel>
+				<p:remoteCommand autoRun="true" 
+					actionListener="#{geographyController.showTable}" />
+				<p:remoteCommand name="changeGeographyAction"
+					action="#{geographyController.edit}" />
+				 
+			</h:form>
+		</div>
+	</div>
+			
+</ui:define>
+</ui:composition>

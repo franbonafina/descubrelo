@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="topbarForm">
+
+		<div id="layout-header" class="Unselectable fontRegular">
+			
+			<!-- LOGO -->
+			<a href="#{request.contextPath}/faces/index.xhtml" id="layout-logo">
+				<h:graphicImage 
+					name="logo-no-text.png" 
+					styleClass="Fleft"
+					library="images" /> 
+					
+				<span class="Fs19 FontTitilliumRegular Fleft "> 
+					<span
+						class="dis-mini-title softblue">#{msg['message.application.brand.title']}
+					</span>
+				</span>
+			</a>
+
+			<!-- PAGE TITLE -->
+			<div class="dis-title-template dis-mini-title">
+				<ui:insert name="viewTitle">
+               		#{msg['message.common.home']}
+            	</ui:insert>
+			</div>
+						
+			<!-- RIGHT MENU -->
+			<ul id="sm-topmenu" class="sm-topmenu layout-header-widgets white Fs14">
+				<!-- LANGUAGE -->
+				<li class="Fleft BordRadHalf TexAlCenter">
+					<p:commandLink 
+						action="userSettings" update="@all"
+						styleClass="white Unselectable decoration es" >
+						<p:outputLabel styleClass="dis-language-iso2code"
+								value="#{languageController.locale}" />
+					</p:commandLink>
+				</li>
+
+				<!-- USER -->
+				<li class="Fleft BordRadHalf TexAlCenter"><i
+					class="icon-user-male"></i>
+					
+					<ul
+						class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+						
+						<li class="Animated05"><a class="white Unselectable"> <i
+								class="icon-user-male Fs26 OvHidden"></i> <span class="Fs18">#{loginController.user.username}<br />
+									<span class="Fs10">#{msg['message.user.lastLogin']} -
+										#{loginController.lastLogin}</span></span>
+						</a></li>
+						
+						<li class="Animated05">
+						
+						<p:commandLink action="userSettings" update="@all"
+								styleClass="white Unselectable decoration">
+						<i class="icon-sliders"></i>
+    						#{msg['message.user.settings.title.short']}
+						</p:commandLink>
+    					
+    					</li>
+						<li class="Animated05">
+						
+						<p:commandLink update="@all"
+								action="changePasswordSetting" styleClass="white Unselectable decoration">
+								<i class="icon-lock"></i>
+    						#{msg['message.user.settings.passwordChange.label']}
+						</p:commandLink> 
+    					</li>
+					</ul></li>
+
+				<!-- HELP DESK & VERSION -->
+				<li class="Fleft BordRadHalf TexAlCenter"><i
+					class="icon-wrench-1"></i>
+					<ul
+						class="layout-header-widgets-submenu BordRad5 shadows white Animated05">						
+						<li class="Animated05"><a href="#" class="white Unselectable">
+								<i class="icon-lifebuoy"></i>#{msg['message.common.helpDesk']}
+						</a></li>
+						<li class="Animated05"><a href="#" class="white Unselectable">
+								<i class="icon-info-circled"></i>#{msg['message.common.version']}: #{vmsg['version']}
+						</a></li>
+					</ul>
+				</li>
+				
+				<!-- LOG OUT -->
+				<li class="Fleft BordRadHalf TexAlCenter"><i class="icon-power"></i>
+					<ul
+						class="layout-header-widgets-submenu BordRad5 shadows white Animated05">
+						<li class="Animated05"><h:commandLink
+								rendered="#{not empty request.remoteUser}"
+								actionListener="#{logoutController.submit}"
+								styleClass="white Unselectable">
+
+								<i class="icon-logout"></i>
+    						#{msg['message.header.logout']}
+    					</h:commandLink></li>
+					</ul></li>
+			</ul>
+			
+			<!-- NEVER REMOVE FOLLOWING 'UL' TAG ! BECAUSE THIS CONTAINS RESPONSIVE MODE HEADER MENU OPEN-CLOSE BUTTON -->
+			<ul id="sm-mobiletopmenu" class="layout-header-widgets white Fs14">
+				<li
+					class="Fleft BordRadHalf TexAlCenter Animated05 DisplayOnResponsive">
+					<i class="icon-th-1"></i>
+				</li>
+			</ul>			
+
+		</div>
+
+		<p:panel id="bannerVersionPanel"
+			styleClass="bannerVersionPanel"
+			rendered="#{environmentController.rendered}">
+			<div id="bannerVersion">
+				<p>#{environmentController.environment}</p>
+			</div>
+		</p:panel>
+
+	</h:form>
+
+</ui:composition>

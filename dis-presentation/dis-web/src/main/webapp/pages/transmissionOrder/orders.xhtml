@@ -1,0 +1,379 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.orders']}
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="prin">
+			<p:remoteCommand
+				autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+					navigationRuler.transmissionOrdersSearch, transmissionOrdersController.selectedCompany)}" />
+					
+			<p:messages autoUpdate="false" id="ordersMessages"
+						showDetail="false" showSummary="true" closable="true" />
+		</h:form>
+		
+		<c:if test="#{null != transmissionOrdersController.selectedCompany}">
+		
+		<div class="ContainerIndent">
+
+			<h:form id="massiveUpdateForm">
+	 			<!-- <p:messages id="messages" showDetail="true" autoUpdate="false" closable="true" /> -->
+	 							
+				<p:panel id="panelButton" styleClass="panelButton">
+
+					<p:commandButton id="Back" value="#{msg['message.common.back']}"
+						icon="ui-icon-back" process="@this" action="searchOrders"
+						title="#{msg['message.orders.massive_update.tooltip.backButton']}" />
+
+					<p:commandButton id="Editar"
+						value="#{msg['message.common.editMode']}" icon="ui-icon-pencil"
+						process="@this" oncomplete="processTable();"
+						actionListener="#{transmissionOrdersController.edit}"
+						rendered="#{!transmissionOrdersController.onEditionMode}"
+						title="#{msg['message.orders.massive_update.tooltip.editButton']}" />
+
+					<p:commandButton id="LimpiarFiltros" icon="ui-icon-refresh"
+						value="#{msg['message.common.clear.table_filters']}"
+						actionListener="#{transmissionOrdersController.clearFilters}"						
+						rendered="#{!transmissionOrdersController.onEditionMode}"
+						process="@this" update=":tabViewOrdersForm:listTohs"
+						title="#{msg['message.common.tooltip.clear.table_filters']}" />
+						
+					<p:commandButton id="Aceptar" icon="ui-icon-check" process="@this"
+						value="#{msg['message.common.save']}"
+						actionListener="#{transmissionOrdersController.confirm}"
+						validateClient="true"
+						rendered="#{transmissionOrdersController.onEditionMode}"
+						title="#{msg['message.orders.massive_update.tooltip.saveButton']}" >
+						<p:confirm message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+					</p:commandButton>
+
+					<p:commandButton id="Cancelar" icon="ui-icon-closethick"
+						value="#{msg['message.common.cancel']}"
+						update=":tabViewOrdersForm:listTohs"
+						actionListener="#{transmissionOrdersController.closeEditionMode}"
+						process="@this"
+						oncomplete="PF('listTohs').filter()"
+						rendered="#{transmissionOrdersController.onEditionMode}"
+						title="#{msg['message.orders.massive_update.tooltip.cancelButton']}" />
+
+					<p:commandButton id="massiveUpdateButton"
+						value="#{msg['message.common.apply']}"
+						update=":massiveUpdateDlgForm" process="@form"
+						actionListener="#{transmissionOrdersController.showMassiveUpdateBrief}"
+						rendered="#{transmissionOrdersController.onEditionMode}"
+						disabled="#{transmissionOrdersController.disableApplyButton()}"
+						title="#{msg['message.orders.massive_update.tooltip.applyButton']}"
+						icon="ui-icon-arrowthick-1-s" />
+				</p:panel>
+
+				<p:panel id="panelMassiveUpdate"
+					header="#{msg['message.orders.massive_update']}"
+					widgetVar="panelMassiveUpdate"
+					rendered="#{transmissionOrdersController.onEditionMode}">
+
+					<p:panelGrid widgetVar="gridMassive" columns="6"
+						styleClass="no-border transparent">
+						
+						<!-- BILL TO CUSTOMER -->
+							<p:outputLabel
+								value="#{msg['message.orders.massive_update.billToCustomer']}"
+								for="selectBillToCustomer" />
+							<p:selectOneMenu id="selectBillToCustomer"
+								effect="fade"
+								var="billTO" 
+								filter="true"
+								filterMatchMode="contains"
+								styleClass="transparent dis-input-width"
+								value="#{transmissionOrdersController.massiveUpdateObject.billToCustomer}"
+								title="#{msg['message.orders.massive_update.tooltip.billToCustomer']}"
+								converter="omnifaces.SelectItemsConverter">
+								<p:ajax process="@this" />
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['message.orders.massive_update.billToCustomer.select']}" />
+								<f:selectItems
+									value="#{transmissionOrdersController.billToCustomer}"
+									var="billTO" itemLabel="#{billTO}" itemValue="#{billTO}" />
+								<p:column>
+									<p:outputLabel
+										value="#{billTO != null ? labelUtil.getCustomerLabel(billTO) : msg['message.invoice.select.customer']}" />
+								</p:column>
+							</p:selectOneMenu>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchBTC"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updateBillToCustomer}">
+									<p:ajax process="@this" 
+										update=":massiveUpdateForm:massiveUpdateButton" />
+								</p:inputSwitch>
+
+								<p:tooltip for="switchBTC"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+
+							<!-- BILLING SCENARIO -->
+							<p:outputLabel
+								value="#{msg['message.orders.massive_update.billing_scenario']}"
+								for="selectBillingScenario" />
+							<p:selectOneMenu id="selectBillingScenario"
+								styleClass="transparent dis-input-width"
+								value="#{transmissionOrdersController.massiveUpdateObject.billingScenario}"
+								title="#{msg['message.orders.massive_update.tooltip.billing_scenario']}"
+								converter="omnifaces.SelectItemsConverter">
+								<p:ajax process="@this"
+									listener="#{transmissionOrdersController.validatePrebill}"
+									update="panelMassiveUpdate" />
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['message.orders.massive_update.billing_scenario.select']}" />
+								<f:selectItems
+									value="#{transmissionOrdersController.billingScenarioList}"
+									var="bs" itemLabel="#{bs.number}" itemValue="#{bs}"
+									itemDescription="#{(labelUtil.getBillingScenarioDescriptionLabel(bs))}" />
+							</p:selectOneMenu>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchBS"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updateBillingScenario}">
+									<p:ajax process="@this" 
+										update="panelMassiveUpdate :massiveUpdateForm:massiveUpdateButton" 
+										listener="#{transmissionOrdersController.validatePrebill}"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchBS"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+
+							<!-- INSERTION ORDER -->
+							<p:outputLabel value="#{msg['message.orders.massive_update.io']}"
+								for="inputInsertionOrder" />
+							<p:inputText styleClass="dis-input-width"
+								id="inputInsertionOrder"
+								value="#{transmissionOrdersController.massiveUpdateObject.insertionOrder}"
+								title="#{msg['message.orders.massive_update.tooltip.io']}">
+								<p:ajax process="@this"/>
+							</p:inputText>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchIO"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updateInsertionOrder}">
+									<p:ajax process="@this" update=":massiveUpdateForm:massiveUpdateButton"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchIO"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+
+							<!-- PURCHASE ORDER -->
+							<p:outputLabel value="#{msg['message.orders.massive_update.po']}"
+								for="inputPurchaseOrder" />
+							<p:inputText styleClass="dis-input-width" id="inputPurchaseOrder"
+								value="#{transmissionOrdersController.massiveUpdateObject.purchaseOrder}"
+								title="#{msg['message.orders.massive_update.tooltip.po']}">
+								<p:ajax process="@this"/>
+							</p:inputText>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchPO"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updatePurchaseOrder}">
+									<p:ajax process="@this" update=":massiveUpdateForm:massiveUpdateButton"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchPO"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+
+							<!-- DELAY REASON -->
+							<p:outputLabel styleClass="ui-outputlabel rendered-width"
+								value="#{msg['message.orders.massive_update.delay_reason']}"
+								for="selectDelayReason" />
+							<p:selectOneMenu styleClass="transparent dis-input-width"
+								id="selectDelayReason"
+								value="#{transmissionOrdersController.massiveUpdateObject.delayReason}"
+								title="#{msg['message.orders.massive_update.tooltip.delay_reason']}"
+								converter="omnifaces.SelectItemsConverter">
+								<p:ajax process="@this"/>
+								<f:selectItem
+									itemLabel="#{msg['message.orders.massive_update.delay_reason.select']}"
+									itemValue="#{null}" />
+								<f:selectItems
+									value="#{selectorController.delayReasons}"
+									var="reason" itemValue="#{reason}"
+									itemLabel="#{(labelUtil.getDelayReasonLabel(reason))}" />
+							</p:selectOneMenu>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchDR"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updateDelayReason}">
+									<p:ajax process="@this" update=":massiveUpdateForm:massiveUpdateButton"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchDR"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+							
+							<!-- BILLABLE -->
+							<p:outputLabel styleClass="ui-outputlabel"
+								value="#{msg['message.orders.massive_update.billable']}"
+								for="selectBillable" />
+							<p:selectOneMenu styleClass="transparent dis-input-width"
+								id="selectBillable"
+								value="#{transmissionOrdersController.massiveUpdateObject.billable}"
+								title="#{msg['message.orders.massive_update.tooltip.billable']}"
+								converter="omnifaces.SelectItemsConverter">
+								<p:ajax process="@this"/>
+								<f:selectItem
+									itemLabel="#{msg['message.common.true']}"
+									itemValue="#{true}" />
+								<f:selectItem
+									itemLabel="#{msg['message.common.false']}"
+									itemValue="#{false}" />
+							</p:selectOneMenu>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchBill"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updateBillable}">
+									<p:ajax process="@this" update=":massiveUpdateForm:massiveUpdateButton"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchBill"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+						
+							<!-- PREBILL -->
+							<p:outputLabel rendered="#{transmissionOrdersController.panelPrebill}"
+								value="#{msg['message.orders.massive_update.prebill_reference']}"
+								for="selectPrebill" />
+							<p:selectOneMenu styleClass="transparent dis-input-width" id="selectPrebill"
+								rendered="#{transmissionOrdersController.panelPrebill}"
+								value="#{transmissionOrdersController.massiveUpdateObject.preBillRef}"
+								title="#{msg['message.orders.massive_update.tooltip.prebill_reference']}"
+								converter="omnifaces.SelectItemsConverter">
+								<p:ajax process="@this"/>
+								<f:selectItems
+									value="#{filterContainer.editOrdersFilterGenerator.prebillRefs}"
+									var="pbr" itemValue="#{pbr}"
+									itemLabel="#{labelUtil.getInvoiceLabel(pbr)} (#{labelUtil.getCustomerLabel(pbr.customer)})"/>
+							</p:selectOneMenu>
+							<p:panel styleClass="no-border" rendered="#{transmissionOrdersController.panelPrebill}">
+								<p:inputSwitch id="switchPBR"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updatePrebillRef}">
+									<p:ajax process="@this" update=":massiveUpdateForm:massiveUpdateButton"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchPBR"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+							
+							
+							<!-- PRODUCT NAME -->
+							<p:outputLabel value="#{msg['message.orders.massive_update.productName']}"
+								for="inputProductName" />
+							<p:inputText styleClass="dis-input-width" id="inputProductName"
+								value="#{transmissionOrdersController.massiveUpdateObject.productName}"
+								title="#{msg['message.orders.massive_update.tooltip.productName']}">
+								<p:ajax process="@this"/>
+							</p:inputText>
+							<p:panel styleClass="no-border">
+								<p:inputSwitch id="switchProductName"
+									offLabel="#{msg['message.common.false']}"
+									onLabel="#{msg['message.common.true']}"
+									value="#{transmissionOrdersController.massiveUpdateObject.updateProductName}">
+									<p:ajax process="@this" update=":massiveUpdateForm:massiveUpdateButton"/>
+								</p:inputSwitch>
+
+								<p:tooltip for="switchProductName"
+									value="#{msg['message.orders.massive_update.tooltip.switch']}" />
+							</p:panel>
+
+					</p:panelGrid>					
+					
+					<p:spacer height="10px"/>
+					
+				</p:panel>
+			</h:form>
+
+			<p:panel id="dataTableOrders" widgetVar="dataTableOrders"
+				styleClass="dis-fake-tabview no-border-panel no-spacing">
+
+				<h:form id="tabViewOrdersForm">
+					<p:remoteCommand name="processTable"
+						actionListener="#{transmissionOrdersController.loadDisabled}"
+						process="@form" update="tabViewOrdersForm" />
+					
+					<p:remoteCommand name="updateTable"
+						actionListener="#{transmissionOrdersController.loadDisabled}"
+						update="tabViewOrdersForm" />
+					
+					<p:remoteCommand name="reloadTableSelection" 
+						update=":tabViewOrdersForm:listTohs"
+						actionListener="#{transmissionOrdersController.reloadSelection}"/>
+					
+					<p:remoteCommand name="detailAction" process="@this"
+						oncomplete="detailPopUp = window.open('/dis-web/faces/pages/transmissionOrder/detailOrders.xhtml', '_blank');
+									detailPopUp.isPopUp = true;"/>
+								
+ 			<!-- 		<p:messages autoUpdate="false" id="ordersMessages"
+						showDetail="false" showSummary="true" closable="true" /> -->
+
+					<p:tabView id="tabViewOrders"
+						styleClass="dis-batch-customer-custom-tab-view"
+						activeIndex="#{transmissionOrdersController.selectedTab}">
+
+						<p:ajax event="tabChange" process="@this"
+							update=":tabViewOrdersForm:listTohs"
+							listener="#{transmissionOrdersController.loadDisabled}" />
+
+						<p:tab title="#{msg['message.orders.tab.mainInformation']}" />
+						<p:tab title="#{msg['message.orders.tab.edit']}" />
+						<p:tab title="#{msg['message.orders.tab.billing']}" />
+						<p:tab title="#{msg['message.orders.tab.campaign']}" />
+						<p:tab title="#{msg['message.orders.tab.salesRepresentative']}" />
+						<p:tab title="#{msg['message.orders.tab.salesChannel']}" />
+						<p:tab title="#{msg['message.orders.tab.commissions']}" />
+						<p:tab title="#{msg['message.orders.tab.invoice']}" />
+						<p:tab title="#{msg['message.orders.tab.others']}" />
+						
+					</p:tabView>
+
+					<ui:include src="ordersTable.xhtml" />
+
+					<p:remoteCommand name="changeEdited" process="@this"
+						actionListener="#{transmissionOrdersController.tableVisualRefresh}" />
+						
+					<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+						disabled="true" />
+					<p:defaultCommand target="buttonDefault"  />
+				</h:form>
+
+			</p:panel>
+
+		</div>
+
+		<ui:include src="exchangeRateDialog.xhtml" />
+		<ui:include src="massiveUpdateDialog.xhtml" />
+		
+		</c:if>
+	</ui:define>
+
+</ui:composition>

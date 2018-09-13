@@ -1,0 +1,144 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.report.preBillAndConsumption.name']}
+</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:panel>
+					<p:focus />
+
+					<h:form prependId="false" id="reportForm">
+						<p:messages id="messages" showDetail="false" autoUpdate="true"
+							closable="true" />
+
+						<p:panelGrid styleClass="transparent no-border" columns="4">
+							<!-- COMPANY -->
+							<p:outputLabel for="company"
+								value="#{msg['message.common.company']}" />
+							<p:selectOneMenu id="company" styleClass="dis-input-width"
+								value="#{reportPreBillAndConsumptionController.company}"
+								title="#{msg['message.customer.tooltip.filterCode']}"
+								converter="omnifaces.SelectItemsConverter"
+								required="true">
+								<f:selectItems value="#{sessionSelectorController.companies}"
+									var="company" itemValue="#{company}"
+									itemLabel="#{company.code} - #{company.description}" />
+
+								<p:ajax update="billTo advertiser agency" />
+							</p:selectOneMenu>
+
+							<!-- AS OF DATE -->
+							<p:outputLabel value="#{msg['message.report.preBillAndConsumption.asOfDate']}"
+								for="asOfDateFilter" />
+							<p:calendar id="asOfDateFilter" required="true"
+								value="#{reportPreBillAndConsumptionController.asOfDate}"
+								title="#{msg['message.report.preBillAndConsumption.asOfDate.tooltip']}"
+								locale="#{languageController.language}"
+								pattern="#{languageController.localeDatePattern}"
+								styleClass="dis-input-width" />
+								
+							<!-- BILL TO CUSTOMER -->
+							<p:outputLabel for="billTo"
+								value="#{msg['message.common.billTo']}" />
+
+							<p:selectOneMenu id="billTo" value="#{reportPreBillAndConsumptionController.billTo}"
+								effect="fade" var="customer" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.preBillAndConsumption.billTo.tooltip']}"
+								disabled="#{empty reportPreBillAndConsumptionController.company}">
+
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.billTo']}" itemValue="#{null}" />
+
+								<f:selectItems
+									value="#{selectorController.getCustomerList(reportPreBillAndConsumptionController.company)}"
+									var="customer" itemValue="#{customer}" itemLabel="#{customer}" />
+
+								<p:column>
+									<p:outputLabel
+										value="#{customer != null ? customer : msg['message.select.billTo']}" />
+								</p:column>						
+							</p:selectOneMenu>
+							
+							<!-- ADVERTISERS -->
+							<p:outputLabel for="advertiser"
+								value="#{msg['message.common.advertiser']}" />
+
+							<p:selectOneMenu id="advertiser" value="#{reportPreBillAndConsumptionController.advertiser}"
+								effect="fade" var="advertiser" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.preBillAndConsumption.advertiser.tooltip']}"
+								disabled="#{empty reportPreBillAndConsumptionController.company}">
+
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.advertiser']}" itemValue="#{null}" />
+
+								<f:selectItems
+									value="#{selectorController.getNonAgencyList(reportPreBillAndConsumptionController.company)}"
+									var="advertiser" itemValue="#{advertiser}" itemLabel="#{advertiser}" />
+
+								<p:column>
+									<p:outputLabel
+										value="#{advertiser != null ? advertiser : msg['message.select.advertiser']}" />
+								</p:column>
+
+							</p:selectOneMenu>
+
+							<!-- AGENCIES -->
+							<p:outputLabel for="agency"
+								value="#{msg['message.common.agency']}" />
+
+							<p:selectOneMenu id="agency" value="#{reportPreBillAndConsumptionController.agency}"
+								effect="fade" var="agency" filter="true"
+								filterMatchMode="contains"
+								converter="omnifaces.SelectItemsConverter"
+								styleClass="dis-input-width"
+								title="#{msg['message.report.preBillAndConsumption.agency.tooltip']}"
+								disabled="#{empty reportPreBillAndConsumptionController.company}">
+
+								<f:selectItem noSelectionOption="true"
+									itemLabel="#{msg['message.select.agency']}" itemValue="#{null}" />
+
+								<f:selectItems
+									value="#{selectorController.getAgencyList(reportPreBillAndConsumptionController.company)}"
+									var="agency" itemValue="#{agency}" itemLabel="#{agency}" />
+
+								<p:column>
+									<p:outputLabel
+										value="#{agency != null ? agency : msg['message.select.agency']}" />
+								</p:column>
+
+							</p:selectOneMenu>
+
+							<p:outputLabel />
+							<p:outputLabel />
+
+
+						</p:panelGrid>
+
+						<ui:param name="controller" value="#{reportPreBillAndConsumptionController}" />
+						<ui:include src="reportFooter.xhtml" />
+					</h:form>
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

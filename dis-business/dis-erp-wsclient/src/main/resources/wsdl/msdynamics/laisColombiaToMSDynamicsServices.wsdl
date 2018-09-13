@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="laisColombiaToMSDynamicsServices" targetNamespace="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:HDR1="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:HDR4="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/" xmlns:HDR5="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/transmissionOrder/" xmlns:HDR2="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/" xmlns:HDR3="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:HDR6="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1" xmlns:soapjms="http://www.w3.org/2010/soapjms/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:tns="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:dx="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1" xmlns:dx3="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:dx4="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/" xmlns:dx5="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/" xmlns:dx6="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/transmissionOrder/" xmlns:tns="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/transmissionOrder/"/>
+          <xsd:element name="processCustomerInfo_Colombia" type="tns:processCustomerInfo_Colombia"/>
+          <xsd:element name="processCustomerInfo_ColombiaResponse" type="tns:processCustomerInfo_ColombiaResponse"/>
+          <xsd:element name="processInvoiceInfo_Colombia" type="tns:processInvoiceInfo_Colombia"/>
+          <xsd:element name="processInvoiceInfo_ColombiaResponse" type="tns:processInvoiceInfo_ColombiaResponse"/>
+          <xsd:element name="processJournalInfo_Colombia" type="tns:processJournalInfo_Colombia"/>
+          <xsd:element name="processJournalInfo_ColombiaResponse" type="tns:processJournalInfo_ColombiaResponse"/>
+          <xsd:complexType name="processCustomerInfo_Colombia">
+            <xsd:sequence>
+              <xsd:element name="customerRequest" nillable="true" type="dx:CreateOrUpdateCustomerRequestType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CustomerIdentificacion">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="CustomerERPId" nillable="true" type="xsd:string"/>
+              <xsd:element name="CustomerId" nillable="true" type="xsd:long"/>
+              <xsd:element minOccurs="0" name="CustomerExternalIds" nillable="true" type="tns:CustomerExternalIds"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CustomerExternalIds">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="CustomerExternalId" nillable="true" type="tns:CustomerExternalId"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CustomerExternalId">
+            <xsd:sequence>
+              <xsd:element name="ExternalId" type="xsd:string"/>
+              <xsd:element name="ExternalIdType" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="AddressStreet">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" name="Street" type="dx3:StreetType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CustomerContactInformation">
+            <xsd:sequence>
+              <xsd:element name="Email" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Fax" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="InvoiceDeliveryPreference" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Language" nillable="true" type="xsd:string"/>
+              <xsd:element name="Telephone" nillable="true" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CustomerBankInformation">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="CustomerBankCountry" nillable="true" type="dx3:CountryType"/>
+              <xsd:element minOccurs="0" name="CustomerBankAccount" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="CustomerBankKeyAccount" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="CustomerBankAccountNumberLastDigits" nillable="true" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="processCustomerInfo_ColombiaResponse">
+            <xsd:sequence>
+              <xsd:element name="customerResponse" nillable="true" type="dx:CreateOrUpdateCustomerResponseType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="processInvoiceInfo_Colombia">
+            <xsd:sequence>
+              <xsd:element name="invoiceRequest" nillable="true" type="dx:SubmitInvoiceRequestType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="InvoiceLines">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="InvoiceLine" nillable="true" type="dx4:InvoiceLineType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="Journals">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="Journal" nillable="true" type="dx5:JournalType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="JournalLines">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="JournalLine" nillable="true" type="dx5:JournalLineType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="JournalLineDimensions">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="JournalLineDimension" nillable="true" type="dx5:JournalLineDimensionType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="TransmissionOrders">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="TransmissionOrder" nillable="true" type="dx6:TransmissionOrderType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="InvoiceLineTaxes">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="InvoiceLineTax" nillable="true" type="dx4:InvoiceLineTaxType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="Journals2">
+            <xsd:sequence>
+              <xsd:element maxOccurs="unbounded" minOccurs="0" name="Journal" nillable="true" type="dx5:JournalType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="SaleInformation">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="SalesChannelCallSign" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Salesperson" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="SaleOffice" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="TermsOfSale" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="processInvoiceInfo_ColombiaResponse">
+            <xsd:sequence>
+              <xsd:element name="invoiceResponse" nillable="true" type="dx:SubmitInvoiceResponseType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="processJournalInfo_Colombia">
+            <xsd:sequence>
+              <xsd:element name="journalRequest" nillable="true" type="dx:SubmitJournalRequestType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="processJournalInfo_ColombiaResponse">
+            <xsd:sequence>
+              <xsd:element name="journalResponse" nillable="true" type="dx:SubmitJournalResponseType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        	</xsd:schema>
+    <xsd:schema targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:dx3="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:tns="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:import namespace="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices"/>
+          <xsd:complexType name="PaymentMethodType">
+            <xsd:sequence>
+              <xsd:element name="Description" type="xsd:string"/>
+              <xsd:element name="PaymentMethodCode" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="PaymentTermType">
+            <xsd:sequence>
+              <xsd:element name="Description" type="xsd:string"/>
+              <xsd:element name="PaymentTermCode" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="AddressType">
+            <xsd:sequence>
+              <xsd:element name="AddressStreet" nillable="true" type="tns:AddressStreet"/>
+              <xsd:element name="AddressCity" nillable="true" type="xsd:string"/>
+              <xsd:element name="AddressRegion" nillable="true" type="dx3:RegionType"/>
+              <xsd:element name="AddressPostalCode" nillable="true" type="xsd:string"/>
+              <xsd:element name="AddressCountry" nillable="true" type="dx3:CountryType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="StreetType">
+            <xsd:sequence>
+              <xsd:element name="Description" type="xsd:string"/>
+              <xsd:element name="StreetType" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="RegionType">
+            <xsd:sequence>
+              <xsd:element name="Description" type="xsd:string"/>
+              <xsd:element name="RegionCode" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CountryType">
+            <xsd:sequence>
+              <xsd:element name="EUMember" type="xsd:boolean"/>
+              <xsd:element minOccurs="0" name="IsoAlpha2Code" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="IsoAlpha3Code" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="IsoNumericCode" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Name" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CurrencyType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Iso3Code" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="BatchType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="BatchId" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Company" type="dx3:CompanyType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CompanyType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Code" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Country" type="dx3:CountryType"/>
+              <xsd:element minOccurs="0" name="Currency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="ErpType" type="dx3:ErpTypeType"/>
+              <xsd:element minOccurs="0" name="TaxID" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="TaxStatus" type="dx3:TaxStatusType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="ErpTypeType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Code" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="TaxStatusType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Code" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="BillingScenarioType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Company" type="dx3:CompanyType"/>
+              <xsd:element minOccurs="0" name="Number" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="AccountType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Company" type="dx3:CompanyType"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Number" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="LAISNumber" type="xsd:string" />
+              <xsd:element minOccurs="0" name="AccountType" type="dx3:AccountTypeType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:simpleType name="AccountTypeType">
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="EXPENSE"/>
+              <xsd:enumeration value="REVENUE"/>
+              <xsd:enumeration value="ASSET"/>
+              <xsd:enumeration value="LIABILITY"/>
+              <xsd:enumeration value="EQUITY"/>
+              <xsd:whiteSpace value="preserve"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+          <xsd:simpleType name="ServiceReceivedTypeType">
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="ON_AIR"/>
+              <xsd:enumeration value="DIGITAL"/>
+              <xsd:enumeration value="LICENSING"/>
+              <xsd:enumeration value="PRODUCTION"/>
+              <xsd:enumeration value="MISCELLANEOUS"/>
+              <xsd:whiteSpace value="preserve"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+          <xsd:complexType name="ChannelType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="ChannelCode" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="InvoiceTypeType">
+            <xsd:sequence>
+              <xsd:element name="adjustment" type="xsd:boolean"/>
+              <xsd:element minOccurs="0" name="Code" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        	</xsd:schema>
+    <xsd:schema targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/" xmlns:dx2="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/" xmlns:dx3="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:dx4="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/" xmlns:tns="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/"/>
+          <xsd:import namespace="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices"/>
+          <xsd:complexType name="InvoiceType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Customer" type="dx2:CustomerType"/>
+              <xsd:element minOccurs="0" name="Advertiser" type="dx2:CustomerType"/>
+              <xsd:element minOccurs="0" name="Agency" type="dx2:CustomerType"/>
+              <xsd:element minOccurs="0" name="BaseCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="BaseGrossAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="BaseNetAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="BaseVatAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="Batch" type="dx3:BatchType"/>
+              <xsd:element minOccurs="0" name="BillingScenario" type="dx3:BillingScenarioType"/>
+              <xsd:element minOccurs="0" name="Company" type="dx3:CompanyType"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="DueDate" type="xsd:dateTime"/>
+              <xsd:element minOccurs="0" name="ExchangeRate" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="ExternalNote" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="InsertionOrder" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="InternalNote" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="InvoiceDate" type="xsd:dateTime"/>
+              <xsd:element minOccurs="0" name="InvoiceLines" nillable="true" type="tns:InvoiceLines"/>
+              <xsd:element minOccurs="0" name="InvoiceId" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="InvoiceNumber" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="InvoiceParent" type="dx4:InvoiceType"/>
+              <xsd:element minOccurs="0" name="InvoiceType" type="dx3:InvoiceTypeType"/>
+              <xsd:element minOccurs="0" name="IssueDate" type="xsd:dateTime"/>
+              <xsd:element minOccurs="0" name="Journals" nillable="true" type="tns:Journals2"/>
+              <xsd:element name="Prebill" type="xsd:boolean"/>
+              <xsd:element name="Barter" type="xsd:boolean"/>
+              <xsd:element minOccurs="0" name="PaymentMethod" nillable="true" type="dx3:PaymentMethodType"/>
+              <xsd:element minOccurs="0" name="PaymentTerm" nillable="true" type="dx3:PaymentTermType"/>
+              <xsd:element minOccurs="0" name="PurchaseOrder" type="xsd:string"/>
+              <xsd:element name="SaleInformation" nillable="true" type="tns:SaleInformation"/>
+              <xsd:element minOccurs="0" name="OneLine" type="xsd:boolean"/>
+              <xsd:element minOccurs="0" name="ServiceReceivedType" type="dx3:ServiceReceivedTypeType"/>
+              <xsd:element minOccurs="0" name="Status" type="dx4:InvoiceStatusType"/>
+              <xsd:element minOccurs="0" name="TransactionCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="TransactionGrossAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TransactionNetAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TransactionVatAmount" type="xsd:decimal"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="InvoiceLineType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="BaseCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="BaseGrossAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="BaseNetAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="BaseVatAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="ItemCode" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="ItemDescription" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Journals" nillable="true" type="tns:Journals"/>
+              <xsd:element minOccurs="0" name="LineNumber" type="xsd:int"/>
+              <xsd:element minOccurs="0" name="Quantity" type="xsd:long"/>
+              <xsd:element minOccurs="0" name="TransactionCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="TransactionGrossAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TransactionVatAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TransactionNetAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="UnitPrice" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="VatPercentage" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="Product" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="StartPeriod" type="xsd:dateTime"/>
+              <xsd:element minOccurs="0" name="EndPeriod" type="xsd:dateTime"/>
+              <xsd:element minOccurs="0" name="PurchaseOrder" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Campaign" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Channel" type="dx3:ChannelType"/>
+              <xsd:element minOccurs="0" name="TransmissionOrders" nillable="true" type="tns:TransmissionOrders"/>
+              <xsd:element minOccurs="0" name="InvoiceLineTaxes" nillable="true" type="tns:InvoiceLineTaxes"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="InvoiceLineTaxType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="TaxCode" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="TaxBasisBaseAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TaxBaseAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TaxBasisTransactionAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TaxTransactionAmount" type="xsd:decimal"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:simpleType name="InvoiceStatusType">
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="CREATED"/>
+              <xsd:enumeration value="EDITED"/>
+              <xsd:enumeration value="PENDING_APP"/>
+              <xsd:enumeration value="APPROVED"/>
+              <xsd:enumeration value="REFUSED"/>
+              <xsd:enumeration value="TRANSMITTED"/>
+              <xsd:enumeration value="POSTED"/>
+              <xsd:enumeration value="DELAYED"/>
+              <xsd:enumeration value="DELETED"/>
+              <xsd:whiteSpace value="preserve"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        	</xsd:schema>
+    <xsd:schema targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/" xmlns:dx2="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/" xmlns:dx3="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:tns="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:import namespace="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/"/>
+          <xsd:complexType name="CustomerType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="CompanyCode" nillable="true" type="xsd:string"/>
+              <xsd:element name="CustomerLegalName" nillable="true" type="xsd:string"/>
+              <xsd:element name="CustomerName" nillable="true" type="xsd:string"/>
+              <xsd:element name="CustomerIdentificacion" nillable="true" type="tns:CustomerIdentificacion"/>
+              <xsd:element name="TaxId" nillable="true" type="xsd:string"/>
+              <xsd:element name="CustomerType" nillable="true" type="xsd:string"/>
+              <xsd:element name="VatType" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="PaymentMethod" nillable="true" type="dx3:PaymentMethodType"/>
+              <xsd:element minOccurs="0" name="PaymentTerm" nillable="true" type="dx3:PaymentTermType"/>
+              <xsd:element name="Address" nillable="true" type="dx3:AddressType"/>
+              <xsd:element name="CustomerContactInformation" nillable="true" type="tns:CustomerContactInformation"/>
+              <xsd:element name="CustomerBankInformation" nillable="true" type="tns:CustomerBankInformation"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        	</xsd:schema>
+    <xsd:schema targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/" xmlns:dx3="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/" xmlns:dx4="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/" xmlns:dx5="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/" xmlns:tns="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/"/>
+          <xsd:import namespace="http://dctradwms01.discovery.com/DcAIS.ws.provider:laisColombiaToMSDynamicsServices"/>
+          <xsd:complexType name="JournalType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="BaseCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="Company" type="dx3:CompanyType"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="ExchangeRate" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="Invoice" type="dx4:InvoiceType"/>
+              <xsd:element minOccurs="0" name="JournalDate" type="xsd:dateTime"/>
+              <xsd:element minOccurs="0" name="JournalId" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="JournalLines" nillable="true" type="tns:JournalLines"/>
+              <xsd:element minOccurs="0" name="ServiceReceivedType" type="dx3:ServiceReceivedTypeType"/>
+              <xsd:element minOccurs="0" name="TotalBaseCreditAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TotalBaseDebitAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TotalTransactionCreditAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TotalTransactionDebitAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TransactionCurrency" type="dx3:CurrencyType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="JournalLineType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Account" type="dx3:AccountType"/>
+              <xsd:element minOccurs="0" name="BaseAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="BaseCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="Description" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="ExchangeRate" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="LineNumber" type="xsd:int"/>
+              <xsd:element minOccurs="0" name="LineType" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="JournalLineDimensions" nillable="true" type="tns:JournalLineDimensions"/>
+              <xsd:element minOccurs="0" name="TransactionAmount" type="xsd:decimal"/>
+              <xsd:element minOccurs="0" name="TransactionCurrency" type="dx3:CurrencyType"/>
+              <xsd:element minOccurs="0" name="EntryType" type="dx5:EntryTypeType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="JournalLineDimensionType">
+            <xsd:sequence>
+              <xsd:element name="DimensionType" type="xsd:string"/>
+              <xsd:element name="DimensionValue" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:simpleType name="EntryTypeType">
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="DEBIT"/>
+              <xsd:enumeration value="CREDIT"/>
+              <xsd:whiteSpace value="preserve"/>
+            </xsd:restriction>
+          </xsd:simpleType>
+        	</xsd:schema>
+    <xsd:schema targetNamespace="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1" xmlns:dx="http://xmlns.discovery.com/EnterpriseServices/LAIS/MSDynamics/ABM/V1" xmlns:dx2="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/" xmlns:dx4="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/" xmlns:dx5="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/customer/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/invoice/"/>
+          <xsd:import namespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/journal/"/>
+          <xsd:complexType name="CreateOrUpdateCustomerRequestType">
+            <xsd:sequence>
+              <xsd:element name="Customer" nillable="true" type="dx2:CustomerType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="CreateOrUpdateCustomerResponseType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="CustomerERPId" nillable="true" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Response" type="dx:ResponseType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="ResponseType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="ErrorCode" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="ErrorMessage" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="ErrorSource" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="SubmitInvoiceRequestType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Invoice" nillable="true" type="dx4:InvoiceType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="SubmitInvoiceResponseType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="ERPInvoiceNumber" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="Response" type="dx:ResponseType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="SubmitJournalRequestType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="PrebillInvoice" type="dx4:InvoiceType"/>
+              <xsd:element minOccurs="0" name="Journal" nillable="true" type="dx5:JournalType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+          <xsd:complexType name="SubmitJournalResponseType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="Response" type="dx:ResponseType"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        	</xsd:schema>
+    <xsd:schema targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/transmissionOrder/" xmlns:dx6="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/transmissionOrder/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <xsd:complexType name="TransmissionOrderType">
+            <xsd:sequence>
+              <xsd:element minOccurs="0" name="TransmissionOrderId" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="BillToTaxLegalName" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="AgencyTaxLegalName" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="AdvertiserTaxLegalName" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="CampaignReference" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="CpeCode" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="OrderReference" type="xsd:string"/>
+              <xsd:element minOccurs="0" name="SalesRepresentativeTaxLegalName" type="xsd:string"/>
+            </xsd:sequence>
+          </xsd:complexType>
+        	</xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="laisColombiaToMSDynamicsServices_PortType_processCustomerInfo_ColombiaResponse">
+    <wsdl:part name="parameters" element="tns:processCustomerInfo_ColombiaResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="laisColombiaToMSDynamicsServices_PortType_processInvoiceInfo_ColombiaResponse">
+    <wsdl:part name="parameters" element="tns:processInvoiceInfo_ColombiaResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="laisColombiaToMSDynamicsServices_PortType_processJournalInfo_Colombia">
+    <wsdl:part name="parameters" element="tns:processJournalInfo_Colombia">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="laisColombiaToMSDynamicsServices_PortType_processJournalInfo_ColombiaResponse">
+    <wsdl:part name="parameters" element="tns:processJournalInfo_ColombiaResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="laisColombiaToMSDynamicsServices_PortType_processInvoiceInfo_Colombia">
+    <wsdl:part name="parameters" element="tns:processInvoiceInfo_Colombia">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="laisColombiaToMSDynamicsServices_PortType_processCustomerInfo_Colombia">
+    <wsdl:part name="parameters" element="tns:processCustomerInfo_Colombia">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="laisColombiaToMSDynamicsServices_PortType">
+    <wsdl:operation name="processCustomerInfo_Colombia">
+      <wsdl:input message="tns:laisColombiaToMSDynamicsServices_PortType_processCustomerInfo_Colombia">
+    </wsdl:input>
+      <wsdl:output message="tns:laisColombiaToMSDynamicsServices_PortType_processCustomerInfo_ColombiaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="processInvoiceInfo_Colombia">
+      <wsdl:input message="tns:laisColombiaToMSDynamicsServices_PortType_processInvoiceInfo_Colombia">
+    </wsdl:input>
+      <wsdl:output message="tns:laisColombiaToMSDynamicsServices_PortType_processInvoiceInfo_ColombiaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="processJournalInfo_Colombia">
+      <wsdl:input message="tns:laisColombiaToMSDynamicsServices_PortType_processJournalInfo_Colombia">
+    </wsdl:input>
+      <wsdl:output message="tns:laisColombiaToMSDynamicsServices_PortType_processJournalInfo_ColombiaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Binder" type="tns:laisColombiaToMSDynamicsServices_PortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="processCustomerInfo_Colombia">
+      <soap:operation soapAction="DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Binder_processCustomerInfo_Colombia" style="document"/>
+      <wsdl:input>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="processInvoiceInfo_Colombia">
+      <soap:operation soapAction="DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Binder_processInvoiceInfo_Colombia" style="document"/>
+      <wsdl:input>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="processJournalInfo_Colombia">
+      <soap:operation soapAction="DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Binder_processJournalInfo_Colombia" style="document"/>
+      <wsdl:input>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body parts="parameters" use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DcAIS.ws.provider.laisColombiaToMSDynamicsServices">
+    <wsdl:port name="DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Port" binding="tns:DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Binder">
+      <soap:address location="http://dctradwms01.discovery.com:5555/ws/DcAIS.ws.provider.laisColombiaToMSDynamicsServices/DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Port"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

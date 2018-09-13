@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante
+	xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 ACTION_INVOICE_CFDI.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.2"
+	serie="NCM" folio="0000118" fecha="2015-12-16" sello="" formaDePago=""
+	noCertificado="" certificado="" subTotal="" descuento=""
+	motivoDescuento="" TipoCambio="" Moneda="MXN" total="1200000"
+	tipoDeComprobante="egreso" metodoDePago="" LugarExpedicion=""
+	NumCtaPago="" xmlns:cfdi="http://www.sat.gob.mx/cfd/3">
+	<cfdi:Emisor nombre="" rfc="">
+		<cfdi:DomicilioFiscal />
+		<cfdi:ExpedidoEn />
+		<cfdi:RegimenFiscal Regimen="" />
+	</cfdi:Emisor>
+	<cfdi:Receptor nombre="TRAVEL STUDIO COMUNICACIONES, S.A. DE C.V."
+		rfc="2130025MXN">
+		<cfdi:Domicilio calle="" noExterior="" colonia=""
+			localidad="" municipio="" pais="" codigoPostal="" />
+	</cfdi:Receptor>
+	<cfdi:Conceptos>
+		<cfdi:Concepto cantidad="1" unidad="NO APLICA"
+			noIdentificacion="PREBIL" descripcion="PRIME TIME" valorUnitario="1200000.00"
+			importe="1200000.00">
+			<OptfieldDetalle IREFERENCE="983" NETWORK="TLC"
+				SNOTES="DIC 2015" SOFFICE="MEXICO" SPERSON="PAULINA SANCHEZ"
+				CAMPAING="N/A" CAMPAINGID="N/A" CANTIDADD="1" PERFACTURA="12/1/2015 to12/31/2015"
+				OC=" " />
+		</cfdi:Concepto>
+	</cfdi:Conceptos>
+	<cfdi:Impuestos totalImpuestosTrasladados="0.00">
+		<cfdi:Traslados>
+			<cfdi:Traslado importe="" impuesto="" tasa="" />
+		</cfdi:Traslados>
+	</cfdi:Impuestos>
+	<OPTFIELD AGID="2130025MXN" AGNAME="TRAVEL STUDIO COMUNICACIONES, S.A. DE C.V."
+		CAMPAING="12/1/2015 to12/31/2015" CID="2130025MXN"
+		CNAME="TRAVEL STUDIO COMUNICACIONES, S.A. DE C.V." NETWORK="TLC"
+		SNOTES="PREBIL 2015" SOFFICE="MEXICO" SPERSON="PAULINA SANCHEZ"
+		REQDATE="2015-12-16" CONSEP="0" />
+</cfdi:Comprobante>

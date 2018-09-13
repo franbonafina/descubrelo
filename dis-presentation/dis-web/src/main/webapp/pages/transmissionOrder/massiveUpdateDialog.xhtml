@@ -1,0 +1,129 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions" >
+
+	<h:form id="massiveUpdateDlgForm">
+	<p:dialog 
+		header="#{msg['message.orders.massive_update']}"
+		id="massiveUpdateDlg"
+		widgetVar="massiveUpdateDlg" 	
+		resizable="false"  >
+	
+		<span class="FontBold Fs18 hardblue">
+			#{msg['message.orders.massive_update.dialog.subTitle']}:
+		</span>
+	
+		<p:panelGrid columns="4" styleClass="no-border transparent">
+			<!-- BILL TO CUSTOMER -->
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateBillToCustomer}"
+				value="#{msg['message.orders.massive_update.billToCustomer']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateBillToCustomer}"
+				styleClass="dis-input-width"
+				value="#{transmissionOrdersController.massiveUpdateObject.billToCustomer}" 
+				readonly="true" >
+			</p:inputText>
+			
+			<!-- BILLING SCENARIO -->
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateBillingScenario}"
+				value="#{msg['message.orders.massive_update.billing_scenario']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateBillingScenario}"
+				styleClass="dis-input-width"
+				value="#{(labelUtil.getBillingScenarioLabel(transmissionOrdersController.massiveUpdateObject.billingScenario))}" 
+				readonly="true" >
+			</p:inputText>
+								
+			<!-- INSERTION ORDER -->
+			<p:outputLabel 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateInsertionOrder}"
+				value="#{msg['message.orders.massive_update.io']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateInsertionOrder}"
+				styleClass="dis-input-width"
+				value="#{transmissionOrdersController.massiveUpdateObject.insertionOrder}" 
+				readonly="true" >
+			</p:inputText>
+								
+			<!-- PURCHASE ORDER -->	
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updatePurchaseOrder}"
+				value="#{msg['message.orders.massive_update.po']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updatePurchaseOrder}"
+				styleClass="dis-input-width"
+				value="#{transmissionOrdersController.massiveUpdateObject.purchaseOrder}"
+				readonly="true" >
+			</p:inputText>
+
+			<!-- DELAY REASON -->		
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateDelayReason}"
+				value="#{msg['message.orders.massive_update.delay_reason']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateDelayReason}"
+				styleClass="dis-input-width"
+				value="#{(labelUtil.getDelayReasonLabel(transmissionOrdersController.massiveUpdateObject.delayReason))}" 
+				readonly="true" >
+			</p:inputText>
+					
+			<!-- BILLABLE -->		
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateBillable}"
+				value="#{msg['message.orders.massive_update.billable']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateBillable}"
+				styleClass="dis-input-width"
+				value="#{transmissionOrdersController.massiveUpdateObject.billable ? msg['message.common.true'] : msg['message.common.false'] }" 
+				readonly="true" >
+			</p:inputText>
+						
+	  		<!-- PREBILL REFERENCE -->	
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updatePrebillRef}"
+				value="#{msg['message.orders.massive_update.prebill_reference']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updatePrebillRef}"
+				styleClass="dis-input-width"
+				value="#{(labelUtil.getInvoiceLabel(transmissionOrdersController.massiveUpdateObject.preBillRef))}" 
+				readonly="true">
+			</p:inputText>
+			
+			<!-- PRODUCT NAME -->	
+			<p:outputLabel
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateProductName}"
+				value="#{msg['message.orders.massive_update.productName']}" />
+			<p:inputText 
+				rendered="#{transmissionOrdersController.massiveUpdateObject.updateProductName}"
+				styleClass="dis-input-width"
+				value="#{transmissionOrdersController.massiveUpdateObject.productName}" 
+				readonly="true">
+			</p:inputText>
+
+		</p:panelGrid>				
+		
+		<p:spacer styleClass="dis-spacer-smal" />		
+	          
+	          <f:facet name="footer">
+	              <p:commandButton 
+	              	value="#{msg['message.common.accept']}"
+	              	update=":tabViewOrdersForm:listTohs"
+					process="@this"					
+					actionListener="#{transmissionOrdersController.massiveUpdate}" 
+					oncomplete="PF('massiveUpdateDlg').hide()"/>
+				<p:commandButton 
+	              	value="#{msg['message.common.cancel']}"
+	                onstart="PF('massiveUpdateDlg').hide()" />
+	          </f:facet>	
+	          
+	</p:dialog>
+	</h:form>
+
+</ui:composition>

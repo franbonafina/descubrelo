@@ -1,0 +1,859 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.invoice']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<p:panel styleClass="no-spacing no-border">
+
+					<p:focus context="listInvoiceForm" />
+
+					<h:form id="listInvoiceForm">
+						<p:messages id="listInvoiceFormMessages" closable="true"
+							showDetail="false" autoUpdate="false" />
+ 
+						<p:tabView activeIndex="#{invoiceController.searchActiveIndex}"
+							id="invoiceTabView">
+
+							<p:ajax event="tabChange" process="@form"
+								update="listInvoiceForm:listInvoiceFormMessages
+								listInvoiceForm:invoiceTabView:disId" resetValues="true"
+								oncomplete="PF('invoiceDataTablePanel').close();"/>
+							
+							<!-- SEARCH TAB -->
+							<p:tab title="#{msg['message.common.search']}">
+
+								<p:panelGrid id="searchInvoiceTab" styleClass="no-border"
+									columns="4">	
+									
+									<!-- COMPANY -->
+									<p:outputLabel for="companyFilter"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="companyFilter"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceFilterGenerator.company}"
+										title="#{msg['message.invoice.tooltip.filterCode']}"
+										required="true">
+										<f:selectItems value="#{sessionSelectorController.companies}"
+											var="company" itemValue="#{company}"
+											itemLabel="#{company.code} - #{company.description}" />
+										<p:ajax
+											update="billingScenarioSearchFilter
+												customerNameFilter
+												advertiserFilter							
+												invoiceTypeSearchFilter" />
+									</p:selectOneMenu>
+									
+									<!-- INVOICE TYPE -->
+									<p:outputLabel for="invoiceTypeSearchFilter"
+										value="#{msg['message.common.invoiceType']}" />
+									<p:selectOneMenu id="invoiceTypeSearchFilter"
+										styleClass="dis-input-width"
+										value="#{invoiceFilterGenerator.filterInvoiceType}"
+										converter="omnifaces.SelectItemsConverter"
+										title="#{msg['message.invoice.tooltip.filterInvoiceType']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.invoiceType']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.getInvoiceTypeListByCompany(invoiceFilterGenerator.company)}"
+											var="invoiceType" itemValue="#{invoiceType}"
+											itemLabel="#{labelUtil.getInvoiceTypeLabel(invoiceFilterGenerator.company, invoiceType)}"/>
+									</p:selectOneMenu>
+									
+									<!--LAIS ID -->
+									<p:outputLabel value="#{msg['message.invoice.disId']}" />
+									<p:inputText styleClass="dis-input-width" id="disId"
+										value="#{invoiceFilterGenerator.disID}"
+										label="#{msg['message.invoice.disId']}"
+										title="#{msg['message.customer.tooltip.filterDisID']}" >
+										<f:converter converterId="javax.faces.Long" />
+									</p:inputText>
+									
+									<!-- INVOICE # -->
+									<p:outputLabel value="#{msg['message.invoice.number']}" />
+									<p:inputText styleClass="dis-input-width"
+										value="#{invoiceFilterGenerator.filterNumber}"
+										title="#{msg['message.invoice.tooltip.filterNumber']}" />									
+
+									<!-- BILL TO CUSTOMER NAME -->
+									<p:outputLabel for="customerNameFilter"
+										value="#{msg['message.invoice.billToCustomer']}" />
+									<p:selectOneMenu id="customerNameFilter"
+										value="#{invoiceFilterGenerator.filterCustomer}"
+										effect="fade" var="customer" filter="true"
+										filterMatchMode="contains"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.invoice.tooltip.filterBillToCustomer']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.customer']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.getCustomerList(invoiceFilterGenerator.company)}"
+											var="customer" itemValue="#{customer}"
+											itemLabel="#{labelUtil.getCustomerLabel(customer)}" />
+										<p:column>
+											<p:outputLabel
+												value="#{customer != null ? labelUtil.getCustomerLabel(customer) : msg['message.invoice.select.customer']}" />
+										</p:column>
+									</p:selectOneMenu>
+									
+									<!-- ADVERTISER -->
+									<p:outputLabel for="advertiserFilter"
+										value="#{msg['message.invoice.advertiser']}" />
+									<p:selectOneMenu id="advertiserFilter"
+										value="#{invoiceFilterGenerator.filterAdvertiser}"
+										effect="fade" var="customer" filter="true"
+										filterMatchMode="contains"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.invoice.tooltip.filterAdvertiser']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.customer']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.getNonAgencyList(invoiceFilterGenerator.company)}"
+											var="customer" itemValue="#{customer}"
+											itemLabel="#{labelUtil.getCustomerLabel(customer)}" />
+										<p:column>
+											<p:outputLabel
+												value="#{customer != null ? labelUtil.getCustomerLabel(customer) : msg['message.invoice.select.customer']}" />
+										</p:column>
+									</p:selectOneMenu>
+									
+									<!--CUSTOMER TAX ID -->
+									<p:outputLabel value="#{msg['message.invoice.taxId']}" />
+									<p:inputText styleClass="dis-input-width"
+										value="#{invoiceFilterGenerator.filterTaxID}"
+										title="#{msg['message.customer.tooltip.filterTaxID']}" />
+										
+									<!-- SERVICE RECEIVED TYPE -->
+									<p:outputLabel for="serviceReceivedTypeSearchFilter"
+										value="#{msg['message.batchCustomer.table.billingContact.serviceReceivedType']}" />
+									<p:selectOneMenu id="serviceReceivedTypeSearchFilter"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceFilterGenerator.filterServiceReceivedType}"
+										title="#{msg['message.invoice.tooltip.filterServiceType']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.serviceType']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.getServiceReceivedTypeList(true)}"
+											var="serviceReceivedType" itemValue="#{serviceReceivedType}"
+											itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceReceivedType)}"/>
+									</p:selectOneMenu>
+									
+									<!-- BILLING SCENARIO -->
+									<p:outputLabel for="billingScenarioSearchFilter"
+										value="#{msg['message.invoice.billingScenario']}" />
+									<p:selectOneMenu id="billingScenarioSearchFilter"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceFilterGenerator.filterBillingScenario}"
+										title="#{msg['message.invoice.tooltip.filterBillingScenario']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.billingScenario']}"
+											itemValue="#{null}" />
+										<f:selectItems value="#{selectorController.getAllBillingScenarioFilterList(invoiceFilterGenerator.company)}"
+											var="billingScenario" itemValue="#{billingScenario}"
+											itemLabel="#{billingScenario.number}"
+											itemDescription="#{(labelUtil.getBillingScenarioDescriptionLabel(billingScenario))}" />
+									</p:selectOneMenu>
+
+									<!--INVOICE DATE  -->
+									<p:outputLabel value="#{msg['message.invoice.dateStart']}"
+										for="invoiceDateCalendar" />
+									<p:calendar id="invoiceDateCalendar"
+										locale="#{languageController.language}"
+										value="#{invoiceFilterGenerator.filterDate}"
+										title="#{msg['message.invoice.tooltip.filterDate']}"
+										styleClass="dis-input-width" readonlyInput="true" >
+										<p:ajax event="dateSelect" update="invoiceDateToCalendar"/>
+									</p:calendar>
+									
+									<!--INVOICE DATE TO  -->
+									<p:outputLabel value="#{msg['message.invoice.dateTo']}"
+										for="invoiceDateToCalendar" />
+									<p:calendar id="invoiceDateToCalendar"
+										locale="#{languageController.language}"
+										value="#{invoiceFilterGenerator.filterDateTo}"
+										title="#{msg['message.invoice.tooltip.filterDateTo']}"
+										mindate="#{invoiceFilterGenerator.filterDate}"
+										styleClass="dis-input-width" readonlyInput="true" >
+									</p:calendar>
+
+									<!--STATUS -->
+									<p:outputLabel for="statusFilter"
+										value="#{msg['message.invoice.status']}" />
+									<p:selectOneMenu id="statusFilter" styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceFilterGenerator.filterStatus}"
+										title="#{msg['message.invoice.tooltip.filterStatus']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.statusFilter']}"
+											itemValue="#{null}" />										
+										<f:selectItems value="#{(selectorController.getStatusListByUser(loginController.user))}"
+											var="status" itemValue="#{status}"
+											itemLabel="#{labelUtil.getInvoiceStatusLabel(status)}" />
+									</p:selectOneMenu>
+									
+									<!-- INVOICE SUBTYPE -->
+									<p:outputLabel value="#{msg['message.common.invoiceSubType']}" for="invoiceSubTypeFilter"/>
+
+									<p:selectOneMenu id="invoiceSubTypeFilter"
+										label="#{msg['message.common.invoiceSubType']}"
+										value="#{invoiceFilterGenerator.filterInvoiceSubType}"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										title="#{msg['message.invoice.tooltip.filterInvoiceSubType']}">
+
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.invoiceSubType']}"
+											itemValue="#{null}" />
+											
+										<f:selectItems itemValue="#{invoiceSubType}"
+											var="invoiceSubType" itemLabel="#{invoiceSubType.code}"
+											value="#{selectorController.invoiceSubtypeList}" />
+									</p:selectOneMenu>
+									
+									<!--PREBILL -->
+									<p:outputLabel for="prebillFilter"
+										value="#{msg['message.common.prebill']}" />
+									<p:selectOneMenu id="prebillFilter" styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceFilterGenerator.prebill}"
+										title="#{msg['message.invoice.tooltip.prebill']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.prebill']}"
+											itemValue="#{null}" />
+										<f:selectItem
+											itemLabel="#{msg['message.common.true']}"
+											itemValue="#{true}" />
+										<f:selectItem
+											itemLabel="#{msg['message.common.false']}"
+											itemValue="#{false}" />
+									</p:selectOneMenu>
+																		
+									<!-- TRANSACTION CURRENCY -->
+									<p:outputLabel for="currencyFilter"
+										value="#{msg['message.common.currency']}" />
+									<p:selectOneMenu id="currencyFilter" styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceFilterGenerator.currency}"
+										title="#{msg['message.invoice.tooltip.filterCurrency']}">
+										
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.currency']}"
+											itemValue="#{null}" />
+											
+										<f:selectItems var="currency"
+											itemValue="#{currency}"
+											itemLabel="#{currency.iso3Code} - #{labelUtil.getCurrencyDescriptionLabel(currency)}"
+											value="#{selectorController.allCurrenciesList}" />
+							
+									</p:selectOneMenu>		
+								</p:panelGrid>
+
+								<p:spacer styleClass="dis-spacer-small" />
+
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">
+									<p:commandButton icon="ui-icon-search"
+										process="searchInvoiceTab @this"
+										actionListener="#{invoiceController.onSearchInvoice}"
+										value="#{msg['message.common.search']}"
+										update="invoiceDataTableForm listInvoiceForm:invoiceTabView:disId listInvoiceForm:listInvoiceFormMessages"
+										title="#{msg['message.invoice.tooltip.searchButton']}" />
+																				
+									<p:commandButton id="clearSearch"
+										value="#{msg['message.common.clear']}"
+										actionListener="#{invoiceController.onClearFilters}"
+										oncomplete="PF('invoiceDataTablePanel').close();"
+										styleClass="dis-button-width" icon="ui-icon-refresh"
+										process="listInvoiceForm:listInvoiceFormMessages @this"
+										update=":listInvoiceForm listInvoiceForm:listInvoiceFormMessages"
+										resetValues="true"
+										title="#{msg['message.common.tooltip.clear.filters']}" />
+										
+								</p:panelGrid>
+
+							</p:tab>
+							
+							<!-- ADD TAB -->
+							<p:tab title="#{msg['message.common.add']}">
+								<p:panelGrid id="invoiceAddTab" styleClass="no-border"
+									columns="2" cellpadding="10">
+									
+									<!-- COMPANY -->
+									<p:outputLabel for="invoiceAddCompany"
+										value="#{msg['message.common.company']}" />
+									<p:selectOneMenu id="invoiceAddCompany"
+										label="#{msg['message.common.company']}"
+										styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceController.selectedCompany}"
+										required="true"										
+										title="#{msg['message.invoice.tooltip.company']}">
+
+										<f:selectItems var="company" itemValue="#{company}"
+											value="#{sessionSelectorController.companies}"											
+											itemLabel="#{company.code} - #{company.description}" />
+										<p:ajax event="change"
+											listener="#{invoiceController.onSelectCompany}"
+											process="@this"
+											update="invoiceAddTab invoiceAddButton" />
+									</p:selectOneMenu>
+									
+									<!-- CUSTOMER -->
+									<p:outputLabel for="invoiceAddCustomer"
+										value="#{msg['message.invoice.add.form.customer']}" />								
+									<p:selectOneMenu id="invoiceAddCustomer" 
+										value="#{invoiceController.selectedCustomer}"
+										effect="fade" 
+										var="customer" 
+										filter="true"
+										filterMatchMode="contains"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.invoice.tooltip.customer']}"
+										disabled="#{null == invoiceController.selectedCompany}" >										
+										<f:selectItem noSelectionOption="true"
+											itemLabel="#{msg['message.invoice.add.form.select.customer']}"
+											itemValue="#{null}"/>										
+										<f:selectItems var="customer"
+											itemValue="#{customer}"
+											itemLabel="#{labelUtil.getCustomerLabel(customer)}"
+											value="#{selectorController.getCustomerList(invoiceController.selectedCompany)}" />											
+										<p:column>
+											<p:outputLabel
+												value="#{customer != null ? labelUtil.getCustomerLabel(customer) : msg['message.invoice.add.form.select.customer']}" />
+										</p:column>
+										<p:ajax event="change"
+											listener="#{invoiceController.onSelectCustomer}" 
+											process="@this"
+											update="invoiceAddTab invoiceAddButton" />
+									</p:selectOneMenu>
+									
+									<!-- ADVERTISER -->
+									<p:outputLabel for="invoiceAddAdvertiser"
+										value="#{msg['message.invoice.add.form.advertiser']}"
+										rendered="#{invoiceController.advertiserRendered}" />
+									<p:selectOneMenu id="invoiceAddAdvertiser"
+										styleClass="dis-input-width"
+										label="#{msg['message.invoice.add.form.advertiser']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceController.selectedAdvertiser}"
+										title="#{msg['message.invoice.tooltip.advertiser']}"
+										rendered="#{invoiceController.advertiserRendered}"
+										effect="fade" 
+										var="advertiser" 
+										filter="true"
+										filterMatchMode="contains" >
+										<f:selectItem noSelectionOption="true"
+											itemValue="#{null}"
+											itemLabel="#{msg['message.invoice.add.form.select.advertiser']}" />
+										<f:selectItems var="advertiser"
+											itemValue="#{advertiser}"
+											itemLabel="#{labelUtil.getCustomerLabel(advertiser)}"
+											value="#{invoiceController.advertisers}" />											
+										<p:column>
+											<p:outputLabel
+												value="#{advertiser != null ? labelUtil.getCustomerLabel(advertiser) : msg['message.invoice.add.form.select.advertiser']}" />
+										</p:column>
+										<p:ajax event="change"
+											listener="#{invoiceController.onSelectAdvertiser}" 
+											process="@this"
+											update="invoiceAddTab invoiceAddButton" />
+									</p:selectOneMenu>
+									
+									<!-- BILLING SCENARIO -->
+									<p:outputLabel for="invoiceAddBillingScenario"
+										value="#{msg['message.invoice.billingScenario']}" />
+									<p:selectOneMenu id="invoiceAddBillingScenario"
+										label="#{msg['message.invoice.billingScenario']}"
+										value="#{invoiceController.selectedBillingScenario}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.invoice.tooltip.billingScenario']}"
+										disabled="#{invoiceController.billingScenarioDisabled}" >
+										<f:selectItem itemValue="#{null}" noSelectionOption="true"
+											itemLabel="#{msg['message.invoice.add.form.select.billingScenario']}" />
+										<f:selectItems var="billingScenario" 
+											itemValue="#{billingScenario}"
+											value="#{invoiceController.billingScenarios}"
+											itemDescription="#{labelUtil.getBillingScenarioDescriptionLabel(billingScenario)}"
+											itemLabel="#{billingScenario.number}" />
+										<p:ajax event="change"
+											listener="#{invoiceController.onSelectBillingScenario}"
+											process="@this"
+											update="invoiceAddTab invoiceAddButton" />
+									</p:selectOneMenu>
+									
+									<!-- SERVICE TYPE -->
+									<p:outputLabel
+										value="#{msg['message.invoice.add.form.serviceType']}"
+										for="invoiceAddService" />
+									<p:selectOneMenu id="invoiceAddService"
+										styleClass="dis-input-width"										
+										label="#{msg['message.invoice.add.form.serviceType']}"
+										converter="omnifaces.SelectItemsConverter"
+										value="#{invoiceController.selectedServiceReceivedType}"
+										title="#{msg['message.invoice.tooltip.serviceType']}"
+										disabled="#{invoiceController.serviceReceivedTypeDisabled}" >
+										<f:selectItem itemValue="#{null}" noSelectionOption="true"
+											itemLabel="#{msg['message.invoice.add.form.select.serviceType']}" />
+										<f:selectItems
+											value="#{invoiceController.serviceReceivedTypes}"
+											var="serviceReceivedType"
+											itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceReceivedType)}"
+											itemValue="#{serviceReceivedType}" />
+										<p:ajax event="change"
+											listener="#{invoiceController.onSelectServiceType}"
+											process="@this"
+											update="invoiceAddTab invoiceAddButton" />
+									</p:selectOneMenu>
+									
+									<!-- INVOICE TYPE -->
+									<p:outputLabel for="invoiceAddInvoiceType"
+										value="#{msg['message.common.invoiceType']}" />
+									<p:selectOneMenu id="invoiceAddInvoiceType"
+										value="#{invoiceController.selectedInvoiceType}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										label="#{msg['message.common.invoiceType']}"
+										title="#{msg['message.invoice.tooltip.filterInvoiceType']}"										
+										disabled="#{invoiceController.invoiceTypeDisabled}" >
+										<f:selectItem itemValue="#{null}"
+											itemLabel="#{msg['message.invoice.add.form.select.invoiceType']}" />
+										<f:selectItems
+											value="#{invoiceController.invoiceTypes}"
+											var="type" itemValue="#{type}"
+											itemLabel="#{(labelUtil.getInvoiceTypeLabel(invoiceController.selectedCompany, type))}" />
+										<p:ajax event="change"
+											process="@this"
+											update="invoiceAddTab invoiceAddButton" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:spacer styleClass="dis-spacer-small" />
+								
+								<p:panelGrid columns="2"
+									styleClass="no-spacing no-border dis-spacing-small">
+									<p:commandButton id="invoiceAddButton" icon="ui-icon-plus"
+										value="#{msg['message.common.add']}"
+										action="#{invoiceController.add}"
+										title="#{msg['message.common.tooltip.add']}"
+										process="@form"
+										update="@form"
+										disabled="#{invoiceController.addButtonDisabled}" />
+									<p:commandButton id="invoiceAddClear"
+										value="#{msg['message.common.clear']}"
+										actionListener="#{invoiceController.cleanAddFields}"
+										styleClass="dis-button-width" icon="ui-icon-refresh"
+										process="@this"
+										update="invoiceAddTab invoiceAddButton"
+										title="#{msg['message.common.tooltip.clear.filters']}" />
+									</p:panelGrid>								
+							</p:tab>
+						</p:tabView>
+
+						<p:spacer styleClass="dis-spacer-small" />
+						
+					</h:form>
+
+					<h:form id="invoiceDataTableForm">
+				
+						<p:panel id="invoiceDataTablePanel"
+							widgetVar="invoiceDataTablePanel" visible="false" closable="true"
+							toggleable="true" closeSpeed="0"
+							rendered="#{invoiceController.searchActiveIndex == 0}"
+							styleClass="no-border no-spacing">
+
+							<p:dataTable id="listInvoice" widgetVar="listInvoice"
+								var="invoice"
+								value="#{invoiceController.invoiceLazyDataModel}"
+								selection="#{invoiceController.selectInvoices}"
+								paginatorAlwaysVisible="true" paginator="true"
+								currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+					 			{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000" sortMode="single"
+								rows="10" stickyHeader="false" lazy="true"
+								emptyMessage="#{msg['message.datatable.emptyMessage']}"
+								styleClass="dataTable-letters">
+        
+								<f:facet name="header">
+									<table class="no-border dis-table-header">
+										<tr>
+											<td>												
+												<p:commandButton id="viewButton" 
+													styleClass="Fleft LightButton"
+													icon="ui-icon-zoomin" process="@this"
+													disabled="#{invoiceController.viewButtonDisabled}"
+													action="#{invoiceController.viewSelected}"
+													title="#{msg['message.common.view']}" />
+												<p:commandButton id="viewConsumptionsButton" 
+													styleClass="Fleft LightButton"
+													icon="ui-icon-arrowreturnthick-1-s" process="@this"
+													rendered="#{perm.isPermitted('consumption:view')}"
+													disabled="#{invoiceController.viewConsumptionsDisabled}"
+													action="#{invoiceController.viewConsumptions}"
+													title="#{msg['message.invoice.tooltip.viewPrebillConsumptions']}" />
+												<p:commandButton id="viewJournalButton" 
+													styleClass="Fleft LightButton"
+													icon="ui-icon-arrowthick-1-e" process="@this"
+													rendered="#{perm.isPermitted('journal:view')}"
+													disabled="#{invoiceController.viewButtonDisabled}"
+													action="#{invoiceController.viewJournal}"
+													title="#{msg['message.invoice.tooltip.viewJournalEntries']}" />
+											</td>
+											<td class="ui-datatable ui-datatable-header">
+												<h:outputText 
+													value="#{msg['message.invoice.title.table']}" />
+											</td>
+											<td>
+												<p:commandButton 
+													id="toggler" type="button"
+													styleClass="LightButton Fright" 
+													icon="ui-icon-wrench" />
+												
+	       										<p:columnToggler id="togglerInvoice"
+	       											widgetVar="togglerInvoice" 
+	       											datasource="listInvoice" 
+	       											trigger="toggler" />
+	       										<script type="text/javascript">removeDuplicatedToggler('#invoiceDataTableForm\\:listInvoice\\:togglerInvoice')</script>
+											</td>	
+										</tr>
+									</table>
+								</f:facet>
+
+								<p:ajax event="page" oncomplete="updateToggles(PF('togglerInvoice'))" />
+								
+								<p:ajax event="rowDblselect" listener="#{invoiceController.rowListener}" 
+									oncomplete="changeInvoiceAction()"/>
+									
+								<p:ajax event="rowSelect" update="invoiceDataTableForm:invoiceButtons viewButton viewJournalButton viewConsumptionsButton"/>
+								<p:ajax event="rowUnselect" update="invoiceDataTableForm:invoiceButtons viewButton viewJournalButton viewConsumptionsButton"/>
+								<p:ajax event="rowSelectCheckbox" update="invoiceDataTableForm:invoiceButtons viewButton viewJournalButton viewConsumptionsButton"/>
+								<p:ajax event="rowUnselectCheckbox" update="invoiceDataTableForm:invoiceButtons viewButton viewJournalButton viewConsumptionsButton"/>
+								<p:ajax event="toggleSelect" update="invoiceDataTableForm:invoiceButtons viewButton viewJournalButton viewConsumptionsButton" />
+
+								<!--COLUMNS -->
+								<p:column 
+									selectionMode="multiple"
+									toggleable="false"
+									style="width:24px;text-align:center" />
+								
+								<!--ID-->
+								<p:column headerText="#{msg['message.invoice.table.id']}"
+									styleClass="col-customer-code">
+									<h:outputText value="#{invoice.id}" />
+								</p:column>
+								
+								<!--INVOICE NUMBER-->
+								<p:column headerText="#{msg['message.invoice.table.number']}"
+									styleClass="col-invoiceNumber">
+									<h:outputText value="#{null != invoice.invoiceNumber ? invoice.invoiceNumber : ' - '}" />
+								
+								</p:column>
+								
+								<!--BILL TO CUSTOMER-->
+								<p:column headerText="#{msg['message.invoice.table.billToCustomer']}"
+									styleClass="col-customer-name">
+									<h:outputText value="#{labelUtil.getCustomerLabel(invoice.customer)}" />
+								</p:column>
+								
+								<!--ADVERTISER-->
+								<p:column headerText="#{msg['message.invoice.table.advertiser']}"
+									styleClass="col-customer-name">
+									<h:outputText value="#{labelUtil.getCustomerLabel(invoice.advertiser)}" />
+								</p:column>
+
+								<!--INVOICE TYPE-->
+								<p:column headerText="#{msg['message.invoice.table.type']}"
+									styleClass="col-customer-invoiceType">
+									<h:outputText value="#{labelUtil.getInvoiceTypeLabel(invoiceController.searchedCompany, invoice.invoiceType)}"/>
+								</p:column>
+								
+								<!--INVOICE TYPE-->
+								<p:column headerText="#{msg['message.invoice.table.subtype']}"
+									styleClass="col-customer-invoiceType">
+									<h:outputText value="#{empty invoice.invoiceSubtype ? '-' : invoice.invoiceSubtype}"/>
+								</p:column>
+
+								<!-- INVOICE DATE-->
+								<p:column headerText="#{msg['message.invoice.table.date']}"
+									styleClass="col-customer-invoiceDate">
+									<h:outputText value="#{invoice.invoiceDate}">
+										<f:convertDateTime dateStyle="short" timeStyle="short"
+										locale="#{languageController.locale}"/>
+									</h:outputText>
+								</p:column>
+
+								<!-- SERVICE TYPE -->
+								<p:column
+									headerText="#{msg['message.invoice.table.serviceType']}"
+									styleClass="col-service-received">
+									<h:outputText
+										value="#{labelUtil.getServiceReceivedTypeLabel(invoice.serviceReceivedType)}" />
+								</p:column>
+								
+								<!-- BILLING SCENARIO -->
+								<p:column
+									headerText="#{msg['message.invoice.billingScenario']}"
+									styleClass="col-billing-scenario">
+									<h:outputText
+										value="#{invoice.billingScenario.number}" />
+								</p:column>
+								
+								<!-- INVOICE SOURCE -->
+								<p:column
+									headerText="#{msg['message.invoice.table.invoiceSource']}"
+									styleClass="col-transaction-currency">
+									<h:outputText
+										value="#{labelUtil.getInvoiceSourceLabel(invoice.invoiceSource)}" />
+								</p:column>
+
+								<!--CURRENCY transactionCurrency	-->
+								<p:column headerText="#{msg['message.invoice.table.currency']}"
+									styleClass="col-transaction-currency">
+									<h:outputText value="#{invoice.transactionCurrency.iso3Code}" />
+								</p:column>
+
+								<!-- TRANSACTION NET AMOUNT -->
+								<p:column
+									headerText="#{msg['message.invoice.table.transactionNetAmount']}"
+									styleClass="col-amount right">
+									<h:outputText value="#{invoice.transactionNetAmount}" >
+										<f:convertNumber 
+											type="currency" currencySymbol="" locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+
+								<!-- TRANSACTION VAT AMOUNT -->
+								<p:column
+									headerText="#{msg['message.invoice.table.transactionVatAmount']}"
+									styleClass="col-invoice-vat right">
+									<h:outputText value="#{invoice.taxable and !invoice.billingScenario.is09() ? invoice.transactionVatAmount : '-'}" >
+										<f:convertNumber 
+											type="currency" currencySymbol="" locale="#{languageController.locale}" />									</h:outputText>
+								</p:column>
+
+								<!-- TRANSACTION GROSS AMOUNT -->
+								<p:column
+									headerText="#{msg['message.invoice.table.transactionGrossAmount']}"
+									styleClass="col-amount right">
+									<h:outputText value="#{!invoice.billingScenario.is09() ? invoice.transactionGrossAmount : invoice.transactionNetAmount}" >
+										<f:convertNumber 
+											type="currency" currencySymbol="" locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+
+								<!-- STATUS -->
+								<p:column headerText="#{msg['message.invoice.table.status']}"
+									styleClass="col-status">
+									<h:outputText value="#{labelUtil.getInvoiceStatusLabel(invoice.status)}" />
+								</p:column>
+
+								<!-- SINGLE TRANSMISSION LINE -->
+								<p:column headerText="#{msg['message.common.oneLine']}"
+									styleClass="col-single-line">
+									<p:selectBooleanCheckbox value="#{invoice.singleLineTransmission}"
+										disabled="#{invoiceController.isOneLineCheckboxDisable(invoice)}"
+										rendered="#{(not invoiceController.isOneLineCheckboxDisable(invoice))}">
+										<p:ajax update="@this" process="@this" listener="#{invoiceController.saveCheckedInvoice(invoice)}" />
+									</p:selectBooleanCheckbox>
+									<h:outputText value="#{invoice.singleLineTransmission ? msg['message.common.true'] : msg['message.common.false'] }"
+										rendered="#{(invoiceController.isOneLineCheckboxDisable(invoice))}" />
+								</p:column>
+							</p:dataTable>
+	
+							<div class="EmptyBox30"></div>					
+							
+							<p:panel
+								id="invoiceButtons" 
+								styleClass="no-border transparent dis-spacing-small">
+												
+								
+								<!-- SUBMIT -->
+								<p:commandButton id="submitInvoicesButton"
+									value="#{msg['message.common.submit']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.submit']}"
+									icon="ui-icon-mail-closed"
+									disabled="#{invoiceController.submitButtonDisabled}"
+									oncomplete="scrollOnMessageToTop()"
+									rendered="#{perm.isPermitted('invoice:submit')}"
+									actionListener="#{invoiceController.submitInvoices}"
+									process="@this invoiceDataTableForm"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>			
+								
+								<!-- APPROVE -->			
+								<p:commandButton id="approveInvoicesButton"
+									value="#{msg['message.common.approve']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.approve']}"
+									icon="ui-icon-circle-check"
+									disabled="#{invoiceController.approveButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:approve')}"
+									actionListener="#{invoiceController.approveInvoices}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this invoiceDataTableForm"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- REJECT -->
+								<p:commandButton id="rejectInvoicesButton"
+									value="#{msg['message.common.reject']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.reject']}"
+									icon="ui-icon-circle-close"
+									disabled="#{invoiceController.refuseButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:approve')}"
+									actionListener="#{invoiceController.refuseInvoices}"
+									oncomplete="scrollOnMessageToTop()"
+									process="@this invoiceDataTableForm"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+									<p:confirm
+										message="#{msg['message.invoice.confirm.list.reject']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- TRANSMIT -->
+								<p:commandButton id="transmitInvoicesButton"
+									value="#{msg['message.common.transmit']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.transmit']}"
+									icon="ui-icon-arrowthick-1-e"
+									disabled="#{invoiceController.transmitButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:transmit') and not invoiceController.sageCompany}"
+									actionListener="#{invoiceController.transmitInvoices}"
+									process="@this invoiceDataTableForm"
+									oncomplete="scrollOnMessageToTop()"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- BOTONES SAGE (Integracion Manual) -->
+								
+								<!-- DOWNLOAD -->
+								<p:commandButton id="downloadInvoicesButton"
+									value="#{msg['message.common.download']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.download']}"
+									icon="ui-icon-arrowthickstop-1-s"
+									disabled="#{invoiceController.isDownloadButtonDisabled()}"
+									rendered="#{perm.isPermitted('invoice:transmit') and invoiceController.sageCompany}"
+									process="@this"
+									actionListener="#{invoiceController.prepareDownload}"
+									oncomplete="scrollOnMessageToTop();"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+								</p:commandButton>
+
+								<h:commandButton id="download" class="download-invoice"
+									process="@this"  style="display: none !important"
+									actionListener="#{invoiceController.download}">
+								</h:commandButton>
+
+
+								<!-- TRANSMIT MANUAL -->
+								<p:commandButton id="transmitManualInvoicesButton"
+									value="#{msg['message.common.transmit']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.transmit.manual']}"
+									icon="ui-icon-arrowthick-1-e"
+									disabled="#{invoiceController.transmitManualButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:transmit') and invoiceController.sageCompany}"
+									actionListener="#{invoiceController.transmitInvoicesManual}"
+									process="@this invoiceDataTableForm"
+									oncomplete="scrollOnMessageToTop()"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>								
+								
+								<!-- DENY MANUAL -->
+								<p:commandButton id="denyInvoicesButton"
+									value="#{msg['message.common.deny']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.deny']}"
+									icon="ui-icon-cancel"									
+									rendered="#{perm.isPermitted('invoice:deny') and invoiceController.sageCompany}"
+									disabled="#{invoiceController.denyButtonDisabled}"
+									actionListener="#{invoiceController.denyInvoices}"								
+									process="@this invoiceDataTableForm"
+									oncomplete="scrollOnMessageToTop()"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages" >
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- POST MANUAL -->
+								<p:commandButton id="postInvoicesButton"
+									value="#{msg['message.common.post']}"
+									styleClass="dis-button-width"
+									title="#{msg['message.invoice.tooltip.list.post']}"
+									icon="ui-icon-flag"
+									rendered="#{perm.isPermitted('invoice:post') and invoiceController.sageCompany}"
+									disabled="#{invoiceController.postButtonDisabled}"
+									actionListener="#{invoiceController.postInvoices}"
+									process="@this invoiceDataTableForm"
+									oncomplete="scrollOnMessageToTop()"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages" >
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+								
+								<!-- DELETE -->
+								<p:commandButton id="deleteInvoicesButton"
+									value="#{msg['message.common.delete']}"
+									styleClass="dis-button-width lais-delete-button"
+									title="#{msg['message.invoice.tooltip.list.delete']}"
+									icon="ui-icon-trash"
+									disabled="#{invoiceController.cancelButtonDisabled}"
+									rendered="#{perm.isPermitted('invoice:cancel')}"
+									actionListener="#{invoiceController.cancelInvoices}"
+									process="@this invoiceDataTableForm"
+									update="invoiceDataTableForm listInvoiceForm:listInvoiceFormMessages">
+									<p:confirm
+										message="#{msg['message.invoice.confirm.list.delete']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>	
+	
+							</p:panel>
+							
+						</p:panel>
+						
+						<p:remoteCommand name="changeInvoiceAction"
+							action="#{invoiceController.view}" />
+						<p:remoteCommand autoRun="true" actionListener="#{invoiceController.showTable}" /> 							
+					</h:form>
+				</p:panel>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

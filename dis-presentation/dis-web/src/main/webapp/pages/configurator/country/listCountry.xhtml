@@ -1,0 +1,264 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.common.country']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+		<div class="Container100">
+			<div class="ContainerIndent">
+				<p:focus context="countryform" />
+				<h:form id="msgForm">
+					<p:messages id="listcountryFormMessages" closable="true"
+						showDetail="false" autoUpdate="false"/>
+				</h:form>
+				<h:form id="countryform">
+					<p:tabView>
+						<p:tab title="#{msg['message.common.country']}">
+
+							<p:panelGrid styleClass="no-border" columns="4">
+
+
+
+								<!--Name -->
+								<p:outputLabel for="name" value="#{msg['message.country.name']}" />
+								<p:inputText id="name" styleClass="dis-input-width"
+									value="#{filterContainer.countryFilterGenerator.name}"
+									title="#{msg['message.country.tooltip.country.name']}" />
+
+
+								<!-- ISO numeric code -->
+								<p:outputLabel for="isoNumericCodeFilter"
+									value="#{msg['message.country.code.numeric']}" />
+								<p:inputText maxlength="3" id="isoNumericCodeFilter"
+									styleClass="dis-input-width"
+									value="#{filterContainer.countryFilterGenerator.isoNumericCode}"
+									title="#{msg['message.country.tooltip.country.numeric']}" />
+
+
+
+								<!-- CODE Alpha2 ISO -->
+								<p:outputLabel for="isoAlpha2CodeFilter"
+									value="#{msg['message.country.code.alpha.a']}" />
+								<p:inputText maxlength="2" id="isoAlpha2CodeFilter"
+									styleClass="dis-input-width"
+									value="#{filterContainer.countryFilterGenerator.isoAlpha2Code}"
+									title="#{msg['message.country.tooltip.country.alpha.a']}" />
+
+
+								<!-- EUMember -->
+								<p:outputLabel for="EUMember"
+									value="#{msg['message.country.eumember']}" />
+								<p:selectOneMenu id="EUMember" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{countryFilterGenerator.EUMember}"
+									title="#{msg['message.country.tooltip.country.eumember']}">
+
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.common.selectOne']}" />
+									<f:selectItem itemValue="#{true}"
+										itemLabel="#{msg['message.common.true']}" />
+									<f:selectItem itemValue="#{false}"
+										itemLabel="#{msg['message.common.false']}" />
+								</p:selectOneMenu>
+
+
+								<!-- CODE Alpha ISO -->
+								<p:outputLabel for="isoAlpha3CodeFilter"
+									value="#{msg['message.country.code.alpha']}" />
+								<p:inputText maxlength="3" id="isoAlpha3CodeFilter"
+									styleClass="dis-input-width"
+									value="#{filterContainer.countryFilterGenerator.isoAlpha3Code}"
+									title="#{msg['message.country.tooltip.country.alpha']}" />
+
+								<!-- active -->
+								<p:outputLabel for="active"
+									value="#{msg['message.country.active']}" />
+								<p:selectOneMenu id="active" styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{countryFilterGenerator.active}"
+									title="#{msg['message.country.tooltip.active']}">
+
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.common.selectOne']}" />
+									<f:selectItem itemValue="#{true}"
+										itemLabel="#{msg['message.common.true']}" />
+									<f:selectItem itemValue="#{false}"
+										itemLabel="#{msg['message.common.false']}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="3"
+								styleClass="no-spacing no-border dis-spacing-small">
+
+								<!-- BUTTON -->
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									actionListener="#{countryController.filterTable}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									oncomplete="PF('countryDataTablePanel').show();"
+									update=":listCountryForm"
+									title="#{msg['message.country.tooltip.country.search']}" />
+
+								<p:commandButton id="add" value="#{msg['message.common.add']}"
+									styleClass="dis-button-width" icon="ui-icon-plus"
+									process="@this" action="#{countryController.add}"
+									title="#{msg['message.country.tooltip.country.add']}" />
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									process="@this"
+									actionListener="#{filterContainer.countryFilterGenerator.clearFilters}"
+									oncomplete="PF('countryDataTablePanel').close();"
+									update=":countryform :msgForm" resetValues="true"
+									title="#{msg['message.country.tooltip.country.clear']}" />
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+
+				</h:form>
+
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+				<h:form id="listCountryForm">
+					<p:panel id="countryDataTablePanel"
+						widgetVar="countryDataTablePanel" visible="false" closable="true"
+						toggleable="true" closeSpeed="0" styleClass="no-border no-spacing">
+
+						<p:dataTable id="countryList" widgetVar="listCountryVar"
+							var="country" value="#{countryController.countryLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="multiple" rows="10" selectionMode="single"
+							selection="#{countryController.selectedCountry}"
+							rowKey="#{country.id}" lazy="true" stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="edit"
+												styleClass="Fleft LightButton" icon="ui-icon-pencil"
+												process="@this" action="#{countryController.edit}"
+												disabled="#{countryController.selectedCountry == null}"
+												title="#{msg['message.country.tooltip.country.edit']}" /> <p:commandButton
+												id="delete" styleClass="Fleft LightButton"
+												icon="ui-icon-closethick"
+												actionListener="#{countryController.delete}" process="@this"
+												disabled="#{countryController.selectedCountry == null}"
+												update=":countryform"
+												title="#{msg['message.channel.tooltip.country.delete']}">
+												<p:confirm
+													message="#{msg['message.common.confirmation.continue']}"
+													icon="ui-icon-alert" />
+											</p:commandButton></td>
+
+
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.country.country']}" /></td>
+										<td></td>
+									</tr>
+								</table>
+							</f:facet>
+							<p:ajax event="rowSelect" update="delete" />
+							<p:ajax event="rowUnselect" update="delete" />
+							<p:ajax event="rowSelect" update="edit" />
+							<p:ajax event="rowUnselect" update="edit" />
+							<p:ajax event="rowDblselect" onstart="selectCountryAction()" />
+
+							<!-- name -->
+							<p:column headerText="#{msg['message.country.name']}"
+								styleClass="col-user-user" sortBy="#{country.name}">
+								<h:outputText value="#{country.name}" />
+							</p:column>
+
+							<!-- ISO alpha code-->
+							<p:column
+								headerText="#{msg['message.country.code.head.alpha.a']}"
+								styleClass="col-user-user" sortBy="#{country.isoAlpha2Code}">
+								<h:outputText value="#{country.isoAlpha2Code}" />
+							</p:column>
+
+
+							<!-- ISO alpha code-->
+							<p:column headerText="#{msg['message.country.code.head.alpha']}"
+								styleClass="col-user-user" sortBy="#{country.isoAlpha3Code}">
+								<h:outputText value="#{country.isoAlpha3Code}" />
+							</p:column>
+
+
+							<!-- ISO numeric code-->
+							<p:column
+								headerText="#{msg['message.country.code.head.numeric']}"
+								styleClass="col-user-user" sortBy="#{country.isoNumericCode}">
+								<h:outputText value="#{country.isoNumericCode}" />
+							</p:column>
+
+
+							<!-- tinsValidation-->
+							<!-- 					<p:column headerText="Tins Validation" styleClass="col-user-user" -->
+							<!-- 						sortBy="#{country.tinsValidation}"> -->
+							<!-- 						<h:outputText value="#{country.tinsValidation}" />  -->
+							<!-- 					</p:column> -->
+
+							<!-- tinsVerification-->
+							<!--                     <p:column headerText="Tins Verification" styleClass="col-user-user" -->
+							<!-- 						sortBy="#{country.tinVerification}"> -->
+							<!-- 						<h:outputText value="#{country.tinVerification}" /> </p:column> -->
+
+
+
+							<!-- EUMember-->
+							<p:column headerText="#{msg['message.country.eumember']}"
+								styleClass="" sortBy="#{country.EUMember}">
+								<h:outputText
+									value="#{country.EUMember ? 
+								msg['message.common.true'] : msg['message.common.false']}" />
+							</p:column>
+
+
+							<!-- Active-->
+							<p:column headerText="#{msg['message.country.active']}"
+								styleClass="" sortBy="#{country.active}">
+
+								<h:outputText
+									value="#{country.active ? 
+								msg['message.common.true'] : msg['message.common.false']}" />
+							</p:column>
+
+							<!-- vatPercentage-->
+							<p:column headerText="#{msg['message.country.vatpercentage']}"  styleClass="col-user-user">
+								<h:outputText
+									value="#{null != country.vatPercentage ? country.vatPercentage : ' - '}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+
+					<p:remoteCommand autoRun="true"
+						actionListener="#{countryController.showTable}" />
+					<p:remoteCommand name="selectCountryAction"
+						action="#{countryController.edit}" />
+
+				</h:form>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

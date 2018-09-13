@@ -1,0 +1,188 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.common.companies']}
+</ui:define>
+
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+	<div class="Container100">
+		<div class="ContainerIndent">
+
+			<p:focus context="companyFiltersForm"/>
+
+			<h:form id="companyFiltersForm">
+				<p:tabView>
+					<p:tab title="#{msg['message.common.filters']}">
+
+						<p:panelGrid styleClass="no-border" columns="2">
+
+								<!-- COMPANY CODE -->
+								<p:outputLabel for="companyCodeFilter"
+									value="#{msg['message.company.filter.companyCode']}" />
+								<p:inputText id="companyCodeFilter"
+									label="#{msg['message.company.filter.companyCode']}"
+									value="#{companyFilterGenerator.code}"
+									styleClass="dis-input-width"
+									title="#{msg['message.company.filter.tooltip.companyCode']}">
+								</p:inputText>
+
+								<!-- DESCRIPTION -->
+								<p:outputLabel for="companyDescriptionFilter"
+									value="#{msg['message.company.filter.description']}" />
+								<p:inputText id="companyDescriptionFilter"
+									styleClass="dis-input-width"
+									value="#{companyFilterGenerator.description}"
+									title="#{msg['message.company.filter.tooltip.description']}" />
+
+							</p:panelGrid>
+
+						<p:spacer styleClass="dis-spacer-small" />
+
+						<p:panelGrid columns="3"
+							styleClass="no-spacing no-border dis-spacing-small">
+							
+							<!-- SEARCH -->
+							<p:commandButton 
+								icon="ui-icon-search"
+								value="#{msg['message.common.search']}"
+								process="@form"
+								update=":listCompanyForm"
+								oncomplete="PF('companyDataTablePanel').show();"
+								title="#{msg['message.company.filter.tooltip.searchButton']}" />
+							
+							<!-- CLEAR SEARCH -->											
+							<p:commandButton 
+								id="clearSearch"
+								value="#{msg['message.common.clear']}"
+								actionListener="#{companyFilterGenerator.clearFilters}"
+								oncomplete="PF('companyDataTablePanel').close();"
+								styleClass="dis-button-width" 
+								icon="ui-icon-refresh" 
+								update=":companyFiltersForm"
+								resetValues="true"
+								title="#{msg['message.common.tooltip.clear.filters']}" />
+								
+							<!-- ADD -->											
+							<!-- <p:commandButton 
+								id="add"
+								value="#{msg['message.common.add']}"
+								styleClass="dis-button-width" 
+								icon="ui-icon-refresh"
+								oncomplete="PF('companyDataTablePanel').close();"
+								action="#{companyController.add}"
+								title="#{msg['message.company.filter.tooltip.add']}" /> -->
+								
+						</p:panelGrid>
+													
+					</p:tab>
+				</p:tabView>
+			</h:form>
+
+			<p:spacer styleClass="dis-spacer-small"/>
+				
+			<h:form id="listCompanyForm">
+				<p:panel 
+					id="companyDataTablePanel" widgetVar="companyDataTablePanel"
+					visible="false" closable="true" toggleable="true" closeSpeed="0"
+					styleClass="no-border no-spacing">
+					
+					<p:dataTable id="listCompany" widgetVar="listCompanyVar" var="company"
+						value="#{companyController.companyLazyDataModel}"
+						paginatorAlwaysVisible="true" paginator="true"
+						currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+						rows="10" selectionMode="single"
+						selection="#{companyController.selectedCompany}" lazy="true"
+						stickyHeader="false"
+						emptyMessage="#{msg['message.datatable.emptyMessage']}"
+						reflow="true"
+						sortMode="multiple" >
+
+						<f:facet name="header">
+							<table class="no-border dis-table-header">
+								<tr>
+									<td>
+										<p:commandButton
+											id="edit" 
+											styleClass="Fleft LightButton"
+											icon="ui-icon-pencil" process="@this"
+											action="#{companyController.edit}"
+											disabled="#{companyController.selectedCompany == null}"
+											title="#{msg['message.company.tooltip.editAccount']}" />
+										</td>
+									<td class="ui-datatable ui-datatable-header">
+										<h:outputText
+											value="#{msg['message.company.list.table.header']}" />
+									</td>
+									<td></td>
+								</tr>
+							</table>
+						</f:facet>
+
+						<p:ajax event="rowSelect" update="edit" />
+						<p:ajax event="rowUnselect" update="edit" />
+						<p:ajax event="rowDblselect" onstart="selectCompanyAction()" />
+
+						<!-- COMPANY -->
+						<p:column headerText="#{msg['message.common.company']}"
+							styleClass="col-user-user"
+							sortBy="#{company.code}">
+							<h:outputText value="#{company.code}" />
+						</p:column>
+						
+						<!-- DESCRIPTION -->
+						<p:column headerText="#{msg['message.common.description']}"
+							sortBy="#{company.description}" >							
+							<h:outputText value="#{company.description}" />
+						</p:column>
+						
+						<!-- ERP TYPE -->
+						<!-- <p:column headerText="#{msg['message.company.ERPType']}"
+							sortBy="#{company.erpType}"  >
+							<h:outputText value="#{company.erpType}" />
+						</p:column> -->
+
+	 					<!-- COUNTRY -->
+						<p:column headerText="#{msg['message.common.country']}"
+							sortBy="#{company.country}" >							
+							<h:outputText value="#{company.country}" />
+						</p:column>
+						
+						<!-- CURRENCY -->
+						<p:column headerText="#{msg['message.common.currency']}"
+							sortBy="#{company.currency}" >							
+							<h:outputText value="#{company.currency}" />
+						</p:column>
+						
+						<!-- ACTIVE -->
+						<p:column headerText="#{msg['message.common.active']}"
+							sortBy="#{company.active}">							
+							<h:outputText value="#{company.active ? 
+								msg['message.common.true'] : msg['message.common.false']}" />
+						</p:column>
+						
+					</p:dataTable>
+				</p:panel>
+				
+				<p:remoteCommand 
+					autoRun="true" 
+					actionListener="#{companyController.showTable}" />
+				<p:remoteCommand 
+					name="selectCompanyAction"
+					action="#{companyController.edit}" />
+			</h:form>
+		</div>
+	</div>
+			
+</ui:define>
+</ui:composition>

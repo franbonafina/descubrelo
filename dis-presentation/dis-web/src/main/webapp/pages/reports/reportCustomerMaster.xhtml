@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.report.customerMaster.name']}
+</ui:define>
+
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+			<p:panel>
+				<p:focus />
+				
+				<h:form prependId="false" id="reportForm">
+					<p:messages id="messages" showDetail="false" autoUpdate="true" closable="true" />
+	
+					<p:panelGrid styleClass="transparent no-border" columns="4">
+						<!-- COMPANY -->
+						<p:outputLabel for="companyFilter"
+							value="#{msg['message.common.company']}"	 />
+						<p:selectOneMenu id="companyFilter"
+							styleClass="dis-input-width"
+							value="#{reportCustomerMasterController.company}"
+							title="#{msg['message.customer.tooltip.filterCode']}"
+							converter="omnifaces.SelectItemsConverter"
+							required="true">
+							
+							<f:selectItems 
+								value="#{sessionSelectorController.companies}"
+								var="company" 
+								itemValue="#{company}"
+								itemLabel="#{company.code} - #{company.description}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- START DATE -->
+						<p:outputLabel value="#{msg['message.report.customerMaster.startTransmissionDate']}"
+							for="startDateFilter"/>
+						<p:calendar id="startDateFilter"
+							required="true"
+							value="#{reportCustomerMasterController.startDate}"
+							title="#{msg['message.report.customerMaster.startTransmissionDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />
+	
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- END DATE -->
+						<p:outputLabel value="#{msg['message.report.customerMaster.endTransmissionDate']}"
+							for="endDateFilter" />
+						<p:calendar id="endDateFilter"
+							required="true"
+							value="#{reportCustomerMasterController.endDate}"
+							title="#{msg['message.report.customerMaster.endTransmissionDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />				
+						
+							<p:outputLabel />
+						<p:outputLabel />
+						
+					</p:panelGrid>
+					
+					<ui:param name="controller" value="#{reportCustomerMasterController}" />
+					<ui:include src="reportFooter.xhtml" />						
+				</h:form>
+				
+			</p:panel>				
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

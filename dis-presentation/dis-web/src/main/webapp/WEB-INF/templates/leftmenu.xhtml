@@ -1,0 +1,282 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ps="http://primefaces.org/sentinel"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:form id="leftmenuForm">
+
+		<div id="layout-menubar" class="Unselectable fontRegular slimmenu">
+
+			<div class="layout-menubarinner-box" id="buttonArea">
+				<a href="#" id="layout-menubar-resize" class="BordRad3"
+					title="Menu Resize"><i class="icon-th-list-2"></i></a> <a href="#"
+					id="layout-menubar-resize2" class="BordRad3" title="Open Menu"><i
+					class="icon-menu"></i></a>
+			</div>
+
+			<ps:menu id="sm_leftmenu">
+
+				<!-- INTERFACES -->
+				<p:submenu id="sm_interfaces"
+					label="#{msg['message.menu.interfaces']}"
+					icon="icon-download-outline"
+					rendered="#{perm.isPermitted('interface:ibms:batch:view') or perm.isPermitted('interface:erp:view')}">
+
+					<!-- IBMS -->
+					<p:menuitem id="sm_intrefaces_ibms"
+						containerStyleClass="#{view.viewId == navigationRuler.batchListPage ? 
+							'dis-active-menu' : null}"
+						value="#{msg['message.menu.interfaces.ibms']}" ajax="true"
+						action="#{navigationRuler.getBatchListPage}"
+						icon="icon-videocam-outline" update="@all"
+						rendered="#{perm.isPermitted('interface:ibms:batch:view')}" />
+
+					<!-- ERP -->
+					<p:menuitem id="sm_intrefaces_erp" containerStyleClass=""
+						value="#{msg['message.menu.interfaces.erp']}" ajax="true"
+						update="@all" icon="icon-cube" action="home"
+						rendered="#{perm.isPermitted('interface:erp:view')}" />
+
+				</p:submenu>
+
+				<!-- CUSTOMERS -->
+				<p:menuitem id="sm_customer" value="#{msg['message.menu.customer']}"
+					icon="icon-users-2" update="@all"
+					containerStyleClass="#{view.viewId == navigationRuler.customerListPage ? 
+						'dis-active-menu' : null}"
+					action="#{navigationRuler.getCustomerListPage}"
+					rendered="#{perm.isPermitted('customer:view')}" />
+
+
+				<!-- TRANSMISSION ORDERS -->
+				<p:submenu id="sm_transmission"
+					label="#{msg['message.menu.transmissionOrders']}" icon="icon-video"
+					rendered="#{perm.isPermitted('transmissionOrder:view')}">
+
+					<!-- TRANSMISSION ORDERS EDIT-->
+					<p:menuitem id="sm_transmission_orders"
+						value="#{msg['message.menu.transmissionOrders.invoicing']}"
+						ajax="true" icon="icon-pencil" update="@all"
+						containerStyleClass="#{view.viewId == navigationRuler.transmissionOrdersSearch ? 
+							'dis-active-menu' : null}"
+						action="#{navigationRuler.getTransmissionOrdersSearch}"
+						rendered="#{perm.isPermitted('transmissionOrder:process')}" />
+
+					<!-- TRANSMISSION ORDERS  VIEW-->
+					<p:menuitem id="sm_transmission_OrdersView" ajax="true"
+						value="#{msg['message.menu.transmissionOrders.review']}"
+						icon="icon-search" update="@all"
+						containerStyleClass="#{view.viewId == navigationRuler.transmissionOrdersViewPage ? 
+							'dis-active-menu' : null}"
+						action="ordersView"
+						rendered="#{perm.isPermitted('transmissionOrder:view')}" />
+
+				</p:submenu>
+
+				<!-- INVOICE -->
+				<p:menuitem id="sm_invoice" value="#{msg['message.menu.invoices']}"
+					ajax="true" rendered="#{perm.isPermitted('invoice:view')}"
+					containerStyleClass="#{view.viewId == navigationRuler.invoiceListPage ? 
+						'dis-active-menu' : null}"
+					update="@all" icon="icon-dollar"
+					action="#{navigationRuler.getInvoiceListPage}" />
+
+				<!-- CONSUMPTION -->
+				<p:menuitem id="sm_consumption"
+					value="#{msg['message.menu.consumptions']}" ajax="true"
+					rendered="#{perm.isPermitted('consumption:view')}"
+					containerStyleClass="#{view.viewId == navigationRuler.consumptionListPage ? 
+						'dis-active-menu' : null}"
+					update="@all" icon="icon-ticket"
+					action="#{navigationRuler.getConsumptionListPage}" />
+
+				<!-- JOURNALS -->
+				<p:menuitem id="sm_journals"
+					value="#{msg['message.menu.reviewJournals']}" icon="icon-book"
+					containerStyleClass="#{view.viewId == navigationRuler.journalListPage ?
+						'dis-active-menu' : null}"
+					update="@all" rendered="#{perm.isPermitted('journal:view')}"
+					action="#{navigationRuler.getJournalListPage}">
+				</p:menuitem>
+
+				<!-- REPORTS -->
+				<p:menuitem id="sm_reports" value="#{msg['message.common.reports']}"
+					containerStyleClass="#{view.viewId == navigationRuler.reportsPage ? 
+						'dis-active-menu' : null}"
+					update="@all" icon="icon-chart-bar"
+					rendered="#{perm.isPermitted('report:run')}"
+					action="#{navigationRuler.getReportsPage}" ajax="true" />
+
+				<p:submenu id="sm_configuration" rendered="true"
+					label="#{msg['message.menu.configuration']}"
+					icon="icon-wrench-outline">
+
+					<!-- COMPANIES -->
+					<p:menuitem id="mi_company" update="@all"
+						value="#{msg['message.menu.company']}" ajax="true"
+						icon="icon-home-outline" containerStyleClass="#{null}"
+						rendered="#{perm.isPermitted('companies:setup')}"
+						action="#{navigationRuler.getCompanyListPage}" />
+
+					<!-- COUNTRY -->
+					<p:menuitem id="mi_country" update="@all"
+						value="#{msg['message.country']}" ajax="true" icon="icon-plus-1"
+						containerStyleClass="#{view.viewId == navigationRuler.countryListPage ? 
+							'dis-active-menu' : null}"
+						rendered="#{perm.isPermitted('country:setup')}"
+						action="#{navigationRuler.getCountryListOutcome}" />
+
+					<!-- CHANNEL -->
+<!-- 					<p:menuitem id="mi_channel" update="@all" -->
+<!-- 						value="#{msg['message.channel']}" ajax="true" -->
+<!-- 						icon="icon-ok-circled2" -->
+<!-- 						containerStyleClass="#{view.viewId == navigationRuler.channelListPage ?  -->
+<!-- 							'dis-active-menu' : null}" -->
+<!-- 						rendered="#{perm.isPermitted('channel:setup')}" -->
+<!-- 						action="#{navigationRuler.getChannelListOutcome}" /> -->
+
+					<!-- BIILING CONFIGURATION -->
+					<p:submenu id="sm_billing" label="#{msg['message.menu.billing']}"
+						icon="icon-star"
+						rendered="#{perm.isPermitted('COAMapping:setup') or perm.isPermitted('withholding:setup')}">
+
+						<!-- BILLING SCENARIOS -->
+						<p:menuitem id="mi_billing_scenarios" update="@all"
+							value="#{msg['message.menu.billingScenarios']}" ajax="true"
+							icon="icon-home-outline" containerStyleClass="#{null}"
+							rendered="false" action="#{navigationRuler.getIndexPage}" />
+
+						<!-- COA MAPPING -->
+						<p:menuitem id="mi_coa_mapping" update="@all"
+							value="#{msg['message.menu.CoAMapping']}" ajax="true"
+							icon="icon-sitemap"
+							containerStyleClass="#{view.viewId == navigationRuler.coaListPage ? 
+							'dis-active-menu' : null}"
+							rendered="#{perm.isPermitted('COAMapping:setup')}"
+							action="#{navigationRuler.getCoaListOutcome}" />
+
+						<!-- WITHHOLDINGS -->
+						<p:menuitem id="mi_withholding" update="@all"
+							icon="icon-newspaper" value="#{msg['message.withholding']}"
+							ajax="true"
+							containerStyleClass="#{view.viewId == navigationRuler.taxListPage ? 
+							'dis-active-menu' : null}"
+							rendered="#{perm.isPermitted('withholding:setup')}"
+							action="#{navigationRuler.getTaxListOutcome}" />
+
+						<!-- INVOICE TYPES -->
+						<p:menuitem id="mi_invoice_types"
+							value="#{msg['message.menu.invoiceTypes']}" ajax="true"
+							icon="icon-doc-text" containerStyleClass="#{null}"
+							rendered="false" action="#{navigationRuler.getIndexPage}"
+							update="@all" />
+							
+						<!-- AUTONUMBERING -->
+						<p:menuitem id="sm_autonumbering"
+							value="#{msg['message.menu.autonumbering']}" ajax="true"
+							icon="icon-sort-number-down" containerStyleClass="#{null}"
+							rendered="false" update="@all"
+							action="#{navigationRuler.getIndexPage}" />
+
+					</p:submenu>
+
+
+					<!-- ACCOUNT -->
+					<p:menuitem id="mi_account"
+						value="#{msg['message.common.accounts']}" ajax="true"
+						icon="icon-book" update="@all"
+						containerStyleClass="#{view.viewId == navigationRuler.accountListPage ? 
+							'dis-active-menu' : null}"
+						rendered="#{perm.isPermitted('account:setup')}"
+						action="#{navigationRuler.getAccountListOutcome}" />
+
+					<!-- GEOGRAPHY -->
+					<p:menuitem id="mi_geography"
+						value="#{msg['message.common.geography']}" icon="icon-flag"
+						ajax="true"
+						containerStyleClass="#{view.viewId == navigationRuler.geographyListPage ? 
+							'dis-active-menu' : null}"
+						rendered="#{perm.isPermitted('geography:setup')}" update="@all"
+						action="#{navigationRuler.getGeographyListOutcome}" />
+
+					<!-- PLATFORM -->
+					<p:menuitem id="mi_platform_setup" update="@all"
+						value="#{msg['message.menu.PlatformSetup']}" ajax="true"
+						icon="icon-eye-1"
+						containerStyleClass="#{view.viewId == navigationRuler.platformListPage ? 
+							'dis-active-menu' : null}"
+						rendered="#{perm.isPermitted('platform:setup')}"
+						action="#{navigationRuler.getPlatformListOutcome}" />
+
+					<!-- PROFIT CENTER -->
+					<p:menuitem id="mi_profitCenter_setup" update="@all"
+						value="#{msg['message.menu.ProfitCenterSetup']}" ajax="true"
+						icon="icon-credit-card"
+						containerStyleClass="#{view.viewId == navigationRuler.profitCenterListPage ? 
+							'dis-active-menu' : null}"
+						rendered="#{perm.isPermitted('profitCenter:setup')}"
+						action="#{navigationRuler.getProfitCenterListOutcome}" />
+
+					<!-- COST CENTER -->
+					<p:menuitem id="mi_costCenter" update="@all"
+						value="#{msg['message.costCenter']}" ajax="true"
+						icon="icon-dollar"
+						containerStyleClass="#{view.viewId == navigationRuler.costCenterListPage ? 
+							'dis-active-menu' : null}"
+						rendered="#{perm.isPermitted('costCenter:setup')}"
+						action="#{navigationRuler.getCostCenterListOutcome}" />
+
+				</p:submenu>
+
+				<!-- USERS CONFIGURATION -->
+				<p:submenu id="sm_users" label="#{msg['message.menu.security']}"
+					icon="icon-lock" rendered="#{perm.isPermitted('setting:setup')}">
+
+					<!-- USERS ADMINISTRATION -->
+					<p:menuitem id="sm_sec_user"
+						containerStyleClass="#{view.viewId == navigationRuler.userListPage ? 
+							'dis-active-menu' : null}"
+						update="@all" value="#{msg['message.menu.user.config']}"
+						ajax="true" icon="icon-users-outline"
+						action="#{navigationRuler.getUserListPage}"
+						rendered="#{perm.isPermitted('user:setup')}" />
+
+					<!-- USER ROLES -->
+					<p:menuitem id="sm_sec_role"
+						containerStyleClass="#{view.viewId == navigationRuler.roleListPage ? 
+							'dis-active-menu' : null}"
+						update="@all" value="#{msg['message.menu.role.config']}"
+						ajax="true" icon="icon-waves-outline"
+						action="#{navigationRuler.getRoleListPage}"
+						rendered="#{perm.isPermitted('role:setup')}" />
+
+					<!-- USER PERMISSIONS -->
+					<p:menuitem id="sm_sec_permission"
+						containerStyleClass="#{view.viewId == navigationRuler.permissionListPage ? 
+							'dis-active-menu' : null}"
+						update="@all" value="#{msg['message.menu.permission.config']}"
+						ajax="true" icon="icon-block-outline"
+						action="#{navigationRuler.getPermissionListPage}" rendered="false" />
+
+					<!-- PASSWORD STANDARDS -->
+					<p:menuitem id="sm_password_standards"
+						containerStyleClass="#{view.viewId == navigationRuler.passwordStandardsPage ? 
+							'dis-active-menu' : null}"
+						value="#{msg['message.menu.passwordStandards.config']}"
+						ajax="true" icon="icon-key-outline" update="@all"
+						action="#{navigationRuler.getPasswordStandardsPage}"
+						rendered="#{perm.isPermitted('passwordStandard:setup')}" />
+
+				</p:submenu>
+			</ps:menu>
+
+		</div>
+
+		<p:remoteCommand action="#{navigationRuler.renavigate}" autoRun="true"
+			process="@this" global="false" />
+
+	</h:form>
+
+</ui:composition>

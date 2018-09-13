@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<xsd:schema
+	targetNamespace="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:commns="http://xmlns.discovery.com/EnterpriseObjects/LAIS/MSDynamics/common/">
+
+	<xsd:complexType name="AddressType">
+		<xsd:sequence>
+			<xsd:element name="AddressStreet" nillable="true">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Street" maxOccurs="unbounded"
+							type="commns:StreetType" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="AddressCity" nillable="true" type="xsd:string" />
+			<xsd:element name="AddressRegion" nillable="true" type="commns:RegionType" />
+			<xsd:element name="AddressPostalCode" nillable="true"
+				type="xsd:string" />
+			<xsd:element name="AddressCountry" nillable="true" type="commns:CountryType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="StreetType">
+		<xsd:sequence>
+			<xsd:element name="Description" type="xsd:string" />
+			<xsd:element name="StreetType" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="RegionType">
+		<xsd:sequence>
+			<xsd:element name="Description" type="xsd:string" />
+			<xsd:element name="RegionCode" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="PaymentTermType">
+		<xsd:sequence>
+			<xsd:element name="Description" type="xsd:string" />
+			<xsd:element name="PaymentTermCode" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="PaymentMethodType">
+		<xsd:sequence>
+			<xsd:element name="Description" type="xsd:string" />
+			<xsd:element name="PaymentMethodCode" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="CurrencyType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Iso3Code" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="BillingScenarioType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Company" type="commns:CompanyType" />
+			<xsd:element minOccurs="0" name="Number" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="BatchType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="BatchId" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Company" type="commns:CompanyType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="CompanyType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Code" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Country" type="commns:CountryType" />
+			<xsd:element minOccurs="0" name="Currency" type="commns:CurrencyType" />
+			<xsd:element minOccurs="0" name="Description" type="xsd:string" />
+			<xsd:element minOccurs="0" name="ErpType" type="commns:ErpTypeType" />
+			<xsd:element minOccurs="0" name="TaxID" type="xsd:string" />
+			<xsd:element minOccurs="0" name="TaxStatus" type="commns:TaxStatusType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="CountryType">
+		<xsd:sequence>
+			<xsd:element name="EUMember" type="xsd:boolean" />
+			<xsd:element minOccurs="0" name="IsoAlpha2Code" type="xsd:string" />
+			<xsd:element minOccurs="0" name="IsoAlpha3Code" type="xsd:string" />
+			<xsd:element minOccurs="0" name="IsoNumericCode" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Name" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ErpTypeType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Code" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Description" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="TaxStatusType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Code" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Description" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="InvoiceTypeType">
+		<xsd:sequence>
+			<xsd:element name="adjustment" type="xsd:boolean" />
+			<xsd:element minOccurs="0" name="Code" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Description" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="ServiceReceivedTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:whiteSpace value="preserve" />
+			<xsd:enumeration value="ON_AIR" />
+			<xsd:enumeration value="DIGITAL" />
+			<xsd:enumeration value="LICENSING" />
+			<xsd:enumeration value="PRODUCTION" />
+			<xsd:enumeration value="MISCELLANEOUS" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="AccountType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="Company" type="commns:CompanyType" />
+			<xsd:element minOccurs="0" name="Description" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Number" type="xsd:string" />
+			<xsd:element minOccurs="0" name="LAISNumber" type="xsd:string" />
+			<xsd:element minOccurs="0" name="AccountType" type="commns:AccountTypeType" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="AccountTypeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:whiteSpace value="preserve" />
+			<xsd:enumeration value="EXPENSE" />
+			<xsd:enumeration value="REVENUE" />
+			<xsd:enumeration value="ASSET" />
+			<xsd:enumeration value="LIABILITY" />
+			<xsd:enumeration value="EQUITY" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="ChannelType">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="ChannelCode" type="xsd:string" />
+			<xsd:element minOccurs="0" name="Description" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+</xsd:schema> 

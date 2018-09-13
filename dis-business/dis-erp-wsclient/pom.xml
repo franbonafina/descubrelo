@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+							 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.discovery.dis</groupId>
+		<artifactId>dis-business</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dis-erp-wsclient</artifactId>
+	<packaging>jar</packaging>
+	<name>Dis Domain</name>
+	<url>http://dis.une.com.ar</url>
+
+	<properties>
+		<axis2.version>1.6.2</axis2.version>
+		<!--log4j.version>1.2.16</log4j.version -->
+	</properties>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.axis2</groupId>
+				<artifactId>axis2-wsdl2code-maven-plugin</artifactId>
+				<version>1.6.2</version>
+				<executions>
+					<!-- <execution> -->
+					<!-- <goals> -->
+					<!-- <goal>wsdl2code</goal> -->
+					<!-- </goals> -->
+					<!-- <configuration> -->
+					<!-- <wsdlFile>src/main/resources/wsdl/DIS_WS.wsdl</wsdlFile> -->
+					<!-- <databindingName>adb</databindingName> -->
+					<!-- <packageName>com.discovery.dis</packageName> -->
+					<!-- <outputDirectory>src/main/java</outputDirectory> -->
+					<!-- <flattenFiles>true</flattenFiles> -->
+					<!-- </configuration> -->
+					<!-- </execution> -->
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+			<id>Wsdl2Code ERPs</id>
+			<activation>
+				<property>
+					<name>wsdl2code</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.axis2</groupId>
+						<artifactId>axis2-wsdl2code-maven-plugin</artifactId>
+						<version>1.6.2</version>
+						<executions>
+							<execution>
+								<id>wsdl2codeTango</id>
+								<goals>
+									<goal>wsdl2code</goal>
+								</goals>
+								<configuration>
+									<wsdlFile>src/main/resources/wsdl/tango/DIS_WS.wsdl</wsdlFile>
+									<databindingName>adb</databindingName>
+									<packageName>com.discovery.dis.integration.tango</packageName>
+									<outputDirectory>target/wsdl2code</outputDirectory>
+									<flattenFiles>true</flattenFiles>
+								</configuration>
+							</execution>
+							<execution>
+								<id>wsdl2codeMSDynamics</id>
+								<goals>
+									<goal>wsdl2code</goal>
+								</goals>
+								<configuration>
+<!-- 									<wsdlFile>src/main/resources/wsdl/msdynamics/lais-msdynamics-ws.wsdl</wsdlFile> -->
+									<wsdlFile>src/main/resources/wsdl/msdynamics/laisColombiaToMSDynamicsServices.wsdl</wsdlFile>
+									<databindingName>adb</databindingName>
+									<packageName>com.discovery.dis.integration.msdynamics</packageName>
+									<outputDirectory>target/wsdl2code</outputDirectory>
+									<flattenFiles>true</flattenFiles>
+								</configuration>
+							</execution>
+							<execution>
+								<id>wsdl2codeSAP</id>
+								<goals>
+									<goal>wsdl2code</goal>
+								</goals>
+								<configuration>
+									<!-- <wsdlFile>src/main/resources/wsdl/sap/lais-sap-ws.wsdl</wsdlFile> -->
+									<wsdlFile>src/main/resources/wsdl/sap/laisMexicoToSAPServices.wsdl</wsdlFile>
+									<databindingName>adb</databindingName>
+									<packageName>com.discovery.dis.integration.sap</packageName>
+									<outputDirectory>target/wsdl2code</outputDirectory>
+									<flattenFiles>true</flattenFiles>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+	</profiles>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-kernel</artifactId>
+			<version>${axis2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-adb</artifactId>
+			<version>${axis2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-transport-http</artifactId>
+			<version>${axis2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-transport-local</artifactId>
+			<version>${axis2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-xmlbeans</artifactId>
+			<version>${axis2.version}</version>
+		</dependency>
+		<!--dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId> 
+			<version>${log4j.version}</version> </dependency -->
+	</dependencies>
+</project>

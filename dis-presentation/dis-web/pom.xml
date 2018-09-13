@@ -1,0 +1,648 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.discovery.dis</groupId>
+		<artifactId>dis-presentation</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dis-web</artifactId>
+	<packaging>war</packaging>
+	<name>Dis Web Application</name>
+	<url>http://dis.une-consulting.com.ar</url>
+
+	<properties>
+		<lais.dbname>oraretdesa</lais.dbname>
+	</properties>
+
+	<dependencies>
+
+		<!-- dis -->
+		<dependency>
+			<groupId>com.discovery.dis</groupId>
+			<artifactId>dis-domain</artifactId>
+			<version>${dis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.discovery.dis</groupId>
+			<artifactId>dis-persistence</artifactId>
+			<version>${dis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.discovery.dis</groupId>
+			<artifactId>dis-dao</artifactId>
+			<version>${dis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.discovery.dis</groupId>
+			<artifactId>dis-service</artifactId>
+			<version>${dis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.discovery.dis</groupId>
+			<artifactId>dis-dao-test</artifactId>
+			<version>${dis.version}</version>
+		</dependency>
+
+		<!-- UNE Core -->
+		<dependency>
+			<groupId>com.une.core</groupId>
+			<artifactId>une-core-dao</artifactId>
+			<version>${une.core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.une.core</groupId>
+			<artifactId>une-core-service</artifactId>
+			<version>${une.core.version}</version>
+		</dependency>
+
+		<!-- Spring Framework -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+
+		<!-- Hibernate -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>asm</groupId>
+					<artifactId>asm-attrs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>cglib</groupId>
+					<artifactId>cglib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.transaction</groupId>
+					<artifactId>jta</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.transaction</groupId>
+					<artifactId>jta</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib</artifactId>
+			<version>${cglib.version}</version>
+		</dependency>
+
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Faces Implementation -->
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-impl</artifactId>
+			<version>${jsf.version}</version>
+			<scope>provided</scope> <!-- solo JBOSS -->
+		</dependency>
+		<!-- Faces Library -->
+		<dependency>
+			<groupId>com.sun.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>${jsf.version}</version>
+			<scope>provided</scope> <!-- solo JBOSS -->
+		</dependency>
+
+		<!-- OmniFaces -->
+		<dependency>
+			<groupId>org.omnifaces</groupId>
+			<artifactId>omnifaces</artifactId>
+			<version>${omnifaces.version}</version>
+		</dependency>
+
+		<!-- Api JEE -->
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<version>${el-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>${javaeewebapi.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Primefaces -->
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>${primefaces.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>sentinel</artifactId>
+			<version>${primefaces.theme.sentinel.version}</version>
+		</dependency>
+
+		<!-- Primefaces Push -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.atmosphere</groupId> -->
+		<!-- <artifactId>atmosphere-runtime</artifactId> -->
+		<!-- <version>${atmosphere.version}</version> -->
+		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-runtime-native</artifactId>
+			<version>${atmosphere.version}</version>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.atmosphere.jboss.as</groupId> -->
+		<!-- <artifactId>jboss-as-websockets</artifactId> -->
+		<!-- <version>0.5</version> -->
+		<!-- </dependency> -->
+
+		<dependency>
+			<groupId>org.jboss.spec.javax.websocket</groupId>
+			<artifactId>jboss-websocket-api_1.1_spec</artifactId>
+			<version>1.1.1.Final-redhat-1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+
+		<!-- JSP Library -->
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>${jsp.version}</version>
+		</dependency>
+		<!-- JSTL Library -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+		</dependency>
+
+		<!-- Security -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+			<version>${shiro.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time.version}</version>
+		</dependency>
+
+		<!-- Embedded Database -->
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsqldb.version}</version>
+			<!-- <scope>provided</scope> -->
+		</dependency>
+
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>${ojdbc6.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Unit Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${springframework.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>2.44.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-firefox-driver</artifactId>
+			<version>2.44.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xml-apis</groupId>
+			<artifactId>xml-apis</artifactId>
+			<version>1.4.01</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- para validacion contraseñas -->
+		<dependency>
+			<groupId>org.passay</groupId>
+			<artifactId>passay</artifactId>
+			<version>${passay.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>1.9.2</version>
+		</dependency>
+
+		<!-- Download -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<!--Encrypting -->
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt-hibernate4</artifactId>
+			<version>1.9.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+
+	</dependencies>
+
+
+	<profiles>
+		<profile>
+			<id>une</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>une</value>
+				</property>
+			</activation>
+			<properties>
+				<lais.dbname>oradiscoverydes</lais.dbname>
+			</properties>
+			<dependencies>
+				<!-- UNE Core -->
+				<dependency>
+					<groupId>com.une.core</groupId>
+					<artifactId>une-core-dao</artifactId>
+					<version>${une.core.version}</version>
+					<scope>provided</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.une.core</groupId>
+					<artifactId>une-core-service</artifactId>
+					<version>${une.core.version}</version>
+					<scope>provided</scope>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-war-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<archive>
+								<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> -->
+								<manifestEntries>
+									<SVN-Revision>${buildNumber}</SVN-Revision>
+									<BuildScmBranch>${buildScmBranch}</BuildScmBranch>
+								</manifestEntries>
+							</archive>
+							<dependentWarExcludes>
+								WEB-INF/lib/une-*.jar
+							</dependentWarExcludes>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-execution</id>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>com.une.core</groupId>
+											<artifactId>une-core-dao</artifactId>
+											<version>${une.core.version}</version>
+											<type>jar</type>
+											<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+											<destFileName>une-core-dao.jar</destFileName>
+										</artifactItem>
+										<artifactItem>
+											<groupId>com.une.core</groupId>
+											<artifactId>une-core-service</artifactId>
+											<version>${une.core.version}</version>
+											<type>jar</type>
+											<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+											<destFileName>une-core-service.jar</destFileName>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+				</plugins>
+			</build>
+		</profile>
+
+
+		<profile>
+			<id>sonar</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<!-- Optional URL to server. Default value is http://localhost:9000 -->
+				<sonar.host.url>
+					http://misa.une.com.ar:9000
+				</sonar.host.url>
+			</properties>
+		</profile>
+
+		<!-- run integration tests with "mvn integration-test -Dmaven.test.failure.ignore=false 
+			-U" -->
+		<profile>
+			<id>itest</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>surefire-itest</id>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<excludes>
+										<exclude>none</exclude>
+									</excludes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>localDeployment</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>local</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jboss.as.plugins</groupId>
+						<artifactId>jboss-as-maven-plugin</artifactId>
+						<version>${jboss-as-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<id>deploy-to-integrationtest</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>undeploy</goal>
+									<goal>deploy</goal>
+								</goals>
+								<configuration>
+									<!-- Ambiente local -->
+									<hostname>localhost</hostname>
+									<port>9999</port>
+									<name>admin</name>
+									<password>.welcome1</password>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<build>
+		<finalName>${disWeb.finalName}</finalName>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<!-- <resource> <directory>src/test/resources</directory> </resource> -->
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+			<testResource>
+				<directory>src/main/webapp</directory>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+
+			<!-- ECLIPSE -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>${maven-eclipse-plugin.version}</version>
+				<configuration>
+					<projectNameTemplate>[artifactId]-[version]</projectNameTemplate>
+					<ajdtVersion>none</ajdtVersion>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+
+			<!-- Se ignora los test de integracion de la web para la fase de test -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/itests/**</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- deploy war to CI environment before deploy -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.jboss.as.plugins</groupId> -->
+			<!-- <artifactId>jboss-as-maven-plugin</artifactId> -->
+			<!-- <version>${jboss-as-maven-plugin.version}</version> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>deploy-to-integrationtest</id> -->
+			<!-- <phase>pre-integration-test</phase> -->
+			<!-- <goals> -->
+			<!-- <goal>undeploy</goal> -->
+			<!-- <goal>deploy</goal> -->
+			<!-- </goals> -->
+			<!-- <configuration> -->
+			<!-- Ambiente de CI -->
+			<!-- <hostname>light.une.com.ar</hostname> -->
+			<!-- <port>9999</port> -->
+			<!-- <name>admin</name> -->
+			<!-- <password>.welcome1</password> -->
+
+			<!-- Ambiente de Releases -->
+			<!-- <hostname>light.une.com.ar</hostname> -->
+			<!-- <port>8091</port> -->
+			<!-- <name>admin</name> -->
+			<!-- <password>.welcome1</password> -->
+			<!-- </configuration> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+
+			<!-- Failsafe -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.7.2</version>
+				<executions>
+					<execution>
+						<id>integration-test</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[2.8,)
+										</versionRange>
+										<goals>
+											<goal>copy</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>prime-repo</id>
+			<name>PrimeFaces Maven Repository</name>
+			<url>http://repository.primefaces.org</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+</project>

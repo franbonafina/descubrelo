@@ -1,0 +1,345 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.discovery.dis</groupId>
+		<artifactId>dis-bom</artifactId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>./dis-architectural/dis-bom/pom.xml</relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dis-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>Dis Maven Parent</name>
+	<url>http://dis.une.com.ar</url>
+
+	<organization>
+		<name>une.com.ar</name>
+		<url>http://www.une.com.ar</url>
+	</organization>
+	<inceptionYear>2014</inceptionYear>
+
+	<modules>
+		<module>dis-architectural</module>
+		<module>dis-data-access</module>
+		<module>dis-business</module>
+		<module>dis-presentation</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Logging -->
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+
+	<scm>
+		<!-- <connection>scm:svn:http://none</connection> -->
+		<!-- <developerConnection>scm:svn:https://none</developerConnection> -->
+		<!-- <url>scm:svn:https://none</url> -->
+		<connection>scm:svn:http://www.une.com.ar/DiscoveryIS/Fuentes/dis-parent</connection>
+		<developerConnection>scm:svn:http://www.une.com.ar/DiscoveryIS/Fuentes/dis-parent</developerConnection>
+		<url>scm:svn:http://www.une.com.ar/DiscoveryIS/Fuentes/dis-parent</url>
+	</scm>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven-compiler-plugin.version}</version>
+					<configuration>
+						<compilerVersion>${java.version}</compilerVersion>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+
+				<!-- Surefire -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+				</plugin>
+
+				<!-- Cobertura -->
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>cobertura-maven-plugin</artifactId>
+					<version>${cobertura.version}</version>
+				</plugin>
+
+				<!-- Reporting -->
+
+				<!-- Maven 2 Eclipse -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-remote-resources-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>process</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<version>1.4</version>
+					<executions>
+						<execution>
+							<phase>validate</phase>
+							<goals>
+								<goal>create</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<!-- <revisionOnScmFailure /> -->
+						<doCheck>false</doCheck>
+						<doUpdate>false</doUpdate>
+						<!-- <getRevisionOnlyOnce>true</getRevisionOnlyOnce> -->
+						<!-- <useLastCommittedRevision>true</useLastCommittedRevision> -->
+						<providerImplementations>
+							<svn>javasvn</svn>
+						</providerImplementations>
+						<format>{0,date,yyyy-MM-dd HH:mm:ss}</format>
+						<items>
+							<item>timestamp</item>
+						</items>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>com.google.code.maven-scm-provider-svnjava</groupId>
+							<artifactId>maven-scm-provider-svnjava</artifactId>
+							<version>2.1.1</version>
+						</dependency>
+						<dependency>
+							<groupId>org.tmatesoft.svnkit</groupId>
+							<artifactId>svnkit</artifactId>
+							<version>1.8.11</version>
+						</dependency>
+						<dependency>
+							<groupId>org.tmatesoft.sqljet</groupId>
+							<artifactId>sqljet</artifactId>
+							<version>1.1.10</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+			</plugin>
+
+			<!-- Cargo -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.codehaus.cargo</groupId> -->
+			<!-- <artifactId>cargo-maven2-plugin</artifactId> -->
+			<!-- <version>${cargo.version}</version> -->
+			<!-- <configuration> -->
+			<!-- <container> -->
+			<!-- <containerId>tomcat7x</containerId> -->
+			<!-- <type>remote</type> -->
+			<!-- </container> -->
+			<!-- <configuration> -->
+			<!-- <type>runtime</type> -->
+			<!-- <properties> -->
+			<!-- <cargo.hostname>${remote.hostname}</cargo.hostname> -->
+			<!-- <cargo.protocol>${remote.protocol}</cargo.protocol> -->
+			<!-- <cargo.servlet.port>${remote.port}</cargo.servlet.port> -->
+			<!-- <cargo.remote.username>${remote.user}</cargo.remote.username> -->
+			<!-- <cargo.remote.password>${remote.pass}</cargo.remote.password> -->
+			<!-- </properties> -->
+			<!-- </configuration> -->
+			<!-- <deployables> -->
+			<!-- <deployable> -->
+			<!-- <groupId>${project.groupId}</groupId> -->
+			<!-- <artifactId>dis-web</artifactId> -->
+			<!-- <type>war</type> -->
+			<!-- <properties> -->
+			<!-- <context>${remote.context}</context> -->
+			<!-- </properties> -->
+			<!-- </deployable> -->
+			<!-- </deployables> -->
+			<!-- </configuration> -->
+
+			<!-- </plugin> -->
+
+		</plugins>
+
+	</build>
+
+	<!-- <profiles> -->
+	<!-- <profile> -->
+	<!-- <id>prod</id> -->
+	<!-- <activation> -->
+	<!-- <property> -->
+	<!-- <name>env</name> -->
+	<!-- <value>prod</value> -->
+	<!-- </property> -->
+	<!-- </activation> -->
+	<!-- <properties> -->
+	<!-- <remote.protocol>https</remote.protocol> -->
+	<!-- <remote.port>443</remote.port> -->
+	<!-- <remote.hostname>prod.example.org</remote.hostname> -->
+	<!-- <remote.user>admin</remote.user> -->
+	<!-- <remote.pass>welcome1</remote.pass> -->
+	<!-- <remote.context>/</remote.context> -->
+	<!-- </properties> -->
+	<!-- </profile> -->
+	<!-- <profile> -->
+	<!-- <id>qa</id> -->
+	<!-- <activation> -->
+	<!-- <property> -->
+	<!-- <name>env</name> -->
+	<!-- <value>qa</value> -->
+	<!-- </property> -->
+	<!-- </activation> -->
+	<!-- <properties> -->
+	<!-- <remote.protocol>http</remote.protocol> -->
+	<!-- <remote.hostname>localhost</remote.hostname> -->
+	<!-- <remote.user>admin</remote.user> -->
+	<!-- <remote.pass>welcome1</remote.pass> -->
+	<!-- <remote.port>8080</remote.port> -->
+	<!-- <remote.context>/disqa</remote.context> -->
+	<!-- </properties> -->
+	<!-- </profile> -->
+	<!-- <profile> -->
+	<!-- <id>cloud1</id> -->
+	<!-- <activation> -->
+	<!-- <property> -->
+	<!-- <name>env</name> -->
+	<!-- <value>cloud1</value> -->
+	<!-- </property> -->
+	<!-- </activation> -->
+	<!-- <properties> -->
+	<!-- <remote.protocol>http</remote.protocol> -->
+	<!-- <remote.hostname>cloud1.une.com.ar</remote.hostname> -->
+	<!-- <remote.user>admin</remote.user> -->
+	<!-- <remote.pass>unetomcat47</remote.pass> -->
+	<!-- <remote.port>8585</remote.port> -->
+	<!-- <remote.context>/dis</remote.context> -->
+	<!-- </properties> -->
+	<!-- </profile> -->
+
+	<!-- </profiles> -->
+
+	<reporting>
+		<plugins>
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
+			<!-- <version>${maven-javadoc-plugin.version}</version> -->
+			<!-- <reportSets> -->
+			<!-- <reportSet> -->
+			<!-- <id>uml</id> -->
+			<!-- <configuration> -->
+			<!-- <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet> -->
+			<!-- <docletArtifact> -->
+			<!-- <groupId>org.umlgraph</groupId> -->
+			<!-- <artifactId>doclet</artifactId> -->
+			<!-- <version>${umlgraph.doclet.version}</version> -->
+			<!-- </docletArtifact> -->
+			<!-- <additionalparam>-views</additionalparam> -->
+			<!-- <destDir>target/uml</destDir> -->
+			<!-- <show>private</show> -->
+			<!-- </configuration> -->
+			<!-- <reports> -->
+			<!-- <report>javadoc</report> -->
+			<!-- </reports> -->
+			<!-- </reportSet> -->
+
+			<!-- </reportSets> -->
+			<!-- </plugin> -->
+
+			<!-- Reporting -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>${maven-project-info-reports-plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${maven-checkstyle-plugin.version}</version>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<url>http://misa.une.com.ar:8081/artifactory/libs-release</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>snapshots</id>
+			<url>http://misa.une.com.ar:8081/artifactory/libs-snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>central</id>
+			<url>http://misa.une.com.ar:8081/artifactory/plugins-release</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>snapshots</id>
+			<url>http://misa.une.com.ar:8081/artifactory/plugins-snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>

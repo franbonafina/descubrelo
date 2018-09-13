@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html" locale="#{languageController.locale}">
+	<h:head>
+    	<link rel="shortcut icon" href="#{resource['images/favicon.ico']}" type="image/x-icon" />
+	
+		<title>#{msg['message.application']}</title>
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<h:outputScript name="js/layout.js" library="sentinel-layout" />
+		<h:outputStylesheet name="css/font-icon-layout.css"
+			library="sentinel-layout" />
+		<h:outputStylesheet name="css/sentinel-layout.css"
+			library="sentinel-layout" />
+		<h:outputStylesheet name="css/core-layout.css"
+			library="sentinel-layout" />
+	</h:head>
+
+	<h:body class="fontRegular red-back">
+
+		<div class="Container100 Top20Percent PosAbsolute MarAuto OvHidden">
+			<div class="Wid50 MarAuto OvHidden TexAlCenter">
+				<h:graphicImage name="images/error-face.svg"
+					library="sentinel-layout" style="width: 100px;" />
+				<div class="EmptyBox20"></div>
+				<span class="white Fs100 Wid100 DispBlock">404</span> <span
+					class="white Wid100 DispBlock Fs24">#{msg['message.page.not.found.summary']}</span><br /> <span
+					class="white Wid100 DispBlock Fs12">#{msg['message.page.not.found.detail']}<br /> </span>
+				<div class="EmptyBox20"></div>
+				<p:button value="#{msg['message.common.back']}" styleClass="Fs24"
+					href="/faces/index.xhtml"></p:button>
+				<div class="EmptyBox50"></div>
+			</div>
+		</div>
+
+	</h:body>
+</f:view>
+</html>

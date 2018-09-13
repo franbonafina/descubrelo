@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>JournalDev-PrimefacesWebApplication</display-name>
+
+	<error-page>
+		<error-code>401</error-code>
+		<location>/faces/pages/access-denied.xhtml</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/faces/pages/404.xhtml</location>
+	</error-page>
+	<error-page>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/faces/pages/session-expired.xhtml</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/faces/pages/error.xhtml</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/faces/pages/error.xhtml</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/faces/pages/error.xhtml</location>
+	</error-page>
+
+	<servlet>
+		<servlet-name>FacesServlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FacesServlet</servlet-name>
+		<url-pattern>/faces/*</url-pattern>
+	</servlet-mapping>
+
+	<filter>
+		<filter-name>FacesExceptionFilter</filter-name>
+		<filter-class>org.omnifaces.filter.FacesExceptionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>FacesExceptionFilter</filter-name>
+		<servlet-name>FacesServlet</servlet-name>
+	</filter-mapping>
+
+	<!-- Hibernate -->
+	<!--filter> <filter-name>hibernateFilter</filter-name> <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class> 
+		<init-param> <param-name>singleSession</param-name> <param-value>true</param-value> 
+		</init-param> </filter> <filter-mapping> <filter-name>hibernateFilter</filter-name> 
+		<url-pattern>/faces/*</url-pattern> </filter-mapping -->
+
+	<!-- Primefaces Push -->
+	<servlet>
+		<servlet-name>Push Servlet</servlet-name>
+		<servlet-class>org.primefaces.push.PushServlet</servlet-class>
+		<!-- <init-param> -->
+		<!-- <param-name>org.atmosphere.cpr.asyncSupport</param-name> -->
+		<!-- <param-value>org.atmosphere.container.JBossAsyncSupportWithWebSocket</param-value> -->
+		<!-- </init-param> -->
+
+		<init-param>
+			<param-name>org.atmosphere.useNative</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>org.atmosphere.cpr.CometSupport.maxInactiveActivity</param-name>
+			<param-value>1800000</param-value>
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Push Servlet</servlet-name>
+		<url-pattern>/primepush/*</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		<description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>client</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Production</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+		<param-value>resources.application</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.FACELETS_BUFFER_SIZE</param-name>
+		<param-value>10485760</param-value> <!-- 1024KB * 10. -->
+	</context-param>
+
+	<!-- INFO: The listener "com.sun.faces.config.ConfigureListener" is already 
+		configured for this context. The duplicate definition has been ignored. <listener> 
+		<listener-class>com.sun.faces.config.ConfigureListener</listener-class> </listener> -->
+
+	<!-- Spring -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>WEB-INF/spring/applicationContext.xml</param-value>
+	</context-param>
+
+	<!-- Shiro -->
+	<listener>
+		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>shiroConfigLocations</param-name>
+		<!-- <param-value>/WEB-INF/classes/shiro-ldap.ini</param-value> -->
+		<param-value>/WEB-INF/classes/shiro-db-only.ini</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
+
+	<!-- PrimeFaces -->
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>sentinel</param-value>
+	</context-param>
+	<context-param>
+		<param-name>primefaces.FONT_AWESOME</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.FACELETS_LIBRARIES</param-name>
+		<param-value>/WEB-INF/taglib/primefaces-sentinel.taglib.xml</param-value>
+	</context-param>
+
+	<mime-mapping>
+		<extension>css</extension>
+		<mime-type>text/css</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>map</extension>
+		<mime-type>text/css</mime-type>
+	</mime-mapping>
+	<!-- Web Fonts -->
+	<mime-mapping>
+		<extension>eot</extension>
+		<mime-type>application/vnd.ms-fontobject</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>otf</extension>
+		<mime-type>font/opentype</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ttf</extension>
+		<mime-type>application/x-font-ttf</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>woff</extension>
+		<mime-type>application/x-font-woff</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>svg</extension>
+		<mime-type>image/svg+xml</mime-type>
+	</mime-mapping>
+	<mime-mapping>
+		<extension>ico</extension>
+		<mime-type>image/x-icon</mime-type>
+	</mime-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+</web-app>

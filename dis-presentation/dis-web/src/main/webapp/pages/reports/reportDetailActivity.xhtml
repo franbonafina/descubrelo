@@ -1,0 +1,247 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.report.detailActivity.name']}
+</ui:define>
+
+<!-- REPORT Detail Activity -->
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+			<p:panel>
+				<p:focus />
+	
+				<h:form prependId="false" id="reportForm">
+					<p:messages id="messages" showDetail="false" autoUpdate="true" closable="true" />
+	
+					<p:panelGrid styleClass="transparent no-border" columns="4">
+						<!-- COMPANY -->
+						<p:outputLabel for="company"
+							value="#{msg['message.common.company']}" />
+						<p:selectOneMenu id="company"
+							styleClass="dis-input-width"
+							value="#{reportDetailActivityController.company}"
+							title="#{msg['message.customer.tooltip.filterCode']}"
+							converter="omnifaces.SelectItemsConverter"
+							required="true">							
+							<f:selectItems 
+								value="#{sessionSelectorController.companies}"
+								var="company" 
+								itemValue="#{company}"
+								itemLabel="#{company.code} - #{company.description}" />
+							<p:ajax event="change" process="@this"
+								update="billToCustomer"
+								listener="#{reportDetailActivityController.companyChanged}"/>
+						</p:selectOneMenu>
+						
+						<!-- INVOICE STATUS -->
+						<p:outputLabel for="invoiceStatus"
+							value="#{msg['message.invoice.status']}" />
+						<p:selectOneMenu id="invoiceStatus" styleClass="dis-input-width"
+							converter="omnifaces.SelectItemsConverter"
+							value="#{reportDetailActivityController.invoiceStatus}"
+							title="#{msg['message.invoice.tooltip.filterStatus']}">
+							<f:selectItem
+								itemLabel="#{msg['message.invoice.add.form.select.statusFilter']}"
+								itemValue="#{null}" />
+							
+							<f:selectItems value="#{selectorController.invoiceStatusList}"
+								var="status" itemValue="#{status}"
+								itemLabel="#{labelUtil.getInvoiceStatusLabel(status)}" />
+						</p:selectOneMenu>
+						
+						<!-- FROM INVOICE DATE -->
+						<p:outputLabel 
+							value="#{msg['message.report.startInvoiceDate']}" 
+							for="startDateFilter" />
+						<p:calendar id="startDateFilter"
+							value="#{reportDetailActivityController.startInvoiceDate}"
+							title="#{msg['message.report.startInvoiceDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />
+	
+						<!-- TO INVOICE DATE -->
+						<p:outputLabel 
+							value="#{msg['message.report.endInvoiceDate']}" 
+							for="endInvoiceDate"/>
+						<p:calendar id="endInvoiceDate"
+							value="#{reportDetailActivityController.endInvoiceDate}"
+							title="#{msg['message.report.endInvoiceDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />				
+
+						<!-- FROM POSTED DATE -->
+						<p:outputLabel 
+							value="#{msg['message.report.startPostedDate']}" 
+							for="startPostedDate" />
+						<p:calendar id="startPostedDate"
+							value="#{reportDetailActivityController.startPostedDate}"
+							title="#{msg['message.report.startPostedDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />
+	
+						<!-- TO POSTED DATE -->
+						<p:outputLabel 
+							value="#{msg['message.report.endPostedDate']}" 
+							for="endPostedDate"/>
+						<p:calendar id="endPostedDate"
+							value="#{reportDetailActivityController.endPostedDate}"
+							title="#{msg['message.report.endPostedDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />							
+							
+						<!-- INVOICE TYPE -->
+						<p:outputLabel for="invoiceType"
+							value="#{msg['message.common.invoiceType']}" />
+						<p:selectOneMenu id="invoiceType"
+							styleClass="dis-input-width"
+							value="#{reportDetailActivityController.invoiceType}"
+							converter="omnifaces.SelectItemsConverter"
+							title="#{msg['message.invoice.tooltip.filterInvoiceType']}">
+						
+							<f:selectItem
+								itemLabel="#{msg['message.invoice.add.form.select.invoiceType']}"
+								itemValue="#{null}" />
+							<f:selectItems value="#{selectorController.getInvoiceTypeListByCompany(reportDetailActivityController.company)}"
+								var="invoiceType" 
+								itemValue="#{invoiceType}"
+								itemLabel="#{labelUtil.getInvoiceTypeLabel(reportDetailActivityController.company, invoiceType)}" />
+						</p:selectOneMenu>
+						
+						<!-- SERVICE TYPE RECEIVED -->
+						<p:outputLabel 
+							for="customerServiceType"
+							value="#{msg['message.customer.form.service_received']}" />
+						<p:selectOneMenu 
+							id="customerServiceType"
+							converter="omnifaces.SelectItemsConverter"
+							value="#{reportDetailActivityController.serviceReceivedType}"
+							styleClass="dis-input-width"
+							title="#{msg['message.customer.tooltip.serviceReceived']}" >
+
+							<f:selectItem
+								itemLabel="#{msg['message.customer.add.select.serviceType']}"
+								itemValue="#{null}" />
+															
+							<f:selectItems var="serviceType"
+								itemValue="#{serviceType}"
+								itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceType)}"
+								value="#{selectorController.serviceReceivedTypeFilterList}" />								
+						</p:selectOneMenu>
+						
+						<!-- INVOICE SUBTYPE -->
+						<p:outputLabel 
+							value="#{msg['message.common.invoiceSubType']}" 
+							for="invoiceSubType"/>
+						<p:selectOneMenu id="invoiceSubType"
+							label="#{msg['message.common.invoiceSubType']}"
+							value="#{reportDetailActivityController.invoiceSubType}"
+							styleClass="dis-input-width"
+							converter="omnifaces.SelectItemsConverter"
+							title="#{msg['message.invoice.tooltip.filterInvoiceSubType']}">
+
+							<f:selectItem
+								itemLabel="#{msg['message.invoice.add.form.select.invoiceSubType']}"
+								itemValue="#{null}" />
+								
+							<f:selectItems itemValue="#{invoiceSubType}"
+								var="invoiceSubType" itemLabel="#{invoiceSubType.code}"
+								value="#{selectorController.allInvoiceSubtypeList}" />
+						</p:selectOneMenu>
+						
+						<!-- SALES CHANNEL --> 
+						<p:outputLabel for="channel"
+							value="#{msg['message.report.detailActivity.salesChannel']}" />
+						<p:selectOneMenu 
+							id="channel"
+							title="#{msg['message.report.detailActivity.salesChannel.tooltip']}"
+							styleClass="dis-input-width"
+							value="#{reportDetailActivityController.channel}"
+							converter="omnifaces.SelectItemsConverter">
+
+							<f:selectItem 
+								itemLabel="#{msg['message.report.journalEntry.channel.select']}"
+								itemValue="#{null}"/>
+								
+							<f:selectItems value="#{selectorController.channelList}"
+								var="channel" itemValue="#{channel}"
+								itemLabel="#{channel.code} - #{channel.description}" />
+						</p:selectOneMenu>
+						
+						<!-- CUSTOMER TYPE -->
+						<p:outputLabel for="customerType"
+							value="#{msg['message.customer.form.type']}" />
+						<p:selectOneMenu id="customerType"
+							label="#{msg['message.customer.form.type']}"
+							value="#{reportDetailActivityController.customerType}"
+							styleClass="dis-input-width"
+							title="#{msg['message.customer.tooltip.customerType']}" >
+							<f:selectItem
+								itemLabel="#{msg['message.customer.select.customerType']}"
+								itemValue="#{null}" />
+							
+							<f:selectItems value="#{selectorController.customerTypeList}"
+								var="customerType"
+								itemValue="#{customerType}"
+								itemLabel="#{labelUtil.getCustomerTypeLabel(customerType)}" />
+						</p:selectOneMenu>
+						
+						<!-- SALES PERSON -->
+						<p:outputLabel for="salesPerson"
+							value="#{msg['message.report.detailActivity.salesPerson']}" />
+						<p:inputText id="salesPerson"
+							value="#{reportDetailActivityController.salesPerson}"
+							title="#{msg['message.report.detailActivity.salesPerson.tooltip']}"
+							styleClass="dis-input-width" />
+						
+						<!-- BILL TO CUSTOMER -->							
+						<p:outputLabel for="billToCustomer"
+							value="#{msg['message.orders.table.mainInformation.billTo']}" />
+						<p:selectOneMenu id="billToCustomer"
+							label="#{msg['message.orders.table.mainInformation.billTo']}"
+							value="#{reportDetailActivityController.billToCustomer}"
+							styleClass="dis-input-width"
+							title="#{msg['message.orders.table.mainInformation.billTo']}"
+							effect="fade" 
+							var="customer" 
+							filter="true"
+							filterMatchMode="contains"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem
+								itemLabel="#{msg['message.select.billTo']}"
+								itemValue="#{null}" />							
+							<f:selectItems value="#{selectorController.getCustomerList(reportDetailActivityController.company)}"
+								var="customer" itemValue="#{customer}"
+								itemLabel="#{customer}"/>
+							<p:column>
+								<p:outputLabel
+									value="#{customer != null ? customer : msg['message.select.billTo']}" />
+							</p:column>
+						</p:selectOneMenu>
+						
+					</p:panelGrid>
+ 
+					<ui:param name="controller" value="#{reportDetailActivityController}" />
+					<ui:include src="reportFooter.xhtml" />					
+				</h:form>
+			</p:panel>				
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

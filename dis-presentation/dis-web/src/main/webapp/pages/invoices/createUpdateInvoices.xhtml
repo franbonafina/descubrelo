@@ -1,0 +1,1502 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		<h:outputText />
+		#{(null != invoiceCRUDController.selectInvoice and null != invoiceCRUDController.selectInvoice.id) ? msg['message.header.invoice.edit'] : msg['message.header.invoice.create']}
+		</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+				navigationRuler.invoiceListPage, invoiceCRUDController.selectInvoice)}" />
+		</h:form>
+
+		<c:if test="#{invoiceCRUDController.selectInvoice != null}">
+
+			<div class="ContainerIndent">
+				<h:form id="createUpdateInvoiceForm">
+
+					<p:messages id="downloadMessages" closable="true"
+						showDetail="false" autoUpdate="false" />
+
+					<span class="FontBold Fs18 hardblue">#{msg['message.invoice.header']}</span>
+					<div class="EmptyBox10"></div>
+
+					<p:panel id="selectInvoiceUpdPanel1">
+						<p:panelGrid id="pGrid" styleClass="transparent no-border">
+
+							<p:row styleClass="dis-input-row">
+								<!-- ID INTERNO -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.disId']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="disId" styleClass="dis-input-width"
+										value="#{empty invoiceCRUDController.selectInvoice.id ? 
+										'-' : invoiceCRUDController.selectInvoice.id}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- NUMBER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.number']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="invoiceNumber" styleClass="dis-input-width"
+										value="#{empty invoiceCRUDController.selectInvoice.invoiceNumber ? 
+										'-' : invoiceCRUDController.selectInvoice.invoiceNumber}" />
+								</p:column>
+
+								<!-- ISSUE DATE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.issueDate']}" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{invoiceCRUDController.selectInvoice.issueDate}"
+										styleClass="dis-input-width"
+										rendered="#{not(empty invoiceCRUDController.selectInvoice.issueDate)}">
+										<f:convertDateTime dateStyle="short" type="date"
+											locale="#{languageController.locale}" />
+									</h:outputText>
+									<h:outputText styleClass="dis-input-width"
+										rendered="#{empty invoiceCRUDController.selectInvoice.issueDate}"
+										value="-" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY -->
+								<p:column>
+									<p:outputLabel for="company"
+										value="#{msg['message.common.company']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="company" styleClass="dis-input-width"
+										style="font-weight: bold;"
+										value="#{invoiceCRUDController.selectInvoice.company}" />
+								</p:column>
+
+								<!-- INVOICE DATE-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.form.date']}"
+										for="invoiceDateCalendar" />
+								</p:column>
+								<p:column>
+									<p:calendar id="invoiceDateCalendar"
+										styleClass="dis-input-width" required="true"
+										label="#{msg['message.invoice.form.date']}"
+										disabled="#{invoiceCRUDController.invoiceDateDisable}"
+										locale="#{languageController.language}"
+										value="#{invoiceCRUDController.selectInvoice.invoiceDate}"
+										title="#{msg['message.invoice.tooltip.invoiceDate']}"
+										mindate="#{invoiceCRUDController.minDate}"
+										maxdate="#{invoiceCRUDController.maxDate}">
+										<p:ajax event="dateSelect"
+											listener="#{invoiceCRUDController.dateChange}"
+											update="invoiceDueDateCalendar" />
+									</p:calendar>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!--BILL TO CUSTOMER-->
+								<p:column>
+									<p:outputLabel for="customer"
+										value="#{msg['message.invoice.billToCustomer']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="customer" styleClass="dis-input-width"
+										value="#{labelUtil.getCustomerLabel(invoiceCRUDController.selectInvoice.customer)}" />
+								</p:column>
+
+								<!-- DUE DATE-->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.form.dueDate']}"
+										for="invoiceDueDateCalendar" />
+								</p:column>
+								<p:column>
+									<p:calendar id="invoiceDueDateCalendar"
+										styleClass="dis-input-width" required="true"
+										label="#{msg['message.invoice.form.dueDate']}"
+										disabled="#{invoiceCRUDController.dueDateDisable}"
+										locale="#{languageController.language}"
+										value="#{invoiceCRUDController.selectInvoice.dueDate}"
+										title="#{msg['message.invoice.tooltip.dueDate']}"
+										mindate="#{invoiceCRUDController.selectInvoice.invoiceDate}">
+										<p:ajax event="dateSelect" process="@this" />
+									</p:calendar>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- AGENCY -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.agency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="invoiceAgency" styleClass="dis-input-width"
+										value="#{labelUtil.getCustomerLabel(invoiceCRUDController.selectInvoice.agency)}" />
+								</p:column>
+
+								<!-- SERVICE TYPE -->
+								<p:column>
+									<p:outputLabel for="serviceType"
+										value="#{msg['message.common.serviceType']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="serviceType" styleClass="dis-input-width"
+										value="#{labelUtil.getServiceReceivedTypeLabel(invoiceCRUDController.selectInvoice.serviceReceivedType)}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- ADVERTISER -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.advertiser']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="advertiser" styleClass="dis-input-width"
+										value="#{invoiceCRUDController.selectInvoice.customer.otherCustomer ? 
+										' - ' : labelUtil.getCustomerLabel(invoiceCRUDController.selectInvoice.advertiser) }" />
+								</p:column>
+
+								<!-- INVOICE TYPE -->
+								<p:column>
+									<p:outputLabel for="invoiceType"
+										value="#{msg['message.common.invoiceType']}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="invoiceType" required="true"
+										label="#{msg['message.common.invoiceType']}"
+										value="#{invoiceCRUDController.selectInvoice.invoiceType}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										rendered="#{not invoiceCRUDController.invoiceTypeDisable}"
+										disabled="#{invoiceCRUDController.invoiceTypeDisable}"
+										title="#{msg['message.invoice.tooltip.invoiceType']}">
+										<f:selectItems itemValue="#{invoiceType}" var="invoiceType"
+											itemLabel="#{(labelUtil.getInvoiceTypeLabel(invoiceCRUDController.company, invoiceType))}"
+											value="#{selectorController.getInvoiceTypeList(invoiceCRUDController.selectInvoice)}" />
+										<p:ajax event="change" process="@this invoiceType"
+											update=":createUpdateInvoiceForm
+										:createUpdateInvoiceForm:invoiceReference invoiceReference
+										createUpdateInvoiceForm:invoiceDataTablePanel
+										:createUpdateInvoiceForm:prebillInvoice prebillInvoice"
+											listener="#{invoiceCRUDController.invoiceTypeChanged}" />
+									</p:selectOneMenu>
+
+									<h:outputText id="invoiceTypeText" styleClass="dis-input-width"
+										rendered="#{invoiceCRUDController.invoiceTypeDisable}"
+										value="#{(labelUtil.getInvoiceTypeLabel(invoiceCRUDController.company, invoiceCRUDController.selectInvoice.invoiceType))}" />
+
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- BANK ACCOUNT NUMBER -->
+								<p:column>
+									<p:outputLabel for="bankAccountNumber"
+										value="#{msg['message.customer.form.bankAccountNumber']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="bankAccountNumber"
+										styleClass="dis-input-width"
+										value="#{null == invoiceCRUDController.customer.customerBankInformation.bankAccountNumber
+											or empty invoiceCRUDController.customer.customerBankInformation.bankAccountNumber ? 
+											' - ' : invoiceCRUDController.customer.customerBankInformation.bankAccountNumber}" />
+								</p:column>
+
+								<!-- INVOICE SUBTYPE -->
+								<p:column>
+									<p:outputLabel for="invoiceSubType"
+										value="#{msg['message.common.invoiceSubType']}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="invoiceSubType"
+										label="#{msg['message.common.invoiceSubType']}"
+										value="#{invoiceCRUDController.selectInvoice.invoiceSubtype}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.invoice.tooltip.invoiceSubType']}"
+										disabled="#{invoiceCRUDController.invoiceSubTypeDisable}">
+										<f:selectItem itemValue="#{null}" noSelectionOption="true"
+											itemLabel="#{msg['message.invoice.tooltip.invoiceSubType']}" />
+										<f:selectItems itemValue="#{invoiceSubType}"
+											var="invoiceSubType" itemLabel="#{invoiceSubType.code}"
+											itemDescription="#{msg['message.invoiceSubtype.'.concat(invoiceSubType.code)]}"
+											value="#{invoiceCRUDController.invoiceSubTypeList}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- BANK KEY ACCOUNT NUMBER -->
+								<p:column>
+									<p:outputLabel for="bankKeyAccountNumber"
+										value="#{msg['message.customer.form.bankKeyAccountNumber']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="bankKeyAccountNumber"
+										styleClass="dis-input-width"
+										value="#{null == invoiceCRUDController.customer.customerBankInformation.bankKeyAccountNumber 
+											or empty invoiceCRUDController.customer.customerBankInformation.bankKeyAccountNumber ? 
+											' - ' : invoiceCRUDController.customer.customerBankInformation.bankKeyAccountNumber}" />
+								</p:column>
+
+								<!-- PREBILL -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.common.prebill']}" />
+								</p:column>
+								<p:column>
+									<p:inputSwitch id="prebillInvoice"
+										value="#{invoiceCRUDController.selectInvoice.prebill}"
+										offLabel="#{msg['message.common.false']}"
+										onLabel="#{msg['message.common.true']}"
+										disabled="#{invoiceCRUDController.prebillDisable}">
+										<p:tooltip for="prebillInvoice"
+											value="#{msg['message.invoice.tooltip.prebill']}" />
+										<p:ajax process="@this" update="prebillInvoiceButton" />
+									</p:inputSwitch>
+								</p:column>
+
+								<!-- VIEW CONSUMPTIONS BUTTON -->
+								<p:column>
+									<p:commandButton id="prebillInvoiceButton"
+										value="#{msg['message.invoice.tooltip.viewPrebillConsumptions']}"
+										action="#{invoiceCRUDController.viewPrebillConsumptions}"
+										rendered="#{invoiceCRUDController.consumptionsButtonRendered}"
+										process="@this" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- CUSTOMER BANK ACCOUNT LAST DIGITS -->
+								<p:column>
+									<p:outputLabel id="customerBankAccountNumberLastDigitsLabel"
+										for="customerBankAccountNumberLastDigits"
+										value="#{msg['message.customer.form.customerBankAccountNumberLastDigits']}" />
+								</p:column>
+								<p:column>
+									<p:inputText id="customerBankAccountNumberLastDigits"
+										disabled="#{invoiceCRUDController.customerBankAccountNumberLastDigitsDisable}"
+										value="#{invoiceCRUDController.selectInvoice.customerBankAccountNumberLastDigits}"
+										styleClass="dis-input-width"
+										title="#{msg['message.customer.form.customerBankAccountNumberLastDigits']}"
+										maxlength="#{validationConstants.maxCustomerBankAccountNumberLastDigitsMaxLength}"
+										required="false">
+										<p:ajax event="blur" process="@this" />
+									</p:inputText>
+								</p:column>
+
+								<!-- SALES PERSON -->
+								<p:column>
+									<p:outputLabel for="salesPerson"
+										rendered="#{invoiceCRUDController.selectInvoice.company.companySettings.additionalInvoiceFields}"
+										value="#{msg['message.invoice.form.salesPerson']}" />
+								</p:column>
+								<p:column>
+									<p:inputText id="salesPerson"
+										label="#{msg['message.invoice.form.salesPerson']}"
+										value="#{invoiceCRUDController.selectInvoice.salesPerson}"
+										styleClass="dis-input-width"
+										required="#{invoiceCRUDController.salesPersonRequired}"
+										title="#{msg['message.invoice.tooltip.salesPerson']}"
+										disabled="#{invoiceCRUDController.salesPersonDisable}"
+										rendered="#{invoiceCRUDController.selectInvoice.company.companySettings.additionalInvoiceFields}">
+										<p:ajax event="blur" process="@this" />
+										<f:validateLength maximum="100" />
+									</p:inputText>
+								</p:column>
+							</p:row>
+							<p:row styleClass="dis-input-row">
+								<!-- INVOICE STATUS-->
+								<p:column>
+									<p:outputLabel for="status"
+										value="#{msg['message.invoice.status']}" />
+								</p:column>
+								<p:column>
+									<h:outputLabel id="status" styleClass="dis-input-width"
+										value="#{labelUtil.getInvoiceStatusLabel(invoiceCRUDController.selectInvoice.status)}" />
+								</p:column>
+
+								<!-- INVOICE REFERENCE -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.invoiceParent']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="invoiceReferenceText"
+										styleClass="dis-input-width"
+										value="#{invoiceCRUDController.hasRelatedInvoice ? labelUtil.getInvoiceLabel(invoiceCRUDController.relatedInvoice) :'-'}"
+										rendered="#{invoiceCRUDController.invoiceReferenceDisable}" />
+
+									<p:selectOneMenu id="invoiceReference"
+										value="#{invoiceCRUDController.selectInvoice.invoiceParent}"
+										effect="fade" var="invoiceReference" filter="true"
+										filterMatchMode="contains"
+										rendered="#{!invoiceCRUDController.invoiceReferenceDisable}"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										title="#{msg['message.invoice.tooltip.invoiceParent']}">
+										<f:selectItem
+											itemLabel="#{msg['message.invoice.add.form.select.invoiceReference']}"
+											itemValue="#{null}" />
+										<f:selectItems
+											value="#{invoiceCRUDController.invoiceReferenceList}"
+											var="invoiceReference" itemValue="#{invoiceReference}"
+											itemLabel="#{labelUtil.getInvoiceLabel(invoiceReference)}" />
+										<p:column>
+											<p:outputLabel
+												value="#{invoiceReference != null ? labelUtil.getInvoiceLabel(invoiceReference) : msg['message.invoice.select.invoiceReference']}" />
+										</p:column>
+									</p:selectOneMenu>
+								</p:column>
+
+								<!-- RELATED -->
+								<p:column>
+									<p:commandButton value="#{msg['message.invoice.seeRelated']}"
+										action="#{invoiceCRUDController.seeRelatedInvoice}"
+										rendered="#{invoiceCRUDController.hasRelatedInvoice and !invoiceCRUDController.onEditionMode}" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- COMPANY CURRENCY -->
+								<p:column>
+									<p:outputLabel
+										value="#{msg['message.invoice.companyCurrency']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="companyCurrency" styleClass="dis-input-width"
+										value="#{invoiceCRUDController.selectInvoice.company.currency.labelDescripcion}" />
+								</p:column>
+
+								<!-- BILLING SCENARIO -->
+								<p:column>
+									<p:outputLabel
+										value="#{msg['message.invoice.billingScenario']}" />
+								</p:column>
+								<p:column>
+									<h:outputText id="billingScenario" styleClass="dis-input-width"
+										value="#{null==invoiceCRUDController.selectInvoice.billingScenario ? 
+										'-' : invoiceCRUDController.selectInvoice.billingScenario.number }" />
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- INVOICE CURRENCY-->
+								<p:column>
+									<p:outputLabel for="currency"
+										value="#{msg['message.invoice.currency']}" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="currency"
+										disabled="#{invoiceCRUDController.invoiceCurrencyDisable}"
+										label="#{msg['message.common.currency']}"
+										value="#{invoiceCRUDController.selectInvoice.transactionCurrency}"
+										required="true" styleClass="dis-input-width"
+										converter="omnifaces.SelectItemsConverter"
+										title="#{msg['message.invoice.tooltip.currency']}"
+										update="rate">
+										<f:selectItems itemValue="#{currency}" var="currency"
+											itemLabel="#{currency.iso3Code} - #{currency.description}"
+											value="#{selectorController.getCurrencyListByCompany(invoiceCRUDController.company)}" />
+
+										<p:ajax event="change" update="@form"
+											listener="#{invoiceCRUDController.currencyChanged}" />
+									</p:selectOneMenu>
+								</p:column>
+
+								<!-- PAYMENT METHOD -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.paymentMethod']}"
+										for="paymentMethod" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="paymentMethod"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										value="#{invoiceCRUDController.selectInvoice.paymentMethod}"
+										label="#{msg['message.invoice.paymentMethod']}"
+										title="#{msg['message.invoice.tooltip.paymentMethod']}"
+										disabled="#{invoiceCRUDController.paymentMethodDisable}">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="paymentMethod"
+											itemValue="#{paymentMethod}"
+											itemLabel="#{(labelUtil.getPaymentMethodLabel(paymentMethod))}"
+											value="#{selectorController.getPaymentMethodList(invoiceCRUDController.company)}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+
+							<p:row styleClass="dis-input-row">
+								<!-- EXCHANGE RATE -->
+								<p:column>
+									<p:outputLabel for="rate"
+										value="#{msg['message.invoice.form.rate']}" />
+								</p:column>
+								<p:column>
+									<p:inputText id="rate"
+										label="#{msg['message.invoice.form.rate']}"
+										value="#{invoiceCRUDController.selectInvoice.exchangeRate}"
+										styleClass="dis-input-width"
+										required="#{invoiceCRUDController.checkRateInvoice}"
+										title="#{msg['message.invoice.tooltip.rate']}"
+										disabled="#{invoiceCRUDController.exchangeRateDisable}">
+										<p:ajax event="valueChange"
+											update="createUpdateInvoiceForm
+												:createUpdateInvoiceForm:invoiceDataTablePanel
+												:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+											listener="#{invoiceCRUDController.recalculateInvoiceTotals}" />
+										<f:convertNumber locale="#{languageController.locale}"
+											type="currency" currencySymbol="" maxFractionDigits="2" />
+										<f:validateDoubleRange minimum="0.00001">
+										</f:validateDoubleRange>
+									</p:inputText>
+								</p:column>
+
+								<!-- PAYMENT TERM -->
+								<p:column>
+									<p:outputLabel value="#{msg['message.invoice.paymentTerm']}"
+										for="paymentTerm" />
+								</p:column>
+								<p:column>
+									<p:selectOneMenu id="paymentTerm"
+										converter="omnifaces.SelectItemsConverter"
+										styleClass="dis-input-width"
+										value="#{invoiceCRUDController.selectInvoice.paymentTerm}"
+										label="#{msg['message.invoice.paymentTerm']}"
+										title="#{msg['message.invoice.tooltip.paymentTerm']}"
+										disabled="#{invoiceCRUDController.paymentMethodDisable}">
+										<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+											itemValue="#{null}" />
+										<f:selectItems var="paymentTerm" itemValue="#{paymentTerm}"
+											itemLabel="#{(labelUtil.getPaymentTermLabel(paymentTerm))}"
+											value="#{selectorController.getPaymentTermList(invoiceCRUDController.company)}" />
+										<p:ajax process="@this" update="invoiceDueDateCalendar"
+											listener="#{invoiceCRUDController.dateChange}" />
+									</p:selectOneMenu>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- INVOICE HEADER DESCRIPTION -->
+								<p:column>
+									<p:outputLabel for="description"
+										value="#{msg['message.common.description']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea id="description" autoResize="false"
+										value="#{invoiceCRUDController.selectInvoice.description}"
+										style="width: 90%;"
+										title="#{msg['message.invoice.tooltip.description']}"
+										maxlength="#{validationConstants.invoiceHeaderMaxLength}"
+										disabled="#{invoiceCRUDController.descriptionDisable}"
+										required="#{invoiceCRUDController.selectInvoice.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}">
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+
+							<p:row>
+								<!-- INTERNAL NOTES -->
+								<p:column>
+									<p:outputLabel for="internalNotes"
+										value="#{msg['message.invoice.internalNotes']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea id="internalNotes" autoResize="false"
+										value="#{invoiceCRUDController.selectInvoice.internalNote}"
+										style="width: 90%;"
+										disabled="#{invoiceCRUDController.descriptionDisable}"
+										title="#{msg['message.invoice.tooltip.invoiceInternalNotes']}"
+										maxlength="#{validationConstants.internalNoteMaxLength}">
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+
+							<p:row
+								rendered="#{invoiceCRUDController.selectInvoice.isAdditionalInvoiceComments()}">
+								<!-- ADDITIONAL COMMENTS -->
+								<p:column>
+									<p:outputLabel for="additionalDescription"
+										value="#{msg['message.customer.governmental.additional.comments']}" />
+								</p:column>
+								<p:column colspan="3">
+									<p:inputTextarea id="additionalDescription" autoResize="false"
+										required="true"
+										value="#{invoiceCRUDController.selectInvoice.additionalComments}"
+										style="width: 90%;"
+										disabled="#{invoiceCRUDController.descriptionDisable}"
+										title="#{msg['message.customer.governmental.tooltip.additional.description']}"
+										maxlength="#{validationConstants.customerAdditionalDescription}">
+										<p:ajax event="blur" process="@this" />
+									</p:inputTextarea>
+								</p:column>
+							</p:row>
+						</p:panelGrid>
+					</p:panel>
+
+					<!-- INVOICE LINES -->
+					<div class="EmptyBox30"></div>
+					<span class="FontBold Fs18 hardblue">#{msg['message.invoice.lines']}</span>
+					<div class="EmptyBox10"></div>
+
+					<o:importConstants
+						type="com.discovery.dis.domain.common.impl.transmissionOrder.TransmissionOrderHeader$SCHEDULE_GROUP_TYPE"
+						var="SCHEDULE_GROUP_TYPE" />
+
+					<p:panel id="invoiceDataTablePanel"
+						widgetVar="invoiceDataTablePanel" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="listInvoiceLines" widgetVar="listInvoiceLines"
+							var="invoiceLine" rowIndexVar="rowIndexVar"
+							value="#{invoiceCRUDController.invoiceLines}"
+							paginatorAlwaysVisible="true" paginator="true"
+							paginatorPosition="top"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="single" rows="10" lazy="true" stickyHeader="false"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							styleClass="dataTable-letters"
+							selection="#{invoiceCRUDController.selectInvoiceLine}"
+							rowKey="#{invoiceLine.lineNumber}"
+							editable="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit}"
+							editMode="cell">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td></td>
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.invoice.title.table.invoiceLines']}" />
+										</td>
+										<td><p:panel styleClass="panel_Button_Invoice">
+												<p:commandButton id="addButton"
+													styleClass="Fleft LightButton" icon="ui-icon-plus"
+													actionListener="#{invoiceCRUDController.addLine}"
+													immediate="true" process="@form"
+													update="createUpdateInvoiceForm:invoiceDataTablePanel
+															:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+													title="#{msg['message.invoice.add.invoiceLine']}"
+													rendered="#{invoiceCRUDController.tableButtonRendered}">
+												</p:commandButton>
+												<p:commandButton id="removeButton"
+													styleClass="Fleft LightButton" icon="ui-icon-minusthick"
+													actionListener="#{invoiceCRUDController.removeLine}"
+													disabled="#{invoiceCRUDController.dataTableDisable}"
+													process="@form"
+													update="createUpdateInvoiceForm:invoiceDataTablePanel
+															:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+													immediate="true"
+													title="#{msg['message.invoice.remove.invoiceLine']}"
+													rendered="#{invoiceCRUDController.tableButtonRendered}">
+												</p:commandButton>
+											</p:panel></td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<p:ajax event="rowSelect" update="addButton removeButton" />
+							<p:ajax event="rowUnselect" update="addButton removeButton" />
+							<p:ajax event="rowSelectCheckbox" update="addButton removeButton" />
+							<p:ajax event="rowUnselectCheckbox"
+								update="addButton removeButton" />
+							<p:ajax event="toggleSelect" update="addButton removeButton" />
+
+							<p:column rendered="#{invoiceCRUDController.tableButtonRendered}"
+								selectionMode="multiple" style="width:16px;text-align:center" />
+
+							<!-- ROW INDEX -->
+							<p:column headerText="#{msg['message.common.line']}"
+								styleClass="col-lineNumber">
+								<h:outputText value="#{invoiceLine.lineNumber}" />
+							</p:column>
+
+							<!-- QUANTITY -->
+							<p:column styleClass="col-Qty">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.createUpdate.table.quantity']}
+									</p:outputLabel>
+									<p:panelGrid id="pGquantity"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<h:outputText rendered="#{!invoiceLine.editable}"
+									value="#{invoiceLine.quantity}" />
+
+								<p:cellEditor rendered="#{invoiceLine.editable}">
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.quantity}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{invoiceLine.quantity}"
+											styleClass="invoiceLineTable-edit"
+											label="#{msg['message.invoice.createUpdate.table.quantity']}">
+											<p:ajax event="change"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel
+											:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+												process="@this"
+												listener="#{invoiceCRUDController.recalculateInvoiceTotals}"
+												oncomplete="updateSaveButton();" />
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- DESCRIPTION -->
+							<p:column styleClass="col-description-line"
+								required="#{invoiceCRUDController.selectInvoice.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.description']}
+									</p:outputLabel>
+									<p:panelGrid id="pGDescription"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.itemDescription}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputTextarea rows="1"
+											value="#{invoiceLine.itemDescription}"
+											required="#{invoiceCRUDController.selectInvoice.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}"
+											label="#{msg['message.invoice.description']}"
+											styleClass="invoiceLineTable-edit">
+											<p:ajax event="change" update="@this" process="@this" />
+											<f:validateLength minimum="1"
+												disabled="#{not invoiceCRUDController.selectInvoice.company.companySettings.invoiceHeaderAndInvoiceLineDescriptionRequired}"
+												maximum="#{validationConstants.getInvoiceLineMaxLength(invoiceCRUDController.company)}" />
+										</p:inputTextarea>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- PRODUCT -->
+							<p:column styleClass="col-product-line"
+								rendered="#{invoiceCRUDController.selectInvoice.company.companySettings.additionalInvoiceFields}">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.product']}
+									</p:outputLabel>
+									<p:panelGrid id="pGProduct"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.product}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{invoiceLine.product}" required="false"
+											label="#{msg['message.invoice.product']}"
+											styleClass="invoiceLineTable-edit">
+											<p:ajax event="change" update="@this" process="@this" />
+											<f:validateLength maximum="100" />
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- START PERIOD-->
+							<p:column styleClass="col-startPeriod-line"
+								rendered="#{invoiceCRUDController.selectInvoice.company.companySettings.additionalInvoiceFields}">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.startPeriod']}
+									</p:outputLabel>
+									<p:panelGrid id="pGStartPeriod"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.startPeriod}">
+											<f:convertDateTime dateStyle="short" timeStyle="short"
+												locale="#{languageController.locale}" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+										<p:calendar styleClass="dis-input-width" required="false"
+											label="#{msg['message.invoice.startPeriod']}"
+											locale="#{languageController.language}"
+											value="#{invoiceLine.startPeriod}">
+											<p:ajax event="dateSelect" update="@this" process="@this" />
+
+										</p:calendar>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- END PERIOD-->
+							<p:column styleClass="col-endPeriod-line"
+								rendered="#{invoiceCRUDController.selectInvoice.company.companySettings.additionalInvoiceFields}">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.endPeriod']}
+									</p:outputLabel>
+									<p:panelGrid id="pGEndPeriod"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.endPeriod}">
+											<f:convertDateTime dateStyle="short" timeStyle="short"
+												locale="#{languageController.locale}" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+										<p:calendar styleClass="dis-input-width" required="false"
+											label="#{msg['message.invoice.endPeriod']}"
+											locale="#{languageController.language}"
+											value="#{invoiceLine.endPeriod}">
+											<p:ajax event="dateSelect" update="@this" process="@this" />
+										</p:calendar>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- SCHEDULE GROUP TYPE -->
+							<p:column styleClass="col-schedule-group-line">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.scheduleGroupType']}
+									</p:outputLabel>
+									<p:panelGrid id="pGscheduleGroupLine"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and invoiceCRUDController.selectInvoice.onAir and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+
+								</f:facet>
+
+								<h:outputText
+									value="#{invoiceLine.scheduleGroupType != null ? 
+ 									invoiceLine.scheduleGroupType : '-'}"
+									rendered="#{!invoiceLine.editable or !invoiceLine.onAir}" />
+
+								<p:cellEditor
+									rendered="#{invoiceLine.editable and invoiceLine.onAir}">
+									<f:facet name="output">
+										<h:outputText
+											value="#{invoiceLine.scheduleGroupType != null ? 
+ 												invoiceLine.scheduleGroupType : '-'}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:selectOneMenu value="#{invoiceLine.scheduleGroupType}"
+											styleClass="invoiceLineTable-edit"
+											converter="omnifaces.SelectItemsConverter"
+											label="#{msg['message.invoice.scheduleGroupType']}"
+											required="#{invoiceLine.onAir}">
+
+											<p:ajax event="change" process="@this"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel"></p:ajax>
+
+											<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+												itemValue="#{null}" />
+											<f:selectItems
+												value="#{selectorController.scheduleGroupTypeList}"
+												var="scheduleGroupType" itemLabel="#{scheduleGroupType}" />
+										</p:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- CHANNEL -->
+							<p:column headerText="#{msg['message.invoice.channel']}"
+								styleClass="col-channel-line" required="true">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.channel']}
+									</p:outputLabel>
+									<p:panelGrid id="pGChannelLine"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+
+								</f:facet>
+								<h:outputText
+									value="#{invoiceLine.channel != null ? invoiceLine.channel : ''}"
+									rendered="#{!invoiceLine.editable}" />
+
+								<p:cellEditor rendered="#{invoiceLine.editable}">
+									<f:facet name="output">
+										<h:outputText
+											value="#{invoiceLine.channel != null ? invoiceLine.channel : ''}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:selectOneMenu value="#{invoiceLine.channel}"
+											styleClass="invoiceLineTable-edit"
+											converter="omnifaces.SelectItemsConverter"
+											label="#{msg['message.invoice.channel']}" required="true">
+
+											<p:ajax event="change" process="@this"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel">
+											</p:ajax>
+											<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+												itemValue="#{null}" />
+											<f:selectItems value="#{selectorController.channelList}"
+												var="channel"
+												itemLabel="#{channel.code} - #{channel.description}" />
+										</p:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- SERVICE RECEIVED TYPE  -->
+							<p:column
+								headerText="#{msg['message.invoice.createUpdate.table.serviceReceivedType']}"
+								styleClass="col-channel-line" required="true">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.createUpdate.table.serviceReceivedType']}
+									</p:outputLabel>
+									<p:panelGrid id="pGServiceTypeLine"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<h:outputText
+									value="#{labelUtil.getServiceReceivedTypeLabel(invoiceLine.serviceReceivedType)}"
+									rendered="#{!invoiceLine.editable}" />
+
+								<p:cellEditor rendered="#{invoiceLine.editable}">
+									<f:facet name="output">
+										<h:outputText
+											value="#{labelUtil.getServiceReceivedTypeLabel(invoiceLine.serviceReceivedType)}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:selectOneMenu value="#{invoiceLine.serviceReceivedType}"
+											styleClass="invoiceLineTable-edit"
+											label="#{msg['message.invoice.createUpdate.table.serviceReceivedType']}"
+											converter="omnifaces.SelectItemsConverter" required="true">
+
+											<p:ajax event="change" process="@this"
+												listener="#{invoiceLine.cleanScheduleGroupType}"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel">
+											</p:ajax>
+											<f:selectItem
+												itemLabel="#{msg['message.invoice.add.form.select.serviceType']}"
+												itemValue="#{null}" />
+											<f:selectItems
+												value="#{invoiceCRUDController.serviceReceivedTypelList}"
+												var="serviceType"
+												itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceType)}" />
+										</p:selectOneMenu>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+
+							<!-- UNIT PRICE -->
+							<p:column styleClass="col-unit-price">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.createUpdate.table.unitPrice']} (#{invoiceCRUDController.selectInvoice.transactionCurrency})
+									</p:outputLabel>
+									<p:panelGrid id="pGunitPrice"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<h:outputText rendered="#{!invoiceLine.editable}"
+									value="#{invoiceLine.unitPrice}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+								<p:cellEditor rendered="#{invoiceLine.editable}">
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.unitPrice}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{invoiceLine.unitPrice}"
+											styleClass="invoiceLineTable-edit"
+											label="#{msg['message.invoice.createUpdate.table.unitPrice']}">
+
+											<p:ajax event="change"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel :createUpdateInvoiceForm:invoiceDataTableMessages
+													:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+												process="@this"
+												listener="#{invoiceCRUDController.recalculateInvoiceTotals}"
+												oncomplete="updateSaveButton();" />
+
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+<!-- 											<f:validateDoubleRange minimum="0.01" /> -->
+											<f:validateLongRange minimum="0" />
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- TOTAL PRICE -->
+							<p:column
+								headerText="#{msg['message.invoice.createUpdate.table.unitAmount']} (#{invoiceCRUDController.selectInvoice.transactionCurrency})"
+								styleClass="col-total-price">
+								<h:outputText value="#{invoiceLine.transactionUnitAmount}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- COMMISSION RATE -->
+							<p:column styleClass="col-commission-rate"
+								rendered="#{invoiceCRUDController.commisionsRendered}">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.createUpdate.table.commissionRate']}
+									</p:outputLabel>
+									<p:panelGrid id="pgCommissionRate"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<h:outputText rendered="#{!invoiceLine.editable}"
+									value="#{empty invoiceLine.commission or empty invoiceLine.commission.percentage ? '-' : invoiceLine.commission.percentage}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+
+								<p:cellEditor rendered="#{invoiceLine.editable}">
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.commission.percentage}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+
+										<p:inputMask value="#{invoiceLine.commission.percentage}"
+											styleClass="invoiceLineTable-edit" maxlength="5"
+											label="#{msg['message.invoice.createUpdate.table.commissionRate']}">
+
+											<f:validateDoubleRange minimum="0" maximum="99.99" />
+											<f:convertNumber maxFractionDigits="2" pattern="##0.00" />
+											<p:ajax event="change"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel
+											:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+												process="@this"
+												listener="#{invoiceLine.recalculateCommissionAmount}"
+												oncomplete="#{invoiceCRUDController.recalculateInvoiceTotals()}" />
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</p:inputMask>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- COMMISSION AMOUNT -->
+							<p:column
+								headerText="#{msg['message.invoice.createUpdate.table.commissionAmount']} (#{invoiceCRUDController.selectInvoice.transactionCurrency})"
+								styleClass="col-commission-amount"
+								rendered="#{invoiceCRUDController.commisionsRendered}">
+								<h:outputText
+									value="#{empty invoiceLine.commission or empty invoiceLine.commission.amount ? '-' : invoiceLine.commission.amount}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- NET AMOUNT -->
+							<p:column
+								headerText="#{msg['message.invoice.createUpdate.table.netPrice']} (#{invoiceCRUDController.selectInvoice.transactionCurrency})"
+								styleClass="col-net-amount">
+								<h:outputText value="#{invoiceLine.transactionNetAmount}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- VAT PERCENTAGE -->
+							<p:column styleClass="col-vat-percentage"
+								rendered="#{!invoiceCRUDController.selectInvoice.foreign}">
+
+								<f:facet name="header">
+									<p:outputLabel>
+										#{msg['message.invoice.createUpdate.table.vatPercentage']}
+									</p:outputLabel>
+									<p:panelGrid id="pGvatPercentage"
+										rendered="#{invoiceCRUDController.onEditionMode and invoiceCRUDController.onEdit and !invoiceCRUDController.invoiceSourceAuto}"
+										styleClass="none transparent">
+										<i class="icon-pencil Wid25 facebookblue"></i>
+									</p:panelGrid>
+								</f:facet>
+
+								<h:outputText
+									rendered="#{!invoiceCRUDController.tableButtonRendered}"
+									value="#{invoiceLine.vatPercentage}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+
+								<p:cellEditor
+									rendered="#{invoiceCRUDController.tableButtonRendered}">
+									<f:facet name="output">
+										<h:outputText value="#{invoiceLine.vatPercentage}">
+											<f:convertNumber locale="#{languageController.locale}"
+												type="currency" currencySymbol="" maxFractionDigits="2" />
+										</h:outputText>
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{invoiceLine.vatPercentage}"
+											styleClass="invoiceLineTable-edit"
+											label="#{msg['message.invoice.createUpdate.table.vatPercentage']}">
+
+											<f:validateDoubleRange minimum="0" maximum="99.99" />
+											<f:convertNumber maxFractionDigits="2" pattern="##0.00" />
+
+											<p:ajax event="change"
+												update="@this :createUpdateInvoiceForm:invoiceDataTablePanel
+											:createUpdateInvoiceForm:listInvoiceLines:panelSubTotalInvoice"
+												process="@this"
+												listener="#{invoiceCRUDController.recalculateInvoiceTotals}"
+												oncomplete="updateSaveButton();" />
+
+										</p:inputText>
+									</f:facet>
+								</p:cellEditor>
+							</p:column>
+
+							<!-- VAT AMOUNT -->
+							<p:column
+								headerText="#{msg['message.invoice.vatAmount']} (#{invoiceCRUDController.selectInvoice.transactionCurrency})"
+								styleClass="col-vat-amount"
+								rendered="#{invoiceCRUDController.selectInvoice.taxable}">
+								<h:outputText value="#{invoiceLine.transactionVatAmount}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+							<!-- PRICE -->
+							<p:column
+								headerText="#{msg['message.common.price']} (#{invoiceCRUDController.selectInvoice.transactionCurrency})"
+								styleClass="col-gross-amount">
+								<h:outputText value="#{invoiceLine.transactionGrossAmount}">
+									<f:convertNumber locale="#{languageController.locale}"
+										type="currency" currencySymbol="" maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+
+
+							<!-- PANEL TOTALES -->
+							<f:facet name="footer">
+								<p:panel id="panelSubTotalInvoice"
+									styleClass="panelGrid-totalInvoice">
+									<p:panelGrid id="panelGridSubTotalInvoice" cellpadding="5"
+										styleClass="panelGridSubTotalInvoice no-border">
+										<f:facet name="header">
+											<p:row>
+												<p:column colspan="1">#{msg['message.common.subtotal']}</p:column>
+												<p:column>#{invoiceCRUDController.selectInvoice.transactionCurrency}</p:column>
+												<p:column
+													rendered="#{!(invoiceCRUDController.selectInvoice.transactionCurrency
+													== invoiceCRUDController.selectInvoice.company.currency)}">	
+
+												#{invoiceCRUDController.selectInvoice.baseCurrency}												
+											</p:column>
+											</p:row>
+										</f:facet>
+
+										<!-- NET AMOUNTS -->
+										<p:row
+											rendered="#{invoiceCRUDController.selectInvoice.taxable}">
+											<p:column>
+												<p:outputLabel value="#{msg['message.invoice.netAmount']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="subTotalTransaction"
+													value="#{invoiceCRUDController.subTotal}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+											<p:column
+												rendered="#{!(invoiceCRUDController.selectInvoice.transactionCurrency 
+													==invoiceCRUDController.selectInvoice.company.currency)}">
+												<h:outputText id="subTotalBase"
+													value="#{invoiceCRUDController.baseNetAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+
+										<!-- VAT AMOUNTS -->
+										<p:row
+											rendered="#{invoiceCRUDController.selectInvoice.taxable}">
+											<p:column>
+												<p:outputLabel value="#{msg['message.invoice.vatAmount']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="vatAmountTransaction"
+													value="#{invoiceCRUDController.vatAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+											<p:column
+												rendered="#{!(invoiceCRUDController.selectInvoice.transactionCurrency 
+													== invoiceCRUDController.selectInvoice.company.currency)}">
+												<h:outputText id="vatAmountBase"
+													value="#{invoiceCRUDController.baseVatAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+										
+										<!-- TAXES -->
+										<ui:repeat var="invoiceTax"
+											value="#{invoiceCRUDController.invoiceTaxes}">
+											<p:row>
+												<p:column>
+													<p:outputLabel value="#{not empty invoiceTax.tax.description ? invoiceTax.tax.description : invoiceTax.tax.taxCode}" />
+												</p:column>
+											<p:column>
+													<h:outputText id="taxAmount"
+														value="#{invoiceTax.taxAmount}">
+														<f:convertNumber locale="#{languageController.locale}"
+															type="currency" currencySymbol="" maxFractionDigits="2" />
+													</h:outputText>
+												</p:column>												
+												<p:column
+												rendered="#{!(invoiceCRUDController.selectInvoice.transactionCurrency 
+													== invoiceCRUDController.selectInvoice.company.currency)}">
+													<h:outputText id="baseTaxAmount"
+														value="#{invoiceTax.baseTaxAmount}">
+														<f:convertNumber locale="#{languageController.locale}"
+															type="currency" currencySymbol="" maxFractionDigits="2" />
+													</h:outputText>
+												</p:column>		
+											</p:row>
+										</ui:repeat>
+
+
+										<!-- GROSS AMOUNTS -->
+										<p:row>
+											<p:column>
+												<p:outputLabel value="#{msg['message.common.total']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="totalTransaction"
+													value="#{invoiceCRUDController.total}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+											<p:column
+												rendered="#{!(invoiceCRUDController.selectInvoice.transactionCurrency 
+												== invoiceCRUDController.selectInvoice.company.currency)}">
+												<h:outputText id="totalBase"
+													value="#{invoiceCRUDController.baseGrossAmount}">
+													<f:convertNumber locale="#{languageController.locale}"
+														type="currency" currencySymbol="" maxFractionDigits="2" />
+												</h:outputText>
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+								<p:panel id="panelCheckboxInvoice"
+									styleClass="panelGrid-chechbox">
+									<p:panelGrid id="panelGridCheckboxInvoice" cellpadding="5"
+										styleClass="panelGridCheckboxInvoice no-border">
+										<p:selectBooleanCheckbox id="singleLineCheckbox"
+											value="#{invoiceCRUDController.selectInvoice.singleLineTransmission}"
+											disabled="#{invoiceCRUDController.oneLineCheckboxDisable}"
+											itemLabel="#{msg['message.invoice.singleInvoiceLine']}"
+											styleClass="single-line-checkbox"
+											rendered="#{!invoiceCRUDController.oneLineCheckboxDisable}">
+											<p:ajax process="@this" update="@this" />
+										</p:selectBooleanCheckbox>
+										<p:panel styleClass="single-line-panel no-border">
+											<h:outputText id="singleLineOutputText"
+												rendered="#{invoiceCRUDController.oneLineCheckboxDisable}"
+												value="#{msg['message.invoice.singleInvoiceLine']}: " />
+											<h:outputText id="singleLineOutputTextValue"
+												rendered="#{invoiceCRUDController.oneLineCheckboxDisable}"
+												styleClass="turquoise-text"
+												value="#{invoiceCRUDController.selectInvoice.singleLineTransmission ? msg['message.common.true'] : msg['message.common.false'] }" />
+										</p:panel>
+									</p:panelGrid>
+								</p:panel>
+							</f:facet>
+						</p:dataTable>
+
+					</p:panel>
+
+					<p:messages id="invoiceDataTableMessages" closable="true"
+						showDetail="false" autoUpdate="true" redisplay="true"/>
+
+					<div class="EmptyBox10"></div>
+					<div class="form-group">
+						<!-- BACK -->
+						<p:commandButton value="#{msg['message.common.back']}"
+							resetValues="true" id="backAdd" process="@this"
+							icon="ui-icon-arrowreturnthick-1-w"
+							title="#{msg['message.invoice.tooltip.createUpdate.back']}"
+							immediate="true" action="#{invoiceCRUDController.back}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- EDIT -->
+						<p:commandButton value="#{msg['message.common.edit']}"
+							resetValues="true" id="editAdd" process="@this"
+							icon="ui-icon-pencil"
+							title="#{msg['message.invoice.tooltip.createUpdate.edit']}"
+							immediate="true"
+							disabled="#{invoiceCRUDController.onTransmit or invoiceCRUDController.onPost}"
+							actionListener="#{invoiceCRUDController.setOnEditionMode(true)}"
+							rendered="#{invoiceCRUDController.editRendered}"
+							update="createUpdateInvoiceForm">
+						</p:commandButton>
+
+						<!-- EXIT EDIT -->
+						<p:commandButton
+							value="#{msg['message.invoice.createUpdate.button.exitEdit']}"
+							resetValues="true" id="exitEditAdd" icon="ui-icon-locked"
+							title="#{msg['message.invoice.tooltip.createUpdate.exitEdit']}"
+							immediate="true"
+							actionListener="#{invoiceCRUDController.setOnEditionMode(false)}"
+							rendered="#{invoiceCRUDController.onEditionMode and !invoiceCRUDController.newInvoice}"
+							process="@this :createUpdateInvoiceForm"
+							update="createUpdateInvoiceForm">
+							<p:confirm
+								message="#{msg['message.invoice.confirm.createUpdate.exitEdit']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- SAVE -->
+						<p:commandButton id="saveInvoiceCRUDButton"
+							value="#{msg['message.common.save']}" icon="ui-icon-check"
+							action="#{invoiceCRUDController.saveInvoice}"
+							process="@this createUpdateInvoiceForm"
+							disabled="#{invoiceCRUDController.onTransmit or invoiceCRUDController.onPost}"
+							title="#{msg['message.invoice.tooltip.createUpdate.save']}"
+							rendered="#{invoiceCRUDController.onEditionMode}">
+							<p:confirm message="#{invoiceCRUDController.confirmSaveMessage}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- SUBMIT -->
+						<p:commandButton id="submitInvoiceCRUDButton"
+							value="#{msg['message.common.submit']}"
+							action="#{invoiceCRUDController.submitInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.submit']}"
+							icon="ui-icon-mail-closed"
+							rendered="#{invoiceCRUDController.submitRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- APPROVE -->
+						<p:commandButton id="approveInvoiceCRUDButton"
+							value="#{msg['message.common.approve']}"
+							action="#{invoiceCRUDController.approveInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.approve']}"
+							icon="ui-icon-circle-check"
+							rendered="#{invoiceCRUDController.approveRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- REJECT -->
+						<p:commandButton id="rejectInvoiceCRUDButton"
+							value="#{msg['message.common.reject']}"
+							action="#{invoiceCRUDController.refuseInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.reject']}"
+							icon="ui-icon-circle-close"
+							rendered="#{invoiceCRUDController.refuseRendered}">
+							<p:confirm
+								message="#{msg['message.invoice.confirm.createUpdate.reject']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- TRANSMIT -->
+						<p:commandButton id="transmitInvoiceCRUDButton"
+							value="#{msg['message.common.transmit']}"
+							action="#{invoiceCRUDController.transmitInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.transmit']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{invoiceCRUDController.transmitRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- BOTONES SAGE (Integracion Manual) -->
+
+						<!-- DOWNLOAD MANUAL -->
+						<p:commandButton id="downloadInvoiceCRUDButton"
+							value="#{msg['message.common.download']}"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.download']}"
+							icon="ui-icon-arrowthickstop-1-s"
+							rendered="#{invoiceCRUDController.downloadRendered}"
+							process="@this"
+							actionListener="#{invoiceCRUDController.prepareDownload}">
+						</p:commandButton>
+
+						<h:commandButton id="download" class="download-invoice"
+							process="@this" style="display: none !important"
+							actionListener="#{invoiceCRUDController.download}">
+						</h:commandButton>
+
+
+						<!-- TRANSMIT MANUAL -->
+						<p:commandButton id="transmitManualInvoiceCRUDButton"
+							value="#{msg['message.common.transmit']}"
+							action="#{invoiceCRUDController.transmitManualInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.transmit.manual']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{invoiceCRUDController.transmitManualRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- DENY MANUAL -->
+						<p:commandButton id="denyInvoiceCRUDButton"
+							value="#{msg['message.common.deny']}"
+							action="#{invoiceCRUDController.denyInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.transmit.deny']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{invoiceCRUDController.denyRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- POST MANUAL -->
+						<p:commandButton id="postInvoiceCRUDButton"
+							value="#{msg['message.common.post']}"
+							action="#{invoiceCRUDController.postInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.transmit.post']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{invoiceCRUDController.postRendered}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- VIEW JOURNAL -->
+						<p:commandButton id="viewJournal"
+							value="#{msg['message.invoice.viewJournalEntries']}"
+							action="#{invoiceCRUDController.viewJournalEntries}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="dis-button-width"
+							title="#{msg['message.invoice.tooltip.viewJournalEntries']}"
+							icon="ui-icon-arrowthick-1-e"
+							rendered="#{!invoiceCRUDController.onEditionMode and !invoiceCRUDController.newInvoice}">
+							<p:confirm
+								message="#{msg['message.common.confirmation.continue']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<!-- DELETE -->
+						<p:commandButton id="deleteInvoiceCRUDButton"
+							value="#{msg['message.common.delete']}"
+							action="#{invoiceCRUDController.deleteInvoice}"
+							process="@this createUpdateInvoiceForm"
+							styleClass="lais-delete-button dis-button-width"
+							title="#{msg['message.invoice.tooltip.createUpdate.delete']}"
+							icon="ui-icon-trash"
+							rendered="#{invoiceCRUDController.cancelRendered}">
+							<p:confirm
+								message="#{msg['message.invoice.confirm.createUpdate.delete']}"
+								icon="ui-icon-alert" />
+						</p:commandButton>
+
+					</div>
+
+					<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+						disabled="true" />
+					<p:defaultCommand target="buttonDefault" />
+
+					<p:remoteCommand name="updateSaveButton"
+						update=":createUpdateInvoiceForm:saveInvoiceCRUDButton" />
+				</h:form>
+
+			</div>
+
+
+		</c:if>
+
+	</ui:define>
+
+</ui:composition>

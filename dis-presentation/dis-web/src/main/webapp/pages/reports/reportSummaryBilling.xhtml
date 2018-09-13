@@ -1,0 +1,140 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+<ui:define name="viewTitle">
+	#{msg['message.report.summaryBilling.name']}
+</ui:define>
+
+<ui:define name="content">
+	<h:outputScript name="jquery/jquery.js" library="primefaces"
+		target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+			<p:panel>
+				<p:focus />
+									  
+				<h:form prependId="false" id="reportForm">
+					<p:messages id="messages" showDetail="false" autoUpdate="true" closable="true" />
+	
+					<p:panelGrid styleClass="transparent no-border" columns="4">
+						
+						<!-- COMPANY -->
+						<p:outputLabel for="companyFilter"
+							value="#{msg['message.common.company']}" />
+						<p:selectOneMenu id="companyFilter"
+							styleClass="dis-input-width"
+							value="#{reportSummaryBillingController.company}"
+							title="#{msg['message.customer.tooltip.filterCode']}"
+							converter="omnifaces.SelectItemsConverter"
+							required="true">							
+							<f:selectItems 
+								value="#{sessionSelectorController.companies}"
+								var="company" 
+								itemValue="#{company}"
+								itemLabel="#{company.code} - #{company.description}" />
+							<p:ajax	update="invoiceTypeFilter" />
+						</p:selectOneMenu>
+
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- START DATE -->
+						<p:outputLabel value="#{msg['message.report.startPostedDate']}"/>
+						<p:calendar id="startDateFilter"
+							value="#{reportSummaryBillingController.startPostedDate}"
+							title="#{msg['message.report.startPostedDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />
+	
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- END DATE -->
+						<p:outputLabel value="#{msg['message.report.endPostedDate']}"/>
+						<p:calendar id="endDateFilter"
+							value="#{reportSummaryBillingController.endPostedDate}"
+							title="#{msg['message.report.endPostedDate.tooltip']}"
+							locale="#{languageController.language}"
+							pattern="#{languageController.localeDatePattern}"
+							styleClass="dis-input-width" />				
+					
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- INVOICE TYPE -->
+						<p:outputLabel value="#{msg['message.report.summaryBilling.invoiceType']}" />
+						<p:selectOneMenu id="invoiceTypeFilter"
+							styleClass="dis-input-width"
+							value="#{reportSummaryBillingController.invoiceType}"
+							title="#{msg['message.report.summaryBilling.invoiceType.tooltip']}"
+							converter="omnifaces.SelectItemsConverter">
+							
+							<f:selectItem itemLabel="#{msg['message.common.selectOne']}" itemValue="#{null}" />
+							
+							<f:selectItems 
+								value="#{selectorController.getInvoiceTypeListByCompany(reportSummaryBillingController.company)}"
+								var="invoiceType" 
+								itemValue="#{invoiceType}"
+								itemLabel="#{labelUtil.getInvoiceTypeLabel(reportSummaryBillingController.company, invoiceType)}" />
+						</p:selectOneMenu>
+						
+						
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- CUSTOMER TYPE -->
+						<p:outputLabel value="#{msg['message.report.summaryBilling.customerType']}" />
+						<p:selectOneMenu id="customerTypeFilter"
+							styleClass="dis-input-width"
+							value="#{reportSummaryBillingController.customerType}"
+							title="#{msg['message.report.summaryBilling.customerType.tooltip']}"
+							converter="omnifaces.SelectItemsConverter">
+							
+							<f:selectItem itemLabel="#{msg['message.common.selectOne']}" itemValue="#{null}" />
+							
+							<f:selectItems 
+								value="#{selectorController.customerTypeList}"
+								var="customerType" 
+								itemValue="#{customerType}"
+								itemLabel="#{labelUtil.getCustomerTypeLabel(customerType)}" />
+						</p:selectOneMenu>
+	
+						<p:outputLabel />
+						<p:outputLabel />
+						
+						<!-- SERVICE TYPE -->
+						<p:outputLabel value="#{msg['message.report.summaryBilling.serviceType']}" />
+						<p:selectOneMenu id="serviceTypeFilter"
+							styleClass="dis-input-width"
+							value="#{reportSummaryBillingController.serviceType}"
+							title="#{msg['message.report.summaryBilling.serviceType.tooltip']}"
+							converter="omnifaces.SelectItemsConverter">
+							
+							<f:selectItem itemLabel="#{msg['message.common.selectOne']}" itemValue="#{null}" />
+							
+							<f:selectItems 
+								value="#{selectorController.serviceReceivedTypeFilterList}"
+								var="serviceType" 
+								itemValue="#{serviceType}"
+								itemLabel="#{labelUtil.getServiceReceivedTypeLabel(serviceType)}" />
+						</p:selectOneMenu>					
+					</p:panelGrid>
+	
+					<ui:param name="controller" value="#{reportSummaryBillingController}" />
+					<ui:include src="reportFooter.xhtml" />		
+				</h:form>
+			</p:panel>				
+			</div>
+		</div>
+
+	</ui:define>
+</ui:composition>

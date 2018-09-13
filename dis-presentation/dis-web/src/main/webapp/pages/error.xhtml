@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<f:view contentType="text/html" locale="#{languageController.locale}">
+	<h:head>
+    	<link rel="shortcut icon" href="#{resource['images/favicon.ico']}" type="image/x-icon" />
+		<title>#{msg['message.application']}</title>
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+		<h:outputScript name="js/layout.js" library="sentinel-layout" />
+		<h:outputStylesheet name="css/font-icon-layout.css"
+			library="sentinel-layout" />
+		<h:outputStylesheet name="css/sentinel-layout.css"
+			library="sentinel-layout" />
+		<h:outputStylesheet name="css/core-layout.css"
+			library="sentinel-layout" />
+		<h:outputStylesheet name="ais-style.css" library="css" />
+		
+	</h:head>
+
+	<h:body styleClass="fontRegular red-back">
+
+		<div class="Container100 Top20Percent PosAbsolute MarAuto OvHidden error-page">
+			<div class="Wid50 MarAuto OvHidden TexAlCenter">
+				<h:graphicImage name="images/error-face.svg"
+					library="sentinel-layout" style="width: 100px;" />
+				<div class="EmptyBox20"></div>
+				<span class="white Fs100 Wid100 DispBlock">#{msg['message.page.error']}</span> <span
+					class="white Wid100 DispBlock Fs24">#{msg['message.page.error.summary']}</span><br />
+				<span class="white Wid100 DispBlock Fs12">#{msg['message.page.error.detail']}<br />
+				</span>
+				<div class="EmptyBox20"></div>
+				<p:button id="homeButton"
+					style="display: none"
+					value="#{msg['message.common.back']}" styleClass="Fs24"
+					href="/faces/index.xhtml"></p:button>
+				<p:button id="closeButton"
+					style="display: none"
+					value="#{msg['message.common.close']}" styleClass="Fs24"
+					onclick="window.close()"></p:button>
+				<script type="text/javascript">
+					if(window.isPopUp === true){
+						$('#closeButton').css("display","");
+					} else {
+						$('#homeButton').css("display","");
+					}
+				</script>
+				<div class="EmptyBox50"></div>
+			</div>
+		</div>
+
+	</h:body>
+</f:view>
+</html>

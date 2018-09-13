@@ -1,0 +1,1198 @@
+/* Discovery Blue Color: #245188 */
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+/* 
+	SENTINEL LAYOUT CSS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+/* Table */
+.ui-columntoggler {
+	min-width: 250px;
+	display: none;
+}
+
+.ui-current-paginator {
+	color: #72787B
+}
+.ui-datatable .ui-paginator .ui-paginator-rpp-options{
+	color: #908B8B
+}
+
+/* Template Header Logo */
+#layout-logo{
+  width: auto;
+  margin-bottom: -2px;
+  padding: 0px;
+  margin: 8px;
+  float: left;
+  line-height: 30px;
+}
+#layout-logo img{
+	height: 32px;
+}
+
+/* Font Color */
+
+.ui-inputfield, 
+.ui-outputlabel, 
+table tbody tr td,
+.ui-datatable .ui-datatable-tablewrapper table thead tr th, 
+.ui-datatable .ui-datatable-tablewrapper table tfoot tr td, 
+.ui-datatable table thead tr th,
+.ui-datatable table tbody tr td,
+.ui-picklist,
+.ui-selectoneradio label {
+	color: #505050
+}
+
+/* Table Selection Color */
+
+.ui-datatable .ui-datatable-tablewrapper table tbody .ui-state-highlight td {
+  background-color: #BBD8E7;
+  color: #23169D;
+}
+
+/* Disabled*/
+
+.ui-state-disabled,
+.ui-widget-content .ui-state-disabled,
+.ui-widget-header .ui-state-disabled {
+	background-image: none;
+	color: #000000 !important;
+}
+
+.ui-selectonemenu.ui-state-disabled .ui-selectonemenu-trigger, .ui-selectonemenu.ui-state-disabled .ui-selectonemenu-label {
+  cursor: default;
+  color: #000000 !important;
+}
+
+/*  Switch Input */
+
+.ui-inputswitch {
+	width: 60px !important;
+	background-color: white !important;
+	color: rgb(80, 80, 80) !important;
+}
+.ui-inputswitch-handle {
+	width: 28px !important;
+}
+.ui-inputswitch-off, .ui-inputswitch-off span {
+	width: 34px !important;
+}
+.ui-inputswitch-on, .ui-inputswitch-on span {
+	width: 23px !important;
+}
+
+/* Colored Button */
+
+.LightButton .ui-button-text{box-shadow: inset 0 0 0 1px #54DB26; border: solid 1px #2B8717; text-shadow: 0 -1px 0 #18840B;
+background: #0C6CBB;
+background: -moz-linear-gradient(top, #104266 0%, #0C6CBB 100%);
+background: -webkit-gradient(left top, left bottom, color-stop(0%, #104266), color-stop(100%, #0C6CBB));
+background: -webkit-linear-gradient(top, #104266 0%, #0C6CBB 100%);
+background: -o-linear-gradient(top, #104266 0%, #0C6CBB 100%);
+background: -ms-linear-gradient(top, #104266 0%, #0C6CBB 100%);
+background: linear-gradient(to bottom, #104266 0%, #0C6CBB 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#104266', endColorstr='#0C6CBB', GradientType=0 );}
+.LightButton:hover .ui-button-text, .LightButton:focus .ui-button-text{color:#ffffff !important;
+background: #0C6CBB;
+background: -moz-linear-gradient(top, #0C6CBB 0%, #104266 100%);
+background: -webkit-gradient(left top, left bottom, color-stop(0%, #0C6CBB), color-stop(100%, #104266));
+background: -webkit-linear-gradient(top, #0C6CBB 0%, #104266 100%);
+background: -o-linear-gradient(top, #0C6CBB 0%, #104266 100%);
+background: -ms-linear-gradient(top, #0C6CBB 0%, #104266 100%);
+background: linear-gradient(to bottom, #0C6CBB 0%, #104266 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0C6CBB', endColorstr='#104266', GradientType=0 );}
+
+.LightButton .ui-button-text {
+  box-shadow: inset 0 0 0 1px #095D99;
+  border: solid 1px #175787;
+  text-shadow: 0 -1px 0 #18840B;
+}
+
+.ui-button span.ui-icon{
+  background-image: url("images/ui-icons_ffffff_256x240.png");
+}
+
+.ui-tooltip {
+	background-color: #EFF6FB;
+	border: solid 1px #27AAE1;
+	color: #007DFF;
+	border-top-left-radius: 0px;
+	opacity: 0.95;
+}
+
+.ui-confirm-dialog .ui-dialog-content .ui-confirm-dialog-message {
+	color: #505050
+}
+
+i {
+	color: #FFFFFF;
+}
+
+/* Menu Bar */
+
+.dis-active-menu {
+	background-color: rgba(17, 113, 191, 0.21);
+}
+
+#layout-portlets-cover {
+  background-color: #F6F8F8;
+}
+
+.layout-menubar-container i {
+	margin-right: 6px;
+}
+
+#layout-menubar i {
+	color: #78C0FC !important;
+}
+
+#layout-menubar li a:hover {
+	color: #54B2F5;
+	padding-left: 20px;
+}
+
+.layout-menubar-container {
+	margin-top: 4px;
+}
+
+.layout-menubarinner-box {
+	padding-top: 4px;
+	padding-bottom: 0px;
+}
+
+/* 
+	ARGENTINA INVOICING SYSTEM CSS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+.dis-datatable-noHeader .ui-datatable-header {
+	height: 0px !important;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+}
+
+.dis-col-toggler-paginator {
+	float: right;
+	margin-right: 11px;
+	margin-top: 10px;
+}
+  
+.spinner-target {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99999;
+}
+
+.spinner-targett {
+	width: 100px;
+  	height: 100px;
+ 	bottom: 0px;
+ 	right: 0px;
+ 	position: fixed;
+}
+
+.dis-confirm-custom .ui-dialog-content {
+	overflow: hidden !important; 
+	padding: 0px !important;	
+	width: 450px;
+}
+
+.dis-report-block .ui-panel {
+	height: 150px;
+}
+.dis-report-block .description {
+	font-size: 14px;
+}
+.dis-report-block .name {
+	font-size: 20px;
+}
+.dis-report-block a {
+	display: block;
+}
+.dis-report-block i {
+	font-size: 60px !important;
+}
+.dis-report-icon-text {
+	position: absolute;
+	margin-left: 15px;
+	margin-top: 16px;
+	color: antiquewhite;
+	font-weight: 700;
+	font-size: 12px;
+}
+
+.transparent {
+	background-color: transparent !important;
+}
+
+.ui-outputlabel {
+	font-weight: bold !important;
+	color: rgb(107, 112, 116);
+}
+
+/* .no-spacing .ui-tabs-panels .ui-tabs-panel */
+.no-spacing,
+.no-spacing.ui-panelgrid .ui-panelgrid-cell,
+.no-spacing .ui-panel-content
+{
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+/* removes panel border */
+.no-border-panel,
+/* removes panel grid border */
+.no-border tr td.ui-panelgrid-cell, 
+.no-border,
+.no-border.dis-table-header tr td{
+ 	border: 0px !important;
+}
+
+/* removes internal border, outer border remmains */
+.no-internal-border tbody tr td{
+	border: 0px !important;
+}
+.no-internal-border{
+	border-collapse: separate;
+}
+
+.dis-spacing-small,
+.dis-spacing-small .ui-panelgrid-cell {
+	padding: 1px;
+}
+
+.dis-spacer-small{
+	width: 10px;
+	height: 10px;
+}
+.dis-spacer-medium{
+	width: 30px;
+	height: 30px;
+}
+.dis-spacer-large{
+	width: 40px;
+	height: 40px;
+}
+
+.dis-title{
+	color: #252424;
+	text-shadow: -1px 0 rgb(234, 234, 234), 0 1px rgb(234, 234, 234), 1px 0 rgb(234, 234, 234), 0 -1px rgb(234, 234, 234);
+	/* text-shadow: 0px 0px 7px rgba(150, 150, 150, 1); */
+	font-size:34px;
+}
+
+.dis-mini-title{
+	text-shadow: 0px 0px 10px rgba(150, 150, 150, 1);
+	font-size:22px;
+	font-weight: bolder;
+	vertical-align: sub;
+}
+
+.dis-home-background {
+	width: 100%;
+	height: 4000px;
+	background-image:
+		url('/dis-web/faces/javax.faces.resource/images/background-text3.png');
+	background-size: cover;
+	opacity: 0.79;
+	position: fixed;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+  	background-position: center 0;
+}
+
+.dis-login-back {
+	background-image: url("/dis-web/faces/javax.faces.resource/images/background-text3.png");
+	background-size: contain;
+	background-color: rgb(141, 180, 214);
+	background-position: top center;
+	background-repeat: no-repeat;
+}
+
+.dis-picklist-width {
+	width: 280px;
+}
+
+.dis-input-width,
+.dis-input-width .ui-panelgrid-cell,
+.dis-input-width .ui-inputfield  {
+	width:300px !important;
+}
+
+.dis-input-width-button,
+.dis-input-width-button .ui-panelgrid-cell,
+.dis-input-width-button .ui-inputfield  {
+	width:267px !important;
+}
+
+.dis-input-width-large {
+	width:500px !important;
+}
+
+.dis-input-row {
+	height: 41px;
+}
+
+
+.dis-inputArea-width {
+	width: 300px !important;
+	height: 100px
+}
+
+.dis-inputArea-big-width {
+	width: 500px !important;
+	height: 250px
+}
+
+.dis-button-width {
+	min-width:110px;
+}
+
+.error-password-user{
+	border: 1px solid #F03369 !important;
+  	color: #F03369;
+}
+
+.panel-center-button{
+	text-align: center;
+}
+
+.changePassword-button {
+	border: none !important;
+	box-shadow: none;
+	width: 85%;
+}
+
+#password-box {
+	min-height: 350px;
+	margin-bottom: 20px;
+	border: solid 1px #D1D3D4;
+}
+
+#password-box .ui-button {
+	border: none !important;
+	box-shadow: none;
+	width: 45%;
+}
+
+#password-box .ui-button .ui-button-text {
+	padding: 16px !important;
+	font-size: 18px !important;
+}
+
+#password-box input[type="text"], 
+#password-box input[type="password"] {
+	padding: 10px !important;
+	box-shadow: none;
+	color: #00AEEF;
+	text-align: center;
+}
+
+.dis-margin {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+.col-centered {
+	text-align: center;
+}
+
+.col-right {
+	text-align: right;
+}
+
+.col-left {
+	text-align: left;
+}
+
+.col-account-num{
+	width: 4rem
+}
+
+.dis-language-iso2code {
+	text-align: center;
+  	vertical-align: -webkit-baseline-middle;
+  	vertical-align: -moz-middle-with-baseline;
+	font-weight: bolder;
+	color: white;
+}
+
+
+/* Not being used */
+.dis-language-flag {
+	vertical-align: -webkit-baseline-middle;
+	width: 102%;
+	height: 102%;
+}
+
+.panelGrid-resp tr {
+	float: left;
+}
+
+.panelGrid-resp tr td:first-child {
+	width: 10em;
+	display: block;
+	float: left;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.panelGrid-resp tr td label {
+	vertical-align: -webkit-baseline-middle;
+}
+
+.dis-role-permissionDescription {
+	height: 80px;
+}
+
+.dis-role-permissionDescription-label { 
+	vertical-align: top;
+}
+
+/* CSS PARA PAGE ERROR */
+
+.error-page {
+  top: 0px;
+  background-color: #EF3C56;
+  height: 100%;
+}
+
+.error-page div {
+  margin-top: 50px;
+}
+
+.dis-panel {
+	padding-top: 5px;
+  	padding-bottom: 5px;
+}
+
+.dis-language-menu {
+  margin-right: 5px;
+}
+
+.dis-title-template{
+  width: 30%;
+  margin-top: 12px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  font-size: 1.2em;
+  color: white;
+}
+
+.dis-report-type-selection-panel {
+	height: 150px;
+}
+
+@media screen and (max-width: 500px) {
+	.panelGrid-resp tr td:first-child {
+		width: 5em;
+	}
+	.dis-input-width {
+		min-width: 100px;
+	}
+	.panelGrid-resp tr td input {
+		width: 135px;
+	}
+	
+	.dis-title-template,
+	.dis-mini-title {
+	  	font-size:  0.8em;
+	}
+	
+	.dis-language-flag {
+		width: 40px;
+		height:40px ;
+	}
+}
+
+.panelGrid-detail{
+	float: left;
+	background: transparent;
+	width: 100%;
+}
+
+.panelGrid-detail-center{
+	background: transparent;
+	width: 100%;
+}
+
+ .dis-readonly * {
+ 	opacity: 1 !important;"
+ }
+
+.column-size-record{
+	width: 1rem;
+}
+
+.column-size-message{
+	width: 9rem;
+}
+
+.column-size-errorType{
+	width: 3rem;
+}
+
+div#languageForm\:languageSelect_panel div table tr td:nth-child(2) ,
+div#userPreferencesForm\:languageSelect_panel div table tr td:nth-child(2),
+div#changePasswordMandatorioForm\:languageSelect_panel div table tr td:nth-child(2){
+	width: 1em;
+}
+
+/* Special fake tab view  */
+
+.dis-batch-customer-custom-tab-view .ui-tabs-panel.ui-widget-content,
+.dis-batch-customer-custom-tab-view .ui-tabs-panels {
+	display: none !important;
+}
+
+.dis-batch-customer-custom-tab-view,
+.dis-batch-customer-custom-tab-view .ui-tabs-nav {
+	border-bottom-width: 0px !important;
+}
+
+#log\:listBatchLog,
+#log\:listBatchLogInfo,
+.dis-fake-tabview .ui-tabs.ui-widget .ui-widget-content 
+.dis-fake-tabview .ui-tabs.ui-widget .ui-tabs-nav {
+	border: 0px !important;
+}
+
+.dis-fake-tabview {
+	border-top-right-radius: 0px;
+	border-top-left-radius: 0px;
+	border-top-width: 0px;
+}
+
+.dis-fake-tabview {
+	border-top-width: 0px;
+}
+
+.dis-fake-tabview .ui-tabs.ui-widget {
+	border-bottom-right-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+
+.dis-fake-tabview ul li:hover {
+	background: #FBFCFD;
+}
+
+.dis-fake-tabview ul .ui-state-active {
+	  background: #FBFCFD !important;
+}
+
+.dis-fake-tabview ul .ui-tabs-outline {
+	  box-shadow: none;
+}
+
+.dis-fake-tabview .ui-datatable {
+	border-top: none;	
+}
+
+.dis-fake-tabview .ui-paginator-bottom .ui-paginator-pages span {
+	background: transparent;
+}
+
+.col-selection-checkbox {
+	width:18px;
+	text-align:center;
+}
+
+.col-selection-checkbox .ui-chkbox {
+	margin-left: 3px;
+}
+
+.col-cost-center {
+	width: 7rem;
+}
+
+.col-customer-code {
+	width: 5rem;
+}
+
+.col-description {
+	width: 16em;	
+}
+
+.col-customer-name {
+	width: 8rem;
+}
+
+.col-invoice-vat {
+	width: 4rem;
+}
+
+.col-journalEntry-description {
+	width: 18rem;
+}
+
+.col-invoiceNumber {
+	width: 6rem;	
+}
+
+.col-status {
+	width: 6em;	
+}
+
+.col-customer-small {
+	width: 3rem;
+}
+
+.col-date-notime {
+	width: 5em;		
+}
+
+.col-company {
+	width: 8em;
+}
+
+.col-service-received {
+	width: 5em;
+}
+
+.col-billing-scenario {
+	width: 4em;
+}
+
+.col-exchange-rate {
+	width: 5em;			
+}
+
+.col-index {
+	width: 3rem;
+}
+
+.col-platform {
+	width: 4rem;	
+}
+
+.col-journal-type{
+	width: 3rem;
+}
+
+.col-id {
+	width: 4rem;
+}
+
+.col-amount {
+	width: 5rem;
+}
+
+.col-transaction-currency {
+	width: 3.5rem;	
+}
+
+.col-journal-line{
+	width: 3em;	
+}
+
+.col-type{
+	width: 5em;	
+}
+
+.col-base{
+	width: 5em;
+}
+
+.col-schedule-group{
+	width: 5em;
+}
+
+.col-channel{
+	width: 5em;
+}
+
+.col-geography{
+	width: auto;
+}
+
+.col-single-line {
+	width: 2.5em;
+}
+
+.dataTable-letters .ui-datatable-tablewrapper table tbody {
+  	word-wrap: break-word;
+  	text-align: center;
+}
+
+.panelGenerate {
+	margin-top: 5px;
+  	margin-left: 5px;
+  	border: none !important;
+}
+
+.panel-checkbox-generate {
+	padding: 0px !important;
+}
+
+.panelButton {
+	margin-left: 5px;
+	border: none;
+	margin-top: 10px;
+}
+
+.panelTotalCurrency {
+ 	float: right;
+}
+
+.panelTotalCurrency table {
+	width: initial;
+}
+
+.col-index-tol {
+	width: 3rem;
+}
+
+.col-column-tol {
+	width: 6rem;
+}
+
+.col-user-email{
+	width: 15rem;
+}
+
+.col-boolean{
+  width: 5rem;
+}
+
+.size-filter{
+	width: 80% !important;
+}
+
+.size-filter-date input{
+	width: 80% !important;
+}
+
+.size-filter-data-table-responsive label {
+	width: 100% !important;
+}
+
+.panel_Button_Invoice {
+	float: right;
+  	border: none;
+}
+
+.panel_Checkbox_Invoice {
+	float: left;
+  	border: none;
+  	color: #FAFAFA;
+}
+
+.panelGrid-totalInvoice {
+	background: transparent;
+	width: 550px;
+	margin-left: auto;
+}
+
+.panelGrid-chechbox {
+	background: transparent;
+	width: 200px;
+	height: 29px;
+	color: rgb(107, 112, 116);
+	/* margin-right: auto; */
+}
+
+@media screen and (min-width: 1000px) {
+	.panelGrid-chechbox {
+	margin-top: -30px;
+	/* margin-right: auto; */
+	}
+}
+
+.panelGrid-totalInvoice div table, .panelGrid-chechbox div table {
+	background: transparent;
+}
+
+.panelGrid-checkboxInvoice {
+	background: transparent;
+}
+
+.single-line-checkbox, .grouped-journalLines-checkbox {
+	padding-top: 3px;
+    padding-left: 4px;
+}
+
+.grouped-journalLines-checkbox {
+	color: #FAFAFA;
+}
+
+.single-line-panel {
+	padding-top: 5px !important;
+}
+
+.single-line-checkbox span {
+	padding-top: 2px;
+}
+
+.datalist-border{
+	border: none;
+  	background: transparent;
+}
+
+
+.datalist-border:hover, .datalist-border:focus {
+  border: none;
+  color: #27AAE1;
+}
+
+.buttonDefault{
+	display: none;
+	visibility: hidden;
+  	height: 0px;
+  	width: 0px;
+}
+
+.invoiceLineTable-edit, .street-datatable-combo {
+	width: 80%;
+}
+
+.street-datatable-combo-panel .ui-state-disabled {
+	background-color: rgb(181, 181, 181) !important;
+	display: none;
+}
+
+#loginTitle {
+	font-size: 30px;
+}
+
+#languageForm .ui-selectonemenu {
+	left: 385px;
+}
+
+.panelGridSubTotalInvoice input {
+	text-align: right;
+}
+
+.panelGridCheckboxInvoice input {
+	text-align: left;
+}
+
+.login-language-selector tr:nth-child(1) {
+	position: absolute;
+}
+
+.row-import{
+	width: 200px;
+}
+
+@media screen and (max-width: 650px) {
+	.ContainerIndent {
+		  margin-top: 20px;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.dis-title-template,
+	.dis-mini-title {
+	  	font-size:  0.8em;
+	}
+}
+
+@media screen and (max-width: 640px) {
+	#layout-menubar {
+		  margin-top: 20px;
+	}
+}
+
+.sm-topmenu label{
+	  cursor: pointer;
+}
+
+.decoration {
+	text-decoration: none;
+	color: #ffffff !important;
+}
+
+.es {
+	height: 100% !important;
+	display: block;
+	width: 100% !important;
+}
+
+.hover-color:hover{
+	background : white !important;
+}
+
+.hover-color-combo .ui-selectcheckboxmenu-label-container .ui-state-hover{
+	background : white !important;
+}
+
+.text-align-right{
+	text-align: right;
+}
+
+.rendered-width{
+	 width: 108px !important;
+	 display:block;
+}
+
+.dis-picklist-noAll .ui-picklist-button-add-all,
+.dis-picklist-noAll .ui-picklist-button-remove-all {
+	display: none;
+}
+
+
+.col-lineNumber{
+	width: 1em;
+}
+
+.col-Qty{
+	width: 2em;
+}
+
+.col-unit-price {
+	width: 4rem;
+}
+
+.col-total-price {
+	width: 4rem;
+}
+
+.col-description-line{
+	width: 10em;
+}
+
+.col-product-line{
+	width: 4em;
+}
+
+.col-startPeriod-line{
+	width: 3em;
+}
+
+.col-endPeriod-line{
+	width: 3em;
+}
+
+.col-schedule-group-line{
+	width: 2em;
+}
+
+.col-channel-line{
+	width: 2.5em;
+}
+
+.col-vat-amount{
+	width: 4em;
+}
+
+.col-commission-amount{
+	width: 2em;
+}
+
+.col-vat-percentage{
+	width: 2em;
+}
+
+.col-commission-rate{
+	width: 2em;
+}
+
+.col-net-amount{
+	width: 4em;
+}
+
+.col-gross-amount{
+	width: 4em;
+}
+
+.col-price-amount{
+	width: 4rem;
+}
+
+.ui-input-text.ui-state-disabled{
+	color: #ff0000
+}
+
+/* 
+	Colors 
+*/
+
+.black {
+	color: black;
+}
+
+.green {
+	color: green;
+}
+
+.facebookblue {
+	color: #3B5998;
+}
+
+.gray {
+	color: gray;
+}
+
+.dis-picklist-noBorder tbody tr td	{
+	border: none !important;
+}
+
+.col-customer-invoiceType{
+	width:5em; 	
+}
+
+.col-customer-invoiceDate{
+	width:5em;
+}
+
+.turquoise-text {
+	color: #27AAE1;
+}
+
+.red-text {
+	color: #FF0000;
+}
+
+.light-red-text {
+	color: #FF8383;
+}
+
+.blue-text {
+	color: #0961A9;
+}
+
+.orange-text {
+	color: #FFB500;
+}
+
+.email-selection-col, .street-selection-col {
+	width: 1px; 
+	text-align:center;	
+}
+
+.email-selection-col .ui-chkbox-all {
+	margin-left: 30% !important;
+    margin-bottom: 7px !important;
+}
+
+.street-selection-col .ui-chkbox-all {
+	margin-left: 30% !important;
+    margin-bottom: 7px !important;
+}
+
+/* Banner Area (DEV, UAT, PROD) */
+div#bannerVersion {
+    width:20%;
+    background-color: yellow;
+    border: 1px solid black;
+    font-size: larger;
+    font-style: oblique;
+    font-family: 'titillium_webregular';
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+    -ms-transform: matrix(1, -0.3, 0, 1, 0, 0); /* IE 9 */
+    -webkit-transform: matrix(1, -0.3, 0, 1, 0, 0); /* Safari */
+    transform: matrix(1, -0.3, 0, 1, 0, 0); /* Standard syntax */
+    z-index: 999999999999999999999;
+    position: absolute;
+}
+
+
+div#bannerVersion p {
+    margin: 0;
+    margin-left: 25%;
+}
+
+.bannerVersionPanel , .bannerVersionPanel div.ui-panel-content.ui-widget-content {
+	padding: 0px !important;
+}
+
+.customer-street-datatable {
+	margin-top: 15px !important;
+}
+
+.input-panel, .input-panel .ui-panel-content {
+	padding: 0px !important;
+}
+
+.input-button {
+	margin-left: 2px !important;
+}
+
+.account-comboBox-panel div{
+	width: 145px !important;
+}
+
+.profitCenter-comboBox-panel div{
+	width: 120px !important;
+}
+
+.float-right{
+    float: right;
+}
+
+.dataList-split{    
+	max-height: 150px;
+    overflow: auto;
+}
+
+.button-submit-split{
+	margin-top: 4px;
+}
+
+
+.wizard-header .ui-wizard-step-titles li{
+	border-radius: 0px !important;
+    margin: 0px;
+}
+
+
+.column-filter input{
+	width: 100% !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+
+.column-size-s{
+	width: 4rem;
+}
+
+
+.column-size-m{
+	width: 6rem;
+}
+
+
+.column-size-l{
+	width: 8rem;
+}
+
+.column-size-xl{
+	width: 12rem;
+}
+
+.column-filter .ui-column-title{
+	display: block;
+}
+
+.button-icon-white .fa-cog:before{
+	color: white;
+}
+
+.column-reference{
+	display: none;
+}
+
+.download-invoice{
+	display: none !important;	
+}
+
+/* Invoice Delete Button */
+.lais-delete-button {
+	float:right;
+}
+
+.lais-delete-button span.ui-button-text.ui-c {
+	background: #E24444 !important;
+	border: solid 1px #B75787;
+}

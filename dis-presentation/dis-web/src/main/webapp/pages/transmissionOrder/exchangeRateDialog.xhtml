@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions" >
+	
+	<h:form id="exchangeRateDlgForm">
+	<p:dialog 
+		header="#{msg['message.invoice.chooseExchangeRate']}"
+		id="exchangeRateDlg"
+		widgetVar="exchangeRateDlg" 	
+		resizable="false"  >
+		
+		<h:panelGrid columns="1" cellpadding="5">
+			<p:panel styleClass="no-border">
+				<p:panelGrid styleClass="no-border">
+					
+					<!-- UI REPEAT DOESNT WORK WELL ITERATING A MAP -->
+					<ui:repeat 
+						var="exchangeRate" 
+						value="#{transmissionOrdersController.individualExchangeRates.toArray()}" 
+						varStatus="status" >
+		 				<p:row>
+		 					<!-- FROM TO MESSAGE -->
+		 					<p:column>
+				 				#{msg['message.common.from']} #{exchangeRate.fromCurrency} 
+				 				#{msg['message.invoice.exchangeRateTo']} #{exchangeRate.toCurrency}:
+			 				</p:column>
+			 				
+							<!-- EXCHANGE RATE VALUE -->
+							<p:column>
+							<p:inputText 
+								value="#{exchangeRate.value}">
+								<f:convertNumber pattern="#0.00000" maxFractionDigits="5"/>
+							</p:inputText> 
+							</p:column>
+						</p:row>
+						
+					</ui:repeat>
+				</p:panelGrid>	
+			</p:panel>
+			
+			<p:spacer styleClass="dis-spacer-smal" />
+				
+            <f:facet name="footer">
+                <p:commandButton 
+                	value="#{msg['message.common.accept']}"
+                	update=":tabViewOrdersForm:listTohs:panelTotalCurrency :prin:ordersMessages"
+                	actionListener="#{transmissionOrdersController.generateInvoices}" />
+				<p:commandButton 
+                	value="#{msg['message.common.cancel']}"
+                    onstart="PF('exchangeRateDlg').hide()" />
+            </f:facet>
+		</h:panelGrid>
+	</p:dialog>
+	</h:form>
+
+</ui:composition>

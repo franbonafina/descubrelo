@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+    http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+
+	<context:component-scan base-package="com.discovery.dis" />
+	<context:annotation-config />
+
+	<!-- DATABASE -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${db.jdbc.driverClassName}" />
+		<property name="url" value="${db.jdbc.url}" />
+		<property name="username" value="${db.jdbc.username}" />
+		<property name="password" value="${db.jdbc.password}" />
+	</bean>
+
+	<bean id="jdbctemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg>
+			<ref bean="dataSource" />
+		</constructor-arg>
+	</bean>
+	
+	<bean id="mockAuditUtil" class="com.discovery.dis.dao.test.util.MockAuditUtil" />
+	<bean id="auditInterceptor" class="com.discovery.dis.dao.audit.AuditInterceptor" >
+		<constructor-arg ref="mockAuditUtil"/> 
+	</bean>
+	
+	<bean id="sessionFactory"
+			class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+			<property name="dataSource" ref="dataSource" />
+			<property name="entityInterceptor" ref="auditInterceptor"/>
+			<property name="hibernateProperties">
+				<props>
+					<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+					<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+					<!-- <prop key="hibernate.default_schema">${hibernate.default_schema}</prop> -->
+					<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+					<prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+					<prop key="hibernate.use_sql_comments">${hibernate.use_sql_comments}</prop>
+					<prop key="hibernate.hbm2ddl.import_files">${hibernate.hbm2ddl.import_files}</prop>
+					<!--prop key="hibernate.hbm2ddl.import_files_sql_extractor">org.hibernate.tool.hbm2ddl.MultipleLinesSqlCommandExtractor</prop -->
+					<prop key="hibernate.transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop>
+					<!--prop key="hibernate.current_session_context_class">thread</prop-->
+					<!--prop key="hibernate.connection.autocommit">false</prop--> 
+					<prop key="hibernate.connection.release_mode">after_transaction</prop>
+					<prop key="transaction.factory_class">org.hibernate.transaction.JDBCTransactionFactory</prop>
+				  	<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
+				</props>
+			</property>
+			<property name="mappingResources">
+				<list>
+					<value>com/discovery/dis/domain/security/impl/Permission.hbm.xml</value>
+					<value>com/discovery/dis/domain/security/impl/Role.hbm.xml</value>
+					<value>com/discovery/dis/domain/security/impl/RolePermission.hbm.xml</value>
+					<value>com/discovery/dis/domain/security/impl/UserRole.hbm.xml</value>
+					<value>com/discovery/dis/domain/security/impl/User.hbm.xml</value>
+					<value>com/discovery/dis/domain/security/impl/UserCompany.hbm.xml</value>
+					<value>com/discovery/dis/domain/configuration/Settings.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/TaxStatus.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/DelayReason.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Company.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/CompanySettings.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/Country.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Language.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Address.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/ServiceReceivedType.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/BatchCustomer.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Customer.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/CustomerBankInformation.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/ServiceReceivedTypeCustomer.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/AdvertiserCustomer.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/BillingContact.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/BillingScenario.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/CustomerCrossReference.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/InvoiceSubTypeCustomer.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/Password.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/ERPType.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Currency.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/BatchLog.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Batch.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/transmissionOrder/TransmissionOrderLine.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/impl/transmissionOrder/TransmissionProduct.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/impl/transmissionOrder/SalesChannel.hbm.xml
+					</value>
+
+					<value>com/discovery/dis/domain/impl/TinValidation.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/transmissionOrder/Commission.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/transmissionOrder/SalesRepresentatives.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/transmissionOrder/TransmissionOrderSplit.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/transmissionOrder/TransmissionOrderHeader.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/BatchLogType.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/impl/ReportContact.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/billing/impl/Invoice.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/billing/impl/InvoiceLine.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/billing/impl/InvoiceType.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/billing/impl/InvoiceSubType.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/billing/impl/Journal.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/billing/impl/JournalLine.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/billing/impl/JournalEntryRule.hbm.xml</value>
+
+					<value>com/discovery/dis/domain/accounting/impl/Account.hbm.xml</value>
+					<value>com/discovery/dis/domain/accounting/impl/Geography.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/accounting/impl/Platform.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/accounting/impl/ProfitCenter.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/accounting/impl/CostCenter.hbm.xml</value>
+					<value>com/discovery/dis/domain/coATransactionMapping/Impl/CoATransactionMapping.hbm.xml
+					</value>
+					<value>com/discovery/dis/domain/impl/Channel.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/ErpLog.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/ErpLogType.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/EntityCache.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/EmailType.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Email.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/TelephoneType.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Telephone.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/Region.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/StreetType.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/Street.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/impl/PaymentTerm.hbm.xml</value>
+					<value>com/discovery/dis/domain/impl/PaymentMethod.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/billing/impl/InvoiceTypeMapping.hbm.xml</value>
+					
+					<value>com/discovery/dis/domain/report/impl/ReportNotification.hbm.xml</value>
+                    
+                    <value>com/discovery/dis/domain/impl/Tax.hbm.xml</value>
+                	<value>com/discovery/dis/domain/billing/impl/InvoiceLineTax.hbm.xml</value>
+                
+                	<value>com/discovery/dis/domain/impl/ExcludingCustomerTax.hbm.xml</value>
+                
+				</list>
+			</property>
+		</bean>
+
+</beans>

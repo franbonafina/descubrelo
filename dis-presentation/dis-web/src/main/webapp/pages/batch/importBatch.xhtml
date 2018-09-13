@@ -1,0 +1,297 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.common.import']} #{null!=batchImportController.selected and batchImportController.selected.batchType=='CUSTOMERS' ? msg['message.common.customers'] : msg['message.common.transmissionOrders']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+				navigationRuler.batchListPage, batchImportController.selected)}" />
+		</h:form>
+
+		<div class="ContainerIndent Responsive">
+
+			<p:messages autoUpdate="true" id="importBatchMessages"
+				showDetail="false" showSummary="true" closable="true" />
+
+			<span class="FontBold Fs18 hardblue">
+				#{msg['message.header.detail.batch.title']} </span>
+			<div class="EmptyBox10"></div>
+
+			<p:panel>
+				<p:panelGrid columns="4" id="batchHeaderPanel"
+					styleClass="no-border panelGrid-detail">
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.company']} :" />
+					<h:outputText
+						value="#{batchImportController.selected.company.getDescriptionAndCode()}" />
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.batchFileID']} :" />
+					<h:outputText value="#{batchImportController.selected.batchFileID}" />
+
+					<p:outputLabel value="#{msg['message.header.detail.batch.type']} :" />
+					<h:outputText value="#{(labelUtil.getBatchTypeLabel(batchImportController.selected.batchType))}" />
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.extractUserID']} :" />
+					<h:outputText
+						value="#{batchImportController.selected.extractUserID}" />
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.startDate']} :" />
+					<h:outputText value="#{batchImportController.selected.startDate}">
+						<f:convertDateTime dateStyle="short" timeStyle="default"
+							type="both" locale="#{languageController.locale}" />
+					</h:outputText>
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.extractStartDate']} :" />
+					<h:outputText
+						value="#{batchImportController.selected.extractStartDate}">
+						<f:convertDateTime dateStyle="short" timeStyle="default"
+							type="both" locale="#{languageController.locale}" />
+					</h:outputText>
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.endDate']} :" />
+					<h:outputText value="#{batchImportController.selected.endDate}">
+						<f:convertDateTime dateStyle="short" timeStyle="default"
+							type="both" locale="#{languageController.locale}" />
+					</h:outputText>
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.extractEndDate']} :" />
+					<h:outputText
+						value="#{batchImportController.selected.extractEndDate}">
+						<f:convertDateTime dateStyle="short" timeStyle="default"
+							type="both" locale="#{languageController.locale}" />
+					</h:outputText>
+
+					<p:outputLabel
+						value="#{msg['message.header.detail.batch.numberOfRecords']} :" />
+					<h:outputText
+						value="#{batchImportController.selected.numberOfRecords}" />
+
+					<p:outputLabel
+						value="#{batchImportController.selected.transmissionOrderType ? 
+						msg['message.header.detail.batch.numberOfInvoices']	: 
+						msg['message.header.detail.batch.numberOfCustomers']} :" />
+					<h:outputText
+						value="#{batchImportController.selected.transmissionOrderType ? 
+						batchImportController.selected.numberOfInvoices : 
+						batchImportController.selected.numberOfCustomers}" />
+
+				</p:panelGrid>
+			</p:panel>
+
+			<div class="EmptyBox30"></div>
+			<span class="FontBold Fs18 hardblue">
+				#{msg['message.import.batch.processStatus']} </span>
+			<div class="EmptyBox10"></div>
+
+			<h:form id="importBatchForm">
+				<p:panel>
+					<!-- PROGRESS BRIEF -->
+					<p:panelGrid id="processPanel"
+						styleClass="no-border panelGrid-detail">
+
+						<!-- PROGRESS BAR -->
+						<p:row>
+							<p:column colspan="2">
+								<p:progressBar interval="1000" widgetVar="progressBarVar"
+									ajax="true" value="#{batchImportController.progress}"
+									labelTemplate="{value}%" styleClass="animated" global="false">
+
+									<p:ajax event="complete"
+										listener="#{batchImportController.onComplete}"
+										oncomplete="PF('progressBarVar').cancel(); 
+											PF('progressBarVar').setValue(100);"
+										update=":importBatchForm:footerButtons :importBatchForm:batchStatus :batchHeaderPanel" />
+								</p:progressBar>
+							</p:column>
+						</p:row>
+
+						<!-- BATCH STATUS -->
+						<p:row>
+							<p:column styleClass="row-import">
+								<p:outputLabel
+									value="#{msg['message.header.detail.batch.status']} :" />
+							</p:column>
+							<p:column>
+								<h:outputText id="batchStatus"
+									value="#{(labelUtil.getBatchStatusLabel(batchImportController.selected.status))}" />
+							</p:column>
+						</p:row>
+
+						<!-- TOTAL -->
+						<p:row>
+							<p:column styleClass="row-import">
+								<p:outputLabel
+									value="#{msg['message.import.batch.tobe.proces']} :" />
+							</p:column>
+							<p:column>
+								<h:outputText value="#{batchImportController.totalCount}" />
+							</p:column>
+						</p:row>
+
+						<!-- 
+						PROCESS						
+ 						<c:if test="#{batchImportController.step != null}">
+ 							<p:row> 
+ 								<p:column styleClass="row-import"> 
+ 									<p:outputLabel 
+ 										value="#{msg['message.import.batch.already.process']}:" /> 
+ 								</p:column> 
+ 								<p:column> 
+ 									<h:outputText value="#{batchImportController.totalProcessed}" /> 
+ 								</p:column> 
+ 							</p:row> 
+ 						</c:if> 
+
+						SUCCESS
+ 						<c:if test="#{batchImportController.step != null}"> 
+ 							<p:row> 
+ 								<p:column styleClass="row-import"> 
+ 									<p:outputLabel value="#{msg['message.import.batch.success']}:" /> 
+ 								</p:column> 
+ 								<p:column> 
+ 									<h:outputText value="#{batchImportController.countSuccess}" /> 
+ 								</p:column> 
+ 							</p:row> 
+ 						</c:if> 
+
+
+						INVALID
+ 						<c:if test="#{batchImportController.step != null}"> 
+ 							<p:row> 
+ 								<p:column styleClass="row-import"> 
+ 									<p:outputLabel value="#{msg['message.import.batch.invalid']}:" /> 
+ 								</p:column> 
+ 								<p:column> 
+ 									<h:outputText value="#{batchImportController.countInvalid}" /> 
+ 								</p:column> 
+ 							</p:row> 
+ 						</c:if> 
+
+						FAILED
+ 						<c:if test="#{batchImportController.step == 'END_STEP'}"> 
+ 							<p:row> 
+ 								<p:column styleClass="row-import"> 
+ 									<p:outputLabel value="#{msg['message.import.batch.failed']} :" /> 
+ 								</p:column> 
+ 								<p:column> 
+ 									<h:outputText value="#{batchImportController.countFailure}" /> 
+ 								</p:column> 
+ 							</p:row> 
+ 						</c:if> --> 
+
+						<!-- STEP -->
+						<c:if test="#{batchImportController.step != null}">
+							<p:row>
+								<p:column styleClass="row-import">
+									<p:outputLabel value="#{msg['message.import.batch.step']}:" />
+								</p:column>
+								<p:column>
+									<h:outputText value="#{batchImportController.stepMessage}" />
+								</p:column>
+							</p:row>
+
+
+							<!-- ELAPSED TIME -->
+							<p:row>
+								<p:column styleClass="row-import">
+									<p:outputLabel
+										value="#{msg['message.import.batch.timeElapsed']}:" />
+								</p:column>
+								<p:column>
+									<p:outputLabel
+										value="#{batchImportController.elapsedSeconds} #{msg['message.import.batch.secondsElapsed']}" />
+								</p:column>
+							</p:row>
+
+							<!-- START TIME -->
+							<p:row>
+								<p:column styleClass="row-import">
+									<p:outputLabel value="#{msg['message.common.started']}:" />
+								</p:column>
+								<p:column>
+									<h:outputText
+										value="#{batchImportController.started != null ? 
+									batchImportController.started : '-'}">
+
+										<f:convertDateTime dateStyle="short" timeStyle="default"
+											type="both" locale="#{languageController.locale}" />
+									</h:outputText>
+								</p:column>
+							</p:row>
+						</c:if>
+					</p:panelGrid>
+				</p:panel>
+
+				<div class="EmptyBox30"></div>
+
+				<p:panelGrid id="footerButtons" columns="4"
+					styleClass="no-border transparent dis-spacing-small">
+					<p:commandButton id="back" process="@this"
+						disabled="#{batchImportController.running}"
+						value="#{msg['message.common.back']}" 
+						action="#{batchImportController.back}" />
+
+					<!-- VALIDATE -->
+					<p:commandButton id="validateButton"
+						value="#{msg['message.common.validate']}"
+						widgetVar="validateButtonVar" update="back log importButton"
+						actionListener="#{batchImportController.startValidation}"
+						disabled="#{batchImportController.running
+								or !batchImportController.validable}"
+						oncomplete="
+								PF('progressBarVar').start();
+								PF('validateButtonVar').disable();"
+						title="#{batchImportController.selected.batchType=='CUSTOMERS' ? msg['message.import.batch.tooltip.validate.customers'] : msg['message.import.batch.tooltip.validate.invoices']}">
+
+						<p:confirm
+							message="#{msg['message.import.batch.validation.confirmation']}"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+
+					<!-- IMPORT -->
+					<p:commandButton id="importButton"
+						value="#{msg['message.common.import']}"
+						update="back log validateButton" widgetVar="importButtonVar"
+						disabled="#{batchImportController.running or !batchImportController.importable}"
+						actionListener="#{batchImportController.startImport}"
+						oncomplete="
+								PF('progressBarVar').start();
+								PF('importButtonVar').disable();"
+						title="#{batchImportController.selected.batchType=='CUSTOMERS' ? msg['message.import.batch.tooltip.import.customers'] : msg['message.import.batch.tooltip.import.invoices']}">
+
+						<p:confirm
+							message="#{msg['message.import.batch.import.confirmation']}"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+
+					<p:commandButton id="log"
+						value="#{msg['message.batch.button.log']}"
+						disabled="#{batchImportController.running}" process="@this"
+						action="#{batchImportController.switchToDetail}" />
+				</p:panelGrid>
+			</h:form>
+
+		</div>
+
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,186 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.menu.Platform']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<p:focus context="platformFiltersForm" />
+
+				<h:form id="platformFiltersForm">
+					<p:messages id="listPlatformMessages" closable="true"
+						showDetail="false" autoUpdate="false" />
+
+					<p:tabView id="filterTabView">
+						<p:tab title="#{msg['message.common.search']}">
+
+							<p:panelGrid styleClass="no-border" columns="4">
+
+								<!-- COMPANY -->
+								<p:outputLabel for="companyFilter"
+									value="#{msg['message.common.company']}" />
+								<p:selectOneMenu id="companyFilter" styleClass="dis-input-width"
+									value="#{filterContainer.platformFilterGenerator.company}"
+									title="#{msg['message.menu.platform.tooltip.filterCode']}"
+									converter="omnifaces.SelectItemsConverter" required="true">
+									
+									<f:selectItems value="#{sessionSelectorController.companies}"
+										var="company" itemValue="#{company}"
+										itemLabel="#{company.code} - #{company.description}" />									
+								</p:selectOneMenu>
+								
+								<!-- CODE -->
+								<p:outputLabel
+									value="#{msg['message.list.platform.code']}" for="code" />
+								<p:inputText id="code" styleClass="dis-input-width"
+									label="#{msg['message.list.platform.code']}"
+									title="#{msg['message.menu.platform.tooltip.code']}"
+									value="#{filterContainer.platformFilterGenerator.code}"/>
+								
+								<!-- ACTIVE -->
+								<p:outputLabel
+									value="#{msg['message.common.active']}" />
+								<p:selectOneMenu id="activeFilter"
+									styleClass="dis-input-width"
+									converter="omnifaces.SelectItemsConverter"
+									value="#{filterContainer.platformFilterGenerator.active}"
+									title="#{msg['message.list.platform.active']}" >
+									
+									<f:selectItem  
+										itemValue="#{true}" 
+										itemLabel="#{msg['message.common.true']}"/>
+									<f:selectItem  
+										itemValue="#{false}" 
+										itemLabel="#{msg['message.common.false']}"/>
+									<f:selectItem  
+										itemValue="#{null}" 
+										itemLabel="#{msg['message.common.selectOne']}"/>
+								</p:selectOneMenu>
+
+							</p:panelGrid>
+
+							<p:spacer styleClass="dis-spacer-small" />
+
+							<p:panelGrid columns="3"
+								styleClass="no-spacing no-border dis-spacing-small">
+								<p:commandButton id="search"
+									value="#{msg['message.common.search']}"
+									actionListener="#{platformController.filterTable}"
+									styleClass="dis-button-width" icon="ui-icon-search"
+									oncomplete="PF('platformDataTable').show();"
+									update=":listPlatformForm"
+									title="#{msg['message.platform.tooltip.search']}" />
+
+								<p:commandButton id="clear"
+									value="#{msg['message.common.clear']}"
+									actionListener="#{platformController.clearFilters}"
+									oncomplete="PF('platformDataTable').close();"
+									styleClass="dis-button-width" icon="ui-icon-refresh"
+									update="platformFiltersForm"
+									title="#{msg['message.common.tooltip.clear.filters']}" />
+
+								<p:commandButton id="add" value="#{msg['message.common.add']}"
+									styleClass="dis-button-width" icon="ui-icon-plus"
+									action="#{platformController.add}"
+									title="#{msg['message.platform.tooltip.add']}" />
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+
+				</h:form>
+
+				<p:spacer styleClass="dis-spacer-small" />
+
+
+				<h:form id="listPlatformForm">
+
+					<p:panel id="platformDataTable" widgetVar="platformDataTable"
+						visible="false" closable="true" toggleable="true" closeSpeed="0"
+						styleClass="no-border no-spacing">
+
+						<p:dataTable id="listPlatform" widgetVar="listPlatform"
+							var="platform" styleClass="dataTable-letters"
+							value="#{platformController.platformLazyDataModel}"
+							paginatorAlwaysVisible="true" paginator="true"
+							currentPageReportTemplate="#{msg['message.common.records']} {startRecord}-{endRecord} #{msg['message.common.of']} {totalRecords}. #{msg['message.common.page']} [{currentPage} #{msg['message.common.of']} {totalPages}]"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} 
+							{PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="5,10,15,20,25,50,100,200,500,1000"
+							sortMode="multiple" rows="10" selectionMode="single"
+							selection="#{platformController.selected}" lazy="true"
+							stickyHeader="false" rowKey="#{platform.id}"
+							emptyMessage="#{msg['message.datatable.emptyMessage']}"
+							reflow="true">
+
+							<f:facet name="header">
+								<table class="no-border dis-table-header">
+									<tr>
+										<td><p:commandButton id="edit"
+												styleClass="Fleft LightButton" icon="ui-icon-pencil"
+												process="@this" action="#{platformController.edit}"
+												disabled="#{platformController.selected == null}"
+												title="#{msg['message.platform.tooltip.edit']}" /></td>
+
+										<td class="ui-datatable ui-datatable-header"><h:outputText
+												value="#{msg['message.Platform.title.table']}" /></td>
+										<td></td>
+									</tr>
+								</table>
+							</f:facet>
+
+							<p:ajax event="rowSelect" update="edit" />
+							<p:ajax event="rowUnselect" update="edit" />
+							<p:ajax event="rowDblselect" onstart="changeUserAction()" />
+
+							<!-- COMPANY -->
+							<p:column headerText="#{msg['message.common.company']}"
+								styleClass="" sortBy="#{platform.company.code}">
+								<h:outputText value="#{platform.company.code}" />
+							</p:column>
+
+							<!-- code -->
+							<p:column headerText="#{msg['message.list.platform.code']}"
+								styleClass="" sortBy="#{platform.code}">
+								<h:outputText value="#{platform.code}" />
+							</p:column>
+
+							<!-- active -->
+							<p:column headerText="#{msg['message.list.platform.active']}"
+								styleClass="" sortBy="#{platform.active}">
+								<h:outputText value="#{platform.active ? msg['message.common.true'] : msg['message.common.false']}" />
+							</p:column>
+
+							<!-- description -->
+							<p:column
+								headerText="#{msg['message.list.platform.description']}"
+								styleClass="" sortBy="#{platform.description}">
+								<h:outputText value="#{platform.description}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</p:panel>
+					
+					<p:remoteCommand 
+					name="changeUserAction"
+					action="#{platformController.edit}" />
+					
+					<p:remoteCommand autoRun="true" update="platformFiltersForm" /> 
+					
+				</h:form>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+	#{msg['message.common.channel']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<div class="Container100">
+			<div class="ContainerIndent">
+
+				<h:form id="channelform">
+					<p:tabView>
+						<p:tab title="#{msg['message.common.channel']}">
+							<p:messages autoUpdate="false" id="indexMessagesChannel"
+								showDetail="false" showSummary="true" closable="true" />
+							<p:panelGrid styleClass="no-border" columns="2"
+								columnClasses="label, value">
+
+								<!-- CODE -->
+								<p:outputLabel for="channelCode"
+									value="#{msg['message.channel.code']}"
+									rendered="#{not channelCRUDController.new}" />
+								<h:outputText id="channelCode"
+									value="#{channelCRUDController.channel.code}"
+									rendered="#{not channelCRUDController.new}" />
+
+								<p:outputLabel for="channelCodeInput"
+									value="#{msg['message.channel.code']}"
+									rendered="#{channelCRUDController.new}" />
+								<p:inputText id="channelCodeInput"
+									label="#{msg['message.channel.code']}"
+									value="#{channelCRUDController.channel.code}" required="true"
+									rendered="#{channelCRUDController.new}"
+									styleClass="dis-input-width"
+									title="#{msg['message.channel.tooltip.channel.code']}">
+									<f:validateLength  maximum="5" />
+								</p:inputText>
+
+								<!-- DESCRIPTION -->
+								<p:outputLabel for="channelDescription"
+									value="#{msg['message.channel.description']}" />
+								<p:inputText id="channelDescription"
+									value="#{channelCRUDController.channel.description}"
+									required="true" styleClass="dis-input-width"
+									title="#{msg['message.channel.tooltip.channel.desc']}" />
+
+								<!-- PROFITCENTER -->
+								<p:outputLabel for="profitCenter"
+									value="#{msg['message.channel.profitCenter']}"></p:outputLabel>
+
+								<!-- MENU -->
+								<p:selectOneMenu id="profitCenter"
+									value="#{channelCRUDController.channel.profitCenter}"
+									converter="omnifaces.SelectItemsConverter"
+									styleClass="dis-input-width" required="true"
+									title="#{msg['message.channel.tooltip.channel.prof']}">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['message.channel.edit.profitcenter']}"
+										styleClass="dis-input-width" />
+
+									<f:selectItems value="#{selectorController.profitCenterList}"
+										var="profitCenter" itemValue="#{profitCenter}"
+										itemLabel="#{profitCenter.number}- #{profitCenter.description}" />
+
+									<p:ajax event="change" process="@this" update="@this" />
+								</p:selectOneMenu>
+
+
+
+								<!-- BUTTON -->
+
+								<p:commandButton value="#{msg['message.common.save']}"
+									id="accept" styleClass="dis-button-width" process="@form"
+									action="#{channelCRUDController.createOrUpdate}"
+									update="channelform indexMessagesChannel" icon="ui-icon-check"
+									oncomplete="scrollOnMessageToTop()"
+									title="#{msg['message.channel.tooltip.channel.save']}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" global="true" showEffect="fade"
+										hideEffect="fade" />
+								</p:commandButton>
+
+								<p:commandButton value="#{msg['message.common.cancel']}"
+									resetValues="true" id="cancelar" process="@this"
+									styleClass="dis-button-width" icon="ui-icon-cancel"
+									immediate="true" action="#{channelCRUDController.cancel}"
+									title="#{msg['message.channel.tooltip.channel.cancel']}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.cancel']}"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+							</p:panelGrid>
+						</p:tab>
+					</p:tabView>
+				</h:form>
+			</div>
+		</div>
+
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,111 @@
+dis.env=local
+#dis.env=dev
+#dis.env=uat
+#dis.env=prod
+
+# Webmethods LOCAL VM
+local.ais.soa.discovery=http://localhost:9095
+local.ais.soa.discovery.user=aisuser
+local.ais.soa.discovery.pass=aisuser
+
+local.ais.soa.discovery.msdynamics=http://localhost:9095
+local.ais.soa.discovery.msdynamics.user=aisuser
+local.ais.soa.discovery.msdynamics.pass=aisuser
+
+local.ais.soa.discovery.sap=http://localhost:9095
+local.ais.soa.discovery.sap.user=aisuser
+local.ais.soa.discovery.sap.pass=aisuser
+
+# Reports LOCAL VM
+#local.ais.report.url=http://192.168.1.103/ReportServer/Pages/ReportViewer.aspx?%2fais%2f
+local.ais.report.url=http://cloud1.une.com.ar:3030/ReportServer/Pages/ReportViewer.aspx?%2fais%2f
+local.ais.report.username=leo
+local.ais.report.password=Welcome1
+
+# Webmethods DEV
+dev.ais.soa.discovery=http://soa-dev.discovery.com/ws/DcAIS.ws.provider.disWSP/DcAIS_ws_provider_disWSP_Port
+dev.ais.soa.discovery.user=aisuser
+dev.ais.soa.discovery.pass=aisuser
+dev.ais.soa.discovery.msdynamics=http://soa-dev.discovery.com/ws//DcAIS.ws.provider.laisColombiaToMSDynamicsServices/DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Port
+dev.ais.soa.discovery.msdynamics.user=aisuser
+dev.ais.soa.discovery.msdynamics.pass=aisuser
+dev.ais.soa.discovery.sap=http://soa-dev.discovery.com/ws/DcAIS.ws.provider.laisMexicoToSAPServices/DcAIS_ws_provider_laisMexicoToSAPServices_Port
+dev.ais.soa.discovery.sap.user=aisuser
+dev.ais.soa.discovery.sap.pass=aisuser
+
+# Reports DEV
+dev.ais.report.url=http://dctzadssrs01/ReportServer/Pages/ReportViewer.aspx?%2flais_dev%2fais%2f
+dev.ais.report.username=svc_webmethods@us.dci.discovery.com
+dev.ais.report.password=Bannanas*2011
+
+# Webmethods UAT
+uat.ais.soa.discovery=http://soa-qa.discovery.com/ws/DcAIS.ws.provider.disWSP/DcAIS_ws_provider_disWSP_Port
+uat.ais.soa.discovery.user=aisuser
+uat.ais.soa.discovery.pass=aisuser
+dev.ais.soa.discovery.msdynamics=http://soa-qa.discovery.com/ws//DcAIS.ws.provider.laisColombiaToMSDynamicsServices/DcAIS_ws_provider_laisColombiaToMSDynamicsServices_Port
+dev.ais.soa.discovery.msdynamics.user=aisuser
+dev.ais.soa.discovery.msdynamics.pass=aisuser
+dev.ais.soa.discovery.sap=http://soa-qa.discovery.com/ws/DcAIS.ws.provider.laisMexicoToSAPServices/DcAIS_ws_provider_laisMexicoToSAPServices_Port
+dev.ais.soa.discovery.sap.user=aisuser
+dev.ais.soa.discovery.sap.pass=aisuser
+
+# Reports UAT
+uat.ais.report.url=http://dctzadssrs01/ReportServer/Pages/ReportViewer.aspx?%2flais_uat%2fais%2f
+uat.ais.report.username=svc_webmethods@us.dci.discovery.com
+uat.ais.report.password=Bannanas*2011
+
+
+# Webmethods PROD
+prod.ais.soa.discovery=http://soa.discovery.com/ws/DcAIS.ws.provider.disWSP/DcAIS_ws_provider_disWSP_Port
+prod.ais.soa.discovery.user=aisuser
+prod.ais.soa.discovery.pass=lA1sU53R!
+prod.ais.soa.discovery.msdynamics=http://localhost:9095
+prod.ais.soa.discovery.msdynamics.user=aisuser
+prod.ais.soa.discovery.msdynamics.pass=lA1sU53R
+
+prod.ais.soa.discovery.sap=http://localhost:9095
+prod.ais.soa.discovery.sap.user=aisuser
+prod.ais.soa.discovery.sap.pass=lA1sU53R
+
+# Reports PROD
+prod.ais.report.url=http://ssrs.discovery.com/ReportServer/Pages/ReportViewer.aspx?%2flais_prd%2fais%2f
+prod.ais.report.username=svc_webmethods@us.dci.discovery.com
+prod.ais.report.password=Bannanas*2011
+
+# Afip Cuit Validation
+ais.afip.cuit.validation.url=https://soa.afip.gob.ar/sr-padron/v2/persona/
+
+# Mail Server
+mail.service.enable=false
+mail.smtp.host=dctmail.discovery.com
+mail.smtp.port=25
+mail.smtp.user=
+mail.smtp.password=
+
+
+#-------
+# FINAL
+#-------
+#Webmethods
+ais.soa.discovery=${${dis.env}.ais.soa.discovery}
+ais.soa.discovery.user=${${dis.env}.ais.soa.discovery.user}
+ais.soa.discovery.pass=${${dis.env}.ais.soa.discovery.pass}
+ais.soa.discovery.msdynamics=${${dis.env}.ais.soa.discovery.msdynamics}
+ais.soa.discovery.msdynamics.user=${${dis.env}.ais.soa.discovery.msdynamics.user}
+ais.soa.discovery.msdynamics.pass=${${dis.env}.ais.soa.discovery.msdynamics.pass}
+ais.soa.discovery.sap=${${dis.env}.ais.soa.discovery.sap}
+ais.soa.discovery.sap.user=${${dis.env}.ais.soa.discovery.sap.user}
+ais.soa.discovery.sap.pass=${${dis.env}.ais.soa.discovery.sap.pass}
+
+
+# Reports
+ais.report.url=${${dis.env}.ais.report.url}
+ais.report.username=${${dis.env}.ais.report.username}
+ais.report.password=${${dis.env}.ais.report.password}
+
+#Environment
+ais.environment=LOCAL
+#ais.environment=DEV
+#ais.environment=UAT
+#ais.environment=PROD
+

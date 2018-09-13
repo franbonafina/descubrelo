@@ -1,0 +1,1708 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:of="http://omnifaces.org/functions"
+	template="/WEB-INF/templates/template.xhtml">
+
+	<ui:define name="viewTitle">
+		#{msg['message.header.customer']}
+	</ui:define>
+
+	<ui:define name="content">
+		<h:outputScript name="jquery/jquery.js" library="primefaces"
+			target="head" />
+
+		<h:form>
+			<p:remoteCommand autoRun="true"
+				action="#{navigationRuler.navigateOnNull(
+				navigationRuler.customerListPage, customerCRUDController.selectCustomer)}" />
+		</h:form>
+
+		<c:if test="#{customerCRUDController.selectCustomer != null}">
+
+			<div class="Container100">
+				<div class="ContainerIndent">
+					<p:focus context="createUpdateCustomerForm" />
+
+					<h:form id="createUpdateCustomerForm">
+
+						<f:facet name="header">
+							<p:outputLabel
+								value="#{customerCRUDController.isNew() ?
+						msg['message.user.dialog.header.create'] :
+						msg['message.user.dialog.header.modificate']}" />
+						</f:facet>
+
+						<p:messages autoUpdate="false" id="indexMessagesCustomer"
+							showDetail="false" showSummary="true" closable="true" />
+
+						<!-- CUSTOMER TAB VIEW -->
+						<p:tabView id="customerTabView"
+							activeIndex="#{customerCRUDController.activeIndex}">
+							<p:ajax event="tabChange"
+								listener="#{customerCRUDController.onTabChange}" />
+
+							<!-- MAIN INFORMATION -->
+							<p:tab id="customerTabInfo"
+								title="#{msg['message.customer.tabview.info']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel1">
+
+									<p:panelGrid id="pGrid" styleClass="no-border"
+										columnClasses="label, value">
+
+										<f:facet name="header">
+											<p:row>
+												<p:column colspan="2" styleClass="column-reference"></p:column>
+												<p:column colspan="2" styleClass="column-reference"></p:column>
+											</p:row>
+										</f:facet>
+
+										<p:row>
+											<!-- COMPANY -->
+											<p:column>
+												<p:outputLabel for="custCompany"
+													value="#{msg['message.customer.company']}" />
+											</p:column>
+											<p:column>
+												<h:outputText id="custCompany"
+													value="#{customerCRUDController.selectCustomer.company}" />
+											</p:column>
+
+											<!-- BMS -->
+											<p:column>
+												<p:outputLabel value="#{msg['message.customer.form.bms']}"
+													for="custIBMSId" />
+											</p:column>
+											<p:column>
+												<h:outputText id="custIBMSId"
+													value="#{not empty customerCRUDController.selectCustomer.crossReference.bmsReference ?
+													customerCRUDController.selectCustomer.crossReference.bmsReference : '-'}" />
+											</p:column>
+										</p:row>
+
+										<p:row>
+											<!-- CUSTOMER NAME -->
+											<p:column>
+												<p:outputLabel for="custName"
+													value="#{msg['message.customer.form.name']}" />
+											</p:column>
+											<p:column>
+												<p:inputText id="custName"
+													label="#{msg['message.customer.form.name']}"
+													disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+													value="#{customerCRUDController.selectCustomer.name}"
+													required="true" styleClass="dis-input-width"
+													title="#{msg['message.customer.tooltip.customerName']}" />
+											</p:column>
+
+											<!-- ERP -->
+											<p:column>
+												<p:outputLabel value="#{msg['message.customer.form.erp']}"
+													for="custERPId" />
+											</p:column>
+											<p:column>
+												<h:outputText id="custERPId"
+													value="#{not empty customerCRUDController.selectCustomer.crossReference.erpReference ? customerCRUDController.selectCustomer.crossReference.erpReference : '-'}" />
+											</p:column>
+
+										</p:row>
+
+										<p:row>
+											<!-- CUSTOMER TAX LEGAL NAME -->
+											<p:column>
+												<p:outputLabel for="custTaxLegalName"
+													value="#{msg['message.customer.taxLegalName']}" />
+											</p:column>
+											<p:column>
+												<p:inputText id="custTaxLegalName"
+													label="#{msg['message.customer.taxLegalName']}"
+													value="#{customerCRUDController.selectCustomer.taxLegalName}"
+													styleClass="dis-input-width"
+													disabled="#{customerCRUDController.readOnly}"
+													title="#{msg['message.customer.tooltip.customerTaxLegalName']}"
+													required="true" />
+											</p:column>
+
+											<!-- CUSTOMER LAIS ID -->
+											<p:column>
+												<p:outputLabel
+													value="#{msg['message.customer.table.lais_id']}"
+													for="custLaisId" />
+											</p:column>
+											<p:column>
+												<h:outputText id="custLaisId"
+													value="#{not empty customerCRUDController.selectCustomer.id ? customerCRUDController.selectCustomer.id : '-'}" />
+											</p:column>
+										</p:row>
+
+										<p:row>
+											<!-- CUSTOMER TYPE -->
+											<p:column>
+												<p:outputLabel for="custType"
+													value="#{msg['message.customer.form.type']}" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="custType"
+													label="#{msg['message.customer.form.type']}"
+													disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+													value="#{customerCRUDController.selectCustomer.customerType}"
+													required="true" styleClass="dis-input-width"
+													title="#{msg['message.customer.tooltip.customerType']}">
+													<p:ajax process="@this" update="selectCustomerUpdPanel6" />
+													<f:selectItems var="customerType"
+														itemValue="#{customerType}"
+														itemLabel="#{labelUtil.getCustomerTypeLabel(customerType)}"
+														value="#{selectorController.customerTypeList}" />
+													<p:ajax process="@this"
+														update=":createUpdateCustomerForm:customerTabView:PojoPickList
+												:createUpdateCustomerForm:customerTabView:selectCustomerUpdPanel6
+												:createUpdateCustomerForm:customerTabView:custAgencyCreditNoteLineDescription"></p:ajax>
+												</p:selectOneMenu>
+											</p:column>
+
+											<!-- ORGANIZATION TYPE -->
+											<p:column>
+												<p:outputLabel for="organizationType"
+													value="#{msg['message.customer.form.organization_type']}" />
+											</p:column>
+											<p:column>
+												<p:inputText id="organizationType"
+													disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+													value="#{customerCRUDController.selectCustomer.organizationType}"
+													styleClass="dis-input-width"
+													title="#{msg['message.customer.tooltip.organizationType']}" />
+											</p:column>
+										</p:row>
+
+										<p:row>
+											<!-- TAX ID -->
+											<p:column>
+												<p:outputLabel id="taxIDLabel" for="taxID"
+													value="#{msg['message.customer.form.tax_id']}" />
+											</p:column>
+											<p:column>
+												<p:inputText id="taxID"
+													value="#{customerCRUDController.selectCustomer.taxID}"
+													styleClass="dis-input-width"
+													disabled="#{customerCRUDController.readOnly}"
+													required="#{customerCRUDController.requiredTaxId}"
+													title="#{msg['message.customer.tooltip.taxID']}" />
+											</p:column>
+
+											<!-- BUSINESS NUMBER -->
+											<p:column>
+												<p:outputLabel
+													value="#{msg['message.customer.form.business_number']}"
+													for="businessNumber" />
+											</p:column>
+											<p:column>
+												<p:inputText id="businessNumber"
+													disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+													value="#{customerCRUDController.selectCustomer.businessNumber}"
+													styleClass="dis-input-width"
+													title="#{msg['message.customer.tooltip.businessNumber']}" />
+											</p:column>
+										</p:row>
+
+										<p:row>
+											<!-- VAT TREATMENT -->
+											<p:column>
+												<p:outputLabel
+													value="#{msg['message.customer.form.vat_treatment']}"
+													for="VATTreatment" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="VATTreatment"
+													converter="omnifaces.SelectItemsConverter"
+													value="#{customerCRUDController.selectCustomer.taxStatus}"
+													styleClass="dis-input-width"
+													title="#{msg['message.customer.form.vat_treatment']}"
+													required="true"
+													disabled="#{customerCRUDController.readOnly}">
+													<f:selectItem
+														itemLabel="#{msg['message.common.selectOne']}"
+														itemValue="#{null}" />
+													<f:selectItems var="taxStatus"
+														itemLabel="#{taxStatus.description}"
+														value="#{selectorController.getTaxStatuses(customerCRUDController.selectCustomer.company)}" />
+													<p:ajax process="@this" update="taxIDLabel" />
+												</p:selectOneMenu>
+											</p:column>
+
+											<!-- MASTER ORGANIZATION -->
+											<p:column>
+												<p:outputLabel for="masterOrganization"
+													value="#{msg['message.customer.form.master_organization']}" />
+											</p:column>
+											<p:column>
+												<p:inputText id="masterOrganization"
+													disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+													value="#{customerCRUDController.selectCustomer.masterOrganization}"
+													styleClass="dis-input-width"
+													title="#{msg['message.customer.tooltip.masterOrganization']}" />
+											</p:column>
+										</p:row>
+
+										<p:row>
+
+											<!-- SERVICE RECEIVED -->
+											<p:column rowspan="3">
+												<p:outputLabel for="custServiceTypeSelection"
+													rendered="#{!customerCRUDController.fromIBMS}"
+													value="#{msg['message.customer.form.service_received']}" />
+												<p:outputLabel for="custServiceTypeSelectionOnAirIBMS"
+													rendered="#{customerCRUDController.fromIBMS}"
+													value="#{msg['message.customer.form.service_received']} *" />
+											</p:column>
+
+											<!-- CUSTOMER TYPE -->
+											<p:column rowspan="3">
+												<p:selectManyMenu id="custServiceTypeSelection"
+													showCheckbox="true" required="true"
+													converter="omnifaces.SelectItemsConverter"
+													value="#{customerCRUDController.serviceReceivedTypeTarget}"
+													styleClass="dis-input-width dis-checkbox-fix"
+													title="#{msg['message.customer.tooltip.serviceReceived']}"
+													disabled="#{customerCRUDController.readOnly}"
+													rendered="#{!customerCRUDController.fromIBMS}">
+													<f:selectItems var="serviceType" itemValue="#{serviceType}"
+														itemLabel="#{serviceType.serviceType}"
+														value="#{selectorController.serviceReceivedTypeFilterList}" />
+													<p:ajax process="@this"
+														update=":createUpdateCustomerForm:customerTabView:PojoPickList"
+														listener="#{customerCRUDController.updateAdvertisersPickList}"></p:ajax>
+												</p:selectManyMenu>
+
+												<!-- CUSTOMER TYPE -->
+												<p:selectManyMenu id="custServiceTypeSelectionOnAirIBMS"
+													showCheckbox="true"
+													converter="omnifaces.SelectItemsConverter"
+													value="#{customerCRUDController.serviceReceivedTypeTarget}"
+													styleClass="dis-input-width dis-checkbox-fix"
+													title="#{msg['message.customer.tooltip.serviceReceived']}"
+													disabled="#{customerCRUDController.readOnly}"
+													rendered="#{customerCRUDController.fromIBMS}">
+													<f:selectItems var="serviceType"
+														itemDisabled="#{serviceType.serviceType eq 'ON_AIR'}"
+														itemValue="#{serviceType}"
+														itemLabel="#{serviceType.serviceType}"
+														value="#{selectorController.serviceReceivedTypeFilterList}" />
+													<p:ajax process="@this"
+														update=":createUpdateCustomerForm:customerTabView:PojoPickList"
+														listener="#{customerCRUDController.updateAdvertisersPickList}"></p:ajax>
+												</p:selectManyMenu>
+											</p:column>
+
+											<!-- PAYMENT METHOD -->
+											<p:column>
+												<p:outputLabel
+													value="#{msg['message.customer.form.paymentMethod']}"
+													for="paymentMethod" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="paymentMethod"
+													converter="omnifaces.SelectItemsConverter"
+													styleClass="dis-input-width"
+													value="#{customerCRUDController.selectCustomer.paymentMethod}"
+													title="#{msg['message.customer.form.paymentMethod']}"
+													disabled="#{customerCRUDController.readOnly}">
+													<f:selectItem
+														itemLabel="#{msg['message.common.selectOne']}"
+														itemValue="#{null}" />
+													<f:selectItems var="paymentMethod"
+														itemValue="#{paymentMethod}"
+														itemLabel="#{(labelUtil.getPaymentMethodLabel(paymentMethod))}"
+														value="#{selectorController.getPaymentMethodList(customerCRUDController.selectCustomer.company)}" />
+													<p:ajax process="@this" immediate="true"
+														update="@form:customerTabView:bankInformationPanel" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+
+										<p:row>
+											<!-- PAYMENT TERM -->
+											<p:column>
+												<p:outputLabel
+													value="#{msg['message.customer.form.paymentTerm']}"
+													for="paymentTerm" />
+											</p:column>
+											<p:column>
+												<p:selectOneMenu id="paymentTerm"
+													converter="omnifaces.SelectItemsConverter"
+													styleClass="dis-input-width"
+													value="#{customerCRUDController.selectCustomer.paymentTerm}"
+													title="#{msg['message.customer.form.paymentTerm']}"
+													disabled="#{customerCRUDController.readOnly}">
+													<f:selectItem
+														itemLabel="#{msg['message.common.selectOne']}"
+														itemValue="#{null}" />
+													<f:selectItems var="paymentTerm" itemValue="#{paymentTerm}"
+														itemLabel="#{(labelUtil.getPaymentTermLabel(paymentTerm))}"
+														value="#{selectorController.getPaymentTermList(customerCRUDController.selectCustomer.company)}" />
+													<p:ajax process="@this" />
+												</p:selectOneMenu>
+											</p:column>
+										</p:row>
+
+										<p:row>
+											<!-- ACTIVE -->
+											<p:column>
+												<p:outputLabel value="#{msg['message.common.active']}" />
+											</p:column>
+											<p:column>
+												<p:inputSwitch id="inputSwitchInactiveCustomer"
+													value="#{customerCRUDController.selectCustomer.active}"
+													offLabel="#{msg['message.common.false']}"
+													onLabel="#{msg['message.common.true']}"
+													title="#{msg['message.customer.tooltip.active']}"
+													disabled="#{customerCRUDController.readOnly}">
+												</p:inputSwitch>
+											</p:column>
+										</p:row>
+
+										<script>
+											// Deshabilita eventos de un checkbox disabled 
+											$(
+													".dis-checkbox-fix .ui-selectlistbox-item.ui-state-disabled .ui-chkbox-box")
+													.off();
+										</script>
+									</p:panelGrid>
+								</p:panel>
+							</p:tab>
+
+							<!-- BILLING TAB -->
+							<p:tab id="customerBillingTab"
+								title="#{msg['message.customer.tabview.billing']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel2">
+									<p:panelGrid styleClass="no-border" columns="4"
+										columnClasses="label, value">
+
+										<!-- LANGUAGE -->
+										<p:outputLabel for="custLanguage"
+											value="#{msg['message.customer.form.language']}" />
+										<p:selectOneMenu id="custLanguage"
+											label="#{msg['message.customer.form.language']}"
+											disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+											converter="omnifaces.SelectItemsConverter"
+											value="#{customerCRUDController.selectCustomer.language}"
+											styleClass="dis-input-width" required="true"
+											title="#{msg['message.customer.tooltip.language']}">
+											<f:selectItems var="language"
+												value="#{selectorController.languageList}"
+												itemLabel="#{language.iso2Code}" itemValue="#{language}" />
+										</p:selectOneMenu>
+
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- BILLING SCENARIO -->
+										<p:outputLabel for="custBillingScenario"
+											value="#{msg['message.customer.form.billing_scenario']}" />
+										<p:selectOneMenu id="custBillingScenario"
+											label="#{msg['message.customer.form.billing_scenario']}"
+											converter="omnifaces.SelectItemsConverter"
+											value="#{customerCRUDController.selectCustomer.billingScenario}"
+											styleClass="dis-input-width" required="true"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.billingScenario']}">
+											<f:selectItem
+												itemLabel="#{msg['message.customer.select.billingScenario']}"
+												itemValue="#{null}" />
+											<f:selectItems var="billingScenario"
+												value="#{customerCRUDController.billingScenarioList}"
+												itemValue="#{billingScenario}"
+												itemLabel="#{billingScenario.number}"
+												itemDescription="#{labelUtil.getBillingScenarioDescriptionLabel(billingScenario)}" />
+										</p:selectOneMenu>
+
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- AGENCY COMMISSION RATE -->
+										<p:outputLabel for="custAgencyCommisionRate"
+											value="#{msg['message.customer.form.commission_rate']}" />
+										<p:inputMask id="custAgencyCommisionRate"
+											label="#{msg['message.customer.form.commission_rate']}"
+											value="#{customerCRUDController.selectCustomer.agencyCommissionRate}"
+											required="true" disabled="#{customerCRUDController.readOnly}"
+											maxlength="5" styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.commissionRate']}">
+											<f:validateDoubleRange minimum="0" maximum="99.99" />
+											<f:convertNumber maxFractionDigits="2" pattern="##0.00" />
+										</p:inputMask>
+
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- AGENCY VOLUME RATE -->
+										<p:outputLabel for="custAgencyVolumeRate"
+											value="#{msg['message.customer.form.bonus_rate']}" />
+										<p:inputMask id="custAgencyVolumeRate"
+											label="#{msg['message.customer.form.bonus_rate']}"
+											value="#{customerCRUDController.selectCustomer.agencyVolumeBonusRate}"
+											required="true" disabled="#{customerCRUDController.readOnly}"
+											maxlength="5" styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.volumeRate']}">
+											<f:validateDoubleRange minimum="0" maximum="99.99" />
+											<f:convertNumber maxFractionDigits="2" pattern="##0.00" />
+										</p:inputMask>
+
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- VAT PERCENTAGE -->
+										<p:outputLabel for="custVatPercentage"
+											value="#{msg['message.customer.form.vatPercentage']}" />
+										<p:inputMask id="custVatPercentage"
+											label="#{msg['message.customer.form.vatPercentage']}"
+											value="#{customerCRUDController.selectCustomer.vatPercentage}"
+											disabled="#{customerCRUDController.readOnly}" maxlength="5"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.vatPercentage']}">
+											<f:validateDoubleRange minimum="0" maximum="99.99" />
+											<f:convertNumber maxFractionDigits="2" pattern="##0.00" />
+										</p:inputMask>
+
+										<!-- GOVERNMENTAL -->
+										<p:outputLabel value="#{msg['message.common.governmental']}"
+											rendered="#{customerCRUDController.selectCustomer.isCompanyAdditionalInvoiceComments()}" />
+										<p:inputSwitch id="inputSwitchGovermental"
+											rendered="#{customerCRUDController.selectCustomer.isCompanyAdditionalInvoiceComments()}"
+											value="#{customerCRUDController.selectCustomer.governmental}"
+											offLabel="#{msg['message.common.false']}"
+											onLabel="#{msg['message.common.true']}"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.additionalInvoiceComments']}">
+											<p:ajax process="@this"
+												update="createUpdateCustomerForm:customerTabView:govermentalDescription" />
+										</p:inputSwitch>
+
+										<p:outputLabel
+											rendered="#{!(customerCRUDController.selectCustomer.isCompanyAdditionalInvoiceComments())}" />
+										<p:outputLabel
+											rendered="#{!(customerCRUDController.selectCustomer.isCompanyAdditionalInvoiceComments())}" />
+
+										<!-- CREDIT NOTE LINE DESCRIPTION -->
+										<p:outputLabel for="custAgencyCreditNoteLineDescription"
+											value="#{msg['message.customer.form.credit_note_line_description']}" />
+										<p:inputTextarea id="custAgencyCreditNoteLineDescription"
+											label="#{message.customer.form.credit_note_line_description}"
+											autoResize="false"
+											value="#{customerCRUDController.selectCustomer.creditNoteLineDescription}"
+											styleClass="dis-inputArea-width"
+											title="#{msg['message.invoice.tooltip.creditNoteLineDescription']}"
+											maxlength="#{validationConstants.getInvoiceLineMaxLength(customerCRUDController.company)}"
+											disabled="#{!customerCRUDController.selectCustomer.agencyCustomer}">
+											<f:validateLength
+												maximum="#{validationConstants.getInvoiceLineMaxLength(customerCRUDController.company)}"></f:validateLength>
+										</p:inputTextarea>
+
+										<!-- ADDITIONAL COMMENTS-->
+										<p:outputLabel for="govermentalDescription"
+											rendered="#{customerCRUDController.selectCustomer.isCompanyAdditionalInvoiceComments()}"
+											value="#{msg['message.customer.governmental.additional.comments']}" />
+										<p:inputTextarea id="govermentalDescription"
+											rendered="#{customerCRUDController.selectCustomer.isCompanyAdditionalInvoiceComments()}"
+											autoResize="false" required="true"
+											value="#{customerCRUDController.selectCustomer.additionalInvoiceComments}"
+											styleClass="dis-inputArea-width"
+											title="#{msg['message.customer.governmental.tooltip.additional.description']}"
+											maxlength="#{validationConstants.customerAdditionalDescription}"
+											disabled="#{ !customerCRUDController.selectCustomer.governmental || customerCRUDController.readOnly}">
+											<f:validateLength
+												maximum="#{validationConstants.customerAdditionalDescription}"></f:validateLength>
+										</p:inputTextarea>
+
+									</p:panelGrid>
+
+								</p:panel>
+							</p:tab>
+
+							<!-- BANK INFORMATION TAB -->
+							<p:tab id="bankInformationTab"
+								title="#{msg['message.customer.tabview.bankInformation']}">
+								<p:panel styleClass="no-border-panel" id="bankInformationPanel">
+									<p:panelGrid styleClass="no-border" columns="2"
+										columnClasses="label, value">
+
+										<!-- BANK NAME -->
+										<p:outputLabel for="customerBankName"
+											value="#{msg['message.customer.form.bankName']}" />
+										<p:inputText id="customerBankName"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.customerBankInformation.bankName}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.form.bankName']}"
+											label="#{msg['message.customer.form.bankName']}">
+											<p:ajax event="blur" process="@this" />
+										</p:inputText>
+
+										<!-- BANK ACCOUNT NUMBER -->
+										<p:outputLabel for="customerBankAccountNumber"
+											value="#{msg['message.customer.form.bankAccountNumber']}" />
+										<p:inputText id="customerBankAccountNumber"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.customerBankInformation.bankAccountNumber}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.form.bankAccountNumber']}"
+											label="#{msg['message.customer.form.bankAccountNumber']}">
+											<p:ajax event="blur" process="@this" />
+										</p:inputText>
+
+										<!-- BANK KEY ACCOUNT NUMBER -->
+										<p:outputLabel for="customerBankKeyAccountNumber"
+											value="#{msg['message.customer.form.bankKeyAccountNumber']}" />
+										<p:inputText id="customerBankKeyAccountNumber"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.customerBankInformation.bankKeyAccountNumber}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.form.bankKeyAccountNumber']}">
+											<p:ajax event="blur" process="@this" />
+										</p:inputText>
+
+										<!-- CUSTOMER BANK ACCOUNT LAST DIGITS -->
+										<p:outputLabel for="customerBankAccountNumberLastDigits"
+											value="#{msg['message.customer.form.customerBankAccountNumberLastDigits']}" />
+										<p:inputText id="customerBankAccountNumberLastDigits"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.customerBankInformation.customerBankAccountNumberLastDigits}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.form.customerBankAccountNumberLastDigits']}"
+											maxlength="#{validationConstants.maxCustomerBankAccountNumberLastDigitsMaxLength}">
+											<p:ajax event="blur" process="@this" />
+										</p:inputText>
+									</p:panelGrid>
+								</p:panel>
+							</p:tab>
+
+							<!-- CONTACT TAB -->
+							<p:tab id="customerContactTab"
+								title="#{msg['message.customer.tabview.contact']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel3">
+									<p:panelGrid styleClass="no-border" columns="4"
+										columnClasses="label, value, label, value">
+
+										<!-- COUNTRY -->
+										<p:outputLabel for="custCountryName"
+											value="#{msg['message.customer.form.country']}" />
+										<p:selectOneMenu id="custCountryName"
+											label="#{msg['message.customer.form.country']}"
+											styleClass="dis-input-width"
+											converter="omnifaces.SelectItemsConverter" required="true"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.address.country}"
+											title="#{msg['message.customer.tooltip.country']}">
+											<f:selectItems value="#{selectorController.countryList}"
+												var="country"
+												itemLabel="#{country.isoAlpha3Code} - #{country.name}"
+												itemValue="#{country}" />
+											<p:ajax event="change" process="@this"
+												update="inputRegion custAddressPostalCode labelcustAddressPostalCode"
+												listener="#{customerCRUDController.onCustomerCountryChange()}" />
+										</p:selectOneMenu>
+
+										<!-- DELIVERY PREFERENCE -->
+										<p:outputLabel for="custInvDeliveryPreferenceAddress"
+											value="#{msg['message.customer.form.invoice_delivery_preference']}" />
+										<p:selectOneMenu id="custInvDeliveryPreferenceAddress"
+											label="#{msg['message.customer.form.invoice_delivery_preference']}"
+											value="#{customerCRUDController.selectCustomer.invoiceDeliveryPreference}"
+											required="true" styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.deliveryPreference']}">
+											<f:selectItems var="deliveryPreference"
+												itemValue="#{deliveryPreference}"
+												itemLabel="#{msg['message.customer.deliveryPreference.'.concat(deliveryPreference)]}"
+												value="#{selectorController.invoicePreferenceList}" />
+											<p:ajax
+												update="createUpdateCustomerForm:customerTabView:faxAddressLabel
+													createUpdateCustomerForm:customerTabView:labelcustAddressPostalCode
+													createUpdateCustomerForm:customerTabView:emailLabelAddress
+													createUpdateCustomerForm:customerTabView:emailAddress" />
+										</p:selectOneMenu>
+
+										<!-- REGION -->
+										<p:outputLabel value="#{msg['message.customer.form.region']}"
+											for="inputRegion" />
+										<p:selectOneMenu id="inputRegion"
+											value="#{customerCRUDController.selectCustomer.address.region}"
+											required="true" styleClass="dis-input-width"
+											converter="omnifaces.SelectItemsConverter"
+											disabled="#{customerCRUDController.readOnly or null eq customerCRUDController.selectCustomer.address.country}"
+											title="#{msg['message.customer.tooltip.region']}">
+											<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+												itemValue="#{null}" />
+											<f:selectItems value="#{customerCRUDController.regionList}"
+												var="region" itemValue="#{region}"
+												itemLabel="#{region.code.concat(' - ').concat(region.description)}" />
+											<p:ajax event="change" process="@this" />
+										</p:selectOneMenu>
+
+										<!-- TELEPHONE -->
+										<p:outputLabel for="inputTelephone"
+											value="#{msg['message.customer.form.telephone']}" />
+										<p:inputText id="inputTelephone"
+											value="#{customerCRUDController.selectCustomer.telephone}"
+											styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly}" required="true"
+											title="#{msg['message.customer.tooltip.telephone']}" />
+										<!-- <p:panel id="inputTelephonePanel"  styleClass="no-border input-panel">
+														<p:inputText id="inputTelephone"
+															value="#{customerCRUDController.defaultTelephone}"
+															styleClass="dis-input-width-button"
+															title="#{msg['message.customer.tooltip.telephone']}"
+															required="true" disabled="true" />
+														<p:commandButton id="inputTelephoneButton"
+															styleClass="Fright input-button"
+															immediate="true"
+															icon="#{null eq customerCRUDController.defaultTelephone ? 'ui-icon-plus': 'ui-icon-pencil'}"
+															actionListener="#{customerCRUDController.goToTelephoneTab}"
+															process="@this"
+															update="customerTabView"
+															rendered="#{!customerCRUDController.readOnly}" >
+															<p:ajax immediate="true" process="@form" />
+														</p:commandButton>
+													</p:panel> -->
+
+										<!-- CITY -->
+										<p:outputLabel for="custCity"
+											value="#{msg['message.customer.form.city']}" />
+										<p:inputText id="custCity"
+											label="#{msg['message.customer.form.city']}" required="true"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.address.city}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.city']}" />
+
+										<!-- FAX -->
+										<p:outputLabel id="faxAddressLabel"
+											value="#{msg['message.customer.form.fax']}" for="faxAddress" />
+										<p:inputText id="faxAddress"
+											value="#{customerCRUDController.selectCustomer.fax}"
+											styleClass="dis-input-width"
+											required="#{customerCRUDController.requiredPhone}"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.fax']}" />
+										<!-- <p:panel id="faxAddressPanel" styleClass="no-border input-panel">
+													<p:inputText id="faxAddress"
+														value="#{customerCRUDController.defaultFax}"
+														styleClass="dis-input-width-button"
+														title="#{msg['message.customer.tooltip.fax']}"
+														required="#{customerCRUDController.requiredPhoneAddress}"
+														disabled="true" />
+													<p:commandButton id="faxAddressButton"
+														styleClass="Fright input-button"
+														immediate="true"
+														icon="#{null eq customerCRUDController.defaultFax ? 'ui-icon-plus': 'ui-icon-pencil'}"
+														actionListener="#{customerCRUDController.goToTelephoneTab}"
+														process="@this"
+														update="customerTabView"
+														rendered="#{!customerCRUDController.readOnly}" >
+														<p:ajax immediate="true" process="@form" />
+													</p:commandButton>
+												</p:panel> -->
+
+										<!-- POSTAL CODE -->
+										<p:outputLabel for="custAddressPostalCode"
+											id="labelcustAddressPostalCode"
+											value="#{msg['message.customer.form.postal_code']}" />
+										<p:inputText id="custAddressPostalCode"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.address.postalCode}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.postalCode']}"
+											required="#{customerCRUDController.requiredPostalCode}" />
+
+										<!-- EMAIL -->
+										<p:outputLabel for="emailAddress" id="emailLabelAddress"
+											value="#{msg['message.customer.form.email']}" />
+										<p:panel id="emailAddressPanel"
+											styleClass="no-border input-panel">
+											<p:inputText id="emailAddress"
+												value="#{customerCRUDController.deliveryEmail}"
+												styleClass="dis-input-width-button"
+												required="#{customerCRUDController.requiredEmailAddress}"
+												label="#{msg['message.customer.tooltip.address.email']}"
+												title="#{msg['message.customer.tooltip.address.email']}"
+												disabled="true">
+												<p:ajax event="blur" process="@this" />
+											</p:inputText>
+											<p:commandButton id="emailAddressButton"
+												styleClass="Fright input-button"
+												icon="#{null eq customerCRUDController.deliveryEmail ? 'ui-icon-plus': 'ui-icon-pencil'}"
+												oncomplete="PF('emailDialog').show();" process="@this"
+												rendered="#{!customerCRUDController.readOnly}">
+											</p:commandButton>
+										</p:panel>
+									</p:panelGrid>
+
+									<!-- STREETS -->
+									<p:dataTable id="customerAddressDatatable"
+										widgetVar="customerAddressDatatable" var="customerStreet"
+										value="#{customerCRUDController.customerStreets}"
+										selection="#{customerCRUDController.selectedCustomerStreets}"
+										rowIndexVar="rowIndexVar" stickyHeader="false"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}"
+										styleClass="dataTable-letters customer-street-datatable"
+										editMode="cell" rowKey="#{customerStreet}"
+										editable="#{!customerCRUDController.readOnly}">
+
+										<f:facet name="header">
+											<table class="no-border dis-table-header">
+												<tr>
+													<td></td>
+													<td class="ui-datatable ui-datatable-header"><h:outputText
+															value="#{msg['message.customer.street.table.title']}" />
+													</td>
+													<td><p:panel styleClass="panel_Button_Invoice">
+															<p:commandButton id="addCustomerStreetButton"
+																styleClass="Fleft LightButton" icon="ui-icon-plus"
+																actionListener="#{customerCRUDController.addCustomerStreet}"
+																immediate="true" process="@form"
+																title="#{msg['message.customer.add.tooltip.street']}"
+																update="@this customerAddressDatatable"
+																rendered="#{!customerCRUDController.readOnly}"
+																disabled="#{customerCRUDController.streetTypeList.size() le customerCRUDController.customerStreets.size()}">
+															</p:commandButton>
+															<p:commandButton id="removeCStreetButton"
+																styleClass="Fleft LightButton" icon="ui-icon-minusthick"
+																actionListener="#{customerCRUDController.removeCustomerStreet}"
+																immediate="true" process="@form"
+																title="#{msg['message.customer.remove.tooltip.street']}"
+																update="@this customerAddressDatatable"
+																disabled="#{empty customerCRUDController.selectedCustomerStreets}"
+																rendered="#{!customerCRUDController.readOnly}">
+															</p:commandButton>
+														</p:panel></td>
+												</tr>
+											</table>
+										</f:facet>
+
+										<p:ajax event="rowSelect"
+											update="addCustomerStreetButton removeCStreetButton" />
+										<p:ajax event="rowUnselect"
+											update="addCustomerStreetButton removeCStreetButton" />
+										<p:ajax event="rowSelectCheckbox"
+											update="addCustomerStreetButton removeCStreetButton" />
+										<p:ajax event="rowUnselectCheckbox"
+											update="addCustomerStreetButton removeCStreetButton" />
+										<p:ajax event="toggleSelect"
+											update="addCustomerStreetButton removeCStreetButton" />
+
+										<p:ajax event="cellEdit" process="@this"
+											listener="#{customerCRUDController.onCustomerStreetsChange()}"
+											oncomplete="updateCustomerStreets();" />
+
+										<!-- STREET SELECTION CHECKBOX -->
+										<p:column id="streetSelectionCol" selectionMode="multiple"
+											styleClass="street-selection-col"
+											rendered="#{not customerCRUDController.readOnly}" />
+
+										<!-- STREET TYPE -->
+										<p:column
+											headerText="#{msg['message.customer.street.table.streetType']}"
+											styleClass="col-channel-line">
+
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText
+														value="#{customerStreet.streetType != null ? 
+ 																	labelUtil.getStreetTypeLabel(customerStreet.streetType) : '-'}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:selectOneMenu value="#{customerStreet.streetType}"
+														styleClass="street-datatable-combo"
+														converter="omnifaces.SelectItemsConverter"
+														label="#{msg['message.customer.address.table.streetType']}"
+														panelStyleClass="street-datatable-combo-panel">
+														<f:selectItem
+															itemLabel="#{msg['message.common.selectOne']}"
+															itemValue="#{null}" />
+														<f:selectItems
+															value="#{customerCRUDController.streetTypeList}"
+															var="streetType"
+															itemLabel="#{labelUtil.getStreetTypeLabel(streetType)}"
+															itemDisabled="#{(customerCRUDController.isCustomerStreetTypeDisabled(customerStreet, streetType))}" />
+													</p:selectOneMenu>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<!-- STREET -->
+										<p:column headerText="#{msg['message.common.description']}"
+											styleClass="col-description-line">
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{customerStreet.description}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:inputText value="#{customerStreet.description}"
+														styleClass="invoiceLineTable-edit"
+														label="#{msg['message.common.description']}"
+														maxlength="#{validationConstants.customerAddressStreetMaxLength}"
+														>
+														<p:ajax event="change" process="@this" />
+														<f:validateLength
+															maximum="#{validationConstants.customerAddressStreetMaxLength}">
+														</f:validateLength>
+													</p:inputText>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+									</p:dataTable>
+								</p:panel>
+							</p:tab>
+
+							<!-- ACCOUNTING CLERK TAB -->
+							<p:tab id="customerAccountingClerkTab"
+								title="#{msg['message.customer.tabview.accountingClerk']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel5">
+									<p:panelGrid styleClass="no-border" columns="2"
+										columnClasses="label, value">
+
+										<!-- CONTACT NAME -->
+										<p:outputLabel
+											value="#{msg['message.customer.form.contact_name']}" />
+										<p:inputText id="custAddressName"
+											disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+											value="#{customerCRUDController.selectCustomer.billingContact.name}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.contactName']}" />
+
+										<!-- ADDITIONAL NAME -->
+										<p:outputLabel
+											value="#{msg['message.customer.form.additional_name']}" />
+										<p:inputText
+											disabled="#{customerCRUDController.readOnly or customerCRUDController.fromIBMS}"
+											value="#{customerCRUDController.selectCustomer.billingContact.additionalContactName}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.contactAdditionalName']}" />
+
+										<!-- SALES GROUP -->
+										<p:outputLabel for="custSalesGroup"
+											value="#{msg['message.customer.form.sales_group_type']}" />
+										<p:inputText id="custSalesGroup"
+											label="#{msg['message.customer.form.sales_group_type']}"
+											value="#{customerCRUDController.selectCustomer.billingContact.salesGroupType}"
+											styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.salesGroupType']}" />
+
+										<!-- TELEPHONE -->
+										<p:outputLabel for="billingContactTelephone"
+											value="#{msg['message.customer.form.telephone']}" />
+										<p:inputText id="billingContactTelephone"
+											value="#{customerCRUDController.selectCustomer.billingContact.telephone}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.contactTelephone']}" />
+										<!-- <p:panel id="billingContactTelephonePanel" styleClass="no-border input-panel">
+											<p:inputText id="billingContactTelephone"									
+											value="#{customerCRUDController.billingContactTelephone}"
+											styleClass="dis-input-width-button"
+											title="#{msg['message.customer.tooltip.contactTelephone']}"
+											disabled="true" />
+											<p:commandButton id="inputBillingContactTelephoneButton"
+												styleClass="Fright input-button"
+												immediate="true"
+												icon="#{null eq customerCRUDController.billingContactTelephone ? 'ui-icon-plus': 'ui-icon-pencil'}"
+												actionListener="#{customerCRUDController.goToTelephoneTab}"
+												process="@this"
+												update="customerTabView"
+												rendered="#{!customerCRUDController.readOnly}" >
+												<p:ajax immediate="true" process="@form" />
+											</p:commandButton>
+										</p:panel> -->
+
+										<!-- FAX -->
+										<p:outputLabel for="billingContactFax"
+											value="#{msg['message.customer.form.fax']}" />
+										<p:inputText id="billingContactFax"
+											value="#{customerCRUDController.selectCustomer.billingContact.fax}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.contactFax']}" />
+										<!-- <p:panel id="billingContactFaxPanel" styleClass="no-border input-panel">
+											<p:inputText id="billingContactFax"											
+											value="#{customerCRUDController.billingContactFax}"
+											styleClass="dis-input-width-button"
+											title="#{msg['message.customer.tooltip.contactFax']}"
+											disabled="true" />
+											<p:commandButton id="inputBillingContactFaxButton"
+												styleClass="Fright input-button"
+												immediate="true"
+												icon="#{null eq customerCRUDController.billingContactFax ? 'ui-icon-plus': 'ui-icon-pencil'}"
+												actionListener="#{customerCRUDController.goToTelephoneTab}"
+												process="@this"
+												update="customerTabView"
+												rendered="#{!customerCRUDController.readOnly}" >
+												<p:ajax immediate="true" process="@form" />
+											</p:commandButton>
+										</p:panel> -->
+
+										<!-- EMAIL -->
+										<p:outputLabel id="billingContactEmailLabel"
+											value="#{msg['message.customer.form.email']}"
+											for="billingContactEmail" />
+										<p:panel id="billingContactEmailPanel"
+											styleClass="no-border input-panel">
+											<p:inputText id="billingContactEmail"
+												value="#{customerCRUDController.billingContactEmail}"
+												styleClass="dis-input-width-button"
+												label="#{msg['message.customer.tooltip.contactEmail']}"
+												title="#{msg['message.customer.tooltip.contactEmail']}"
+												disabled="true" />
+											<p:commandButton id="inputBillingContactEmailButton"
+												styleClass="Fright input-button"
+												icon="#{null eq customerCRUDController.billingContactEmail ? 'ui-icon-plus': 'ui-icon-pencil'}"
+												onclick="PF('emailDialog').show();" process="@this"
+												rendered="#{!customerCRUDController.readOnly}">
+											</p:commandButton>
+										</p:panel>
+
+									</p:panelGrid>
+								</p:panel>
+							</p:tab>
+
+							<!-- REPORT CONTACT TAB -->
+							<p:tab id="customerReportContact"
+								title="#{msg['message.customer.tabview.report_contact']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel8">
+
+									<p:panelGrid styleClass="no-border" columns="4"
+										columnClasses="label, value">
+
+										<span class="FontBold Fs18 hardblue">#{msg['message.customer.form.report_contact.mainInformation']}</span>
+										<p:outputLabel />
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- NAME -->
+										<p:outputLabel
+											value="#{msg['message.customer.form.report_contact.name']}" />
+										<p:inputText
+											value="#{customerCRUDController.selectCustomer.reportContact.name}"
+											styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.reportContact.name']}" />
+
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- EMAIL -->
+										<p:outputLabel for="reportContactEmail"
+											id="reportContactEmailLabel"
+											value="#{msg['message.customer.form.report_contact.email']}" />
+										<p:panel id="reportContactEmailPanel"
+											styleClass="no-border input-panel">
+											<p:inputText id="reportContactEmail"
+												value="#{customerCRUDController.reportContactEmail}"
+												styleClass="dis-input-width-button"
+												label="#{msg['message.customer.tooltip.reportContact.email']}"
+												title="#{msg['message.customer.tooltip.reportContact.email']}"
+												disabled="true" />
+											<p:commandButton id="inputReportContactEmailButton"
+												styleClass="Fright input-button"
+												icon="#{null eq customerCRUDController.reportContactEmail ? 'ui-icon-plus': 'ui-icon-pencil'}"
+												onclick="PF('emailDialog').show();" process="@this"
+												rendered="#{!customerCRUDController.readOnly}">
+											</p:commandButton>
+										</p:panel>
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- TELEPHONE -->
+										<p:outputLabel for="phone" id="phoneLabel"
+											value="#{msg['message.customer.form.report_contact.phone']}" />
+										<p:inputText id="phone"
+											value="#{customerCRUDController.selectCustomer.reportContact.telephone}"
+											styleClass="dis-input-width"
+											title="#{msg['message.customer.tooltip.reportContact.telephone']}" />
+										<!-- <p:panel id="phonePanel" styleClass="no-border input-panel">
+												<p:inputText id="phone"
+													value="#{customerCRUDController.reportContactTelephone}"
+													styleClass="dis-input-width-button"
+													label="#{msg['message.customer.tooltip.reportContact.telephone']}"
+													title="#{msg['message.customer.tooltip.reportContact.telephone']}"
+													disabled="true" />
+												<p:commandButton id="inputReportContactPhoneButton"
+													styleClass="Fright input-button"
+													immediate="true"
+													icon="#{null eq customerCRUDController.reportContactTelephone ? 'ui-icon-plus': 'ui-icon-pencil'}"
+													actionListener="#{customerCRUDController.goToTelephoneTab}"
+													process="@this"
+													update="customerTabView"
+													rendered="#{!customerCRUDController.readOnly}" >
+													<p:ajax immediate="true" process="@form" />
+												</p:commandButton>
+											</p:panel> -->
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<div class="EmptyBox10"></div>
+										<span class="FontBold Fs18 hardblue">#{msg['message.common.address']}</span>
+										<p:outputLabel />
+										<p:outputLabel />
+										<p:outputLabel />
+
+										<!-- COUNTRY -->
+										<p:outputLabel
+											value="#{msg['message.customer.form.report_contact.country']}" />
+										<p:selectOneMenu styleClass="dis-input-width"
+											converter="omnifaces.SelectItemsConverter"
+											disabled="#{customerCRUDController.readOnly}"
+											value="#{customerCRUDController.selectCustomer.reportContact.address.country}"
+											title="#{msg['message.customer.tooltip.reportContact.country']}">
+											<f:selectItem
+												itemLabel="#{msg['message.customer.add.select.country']}"
+												itemValue="#{null}" />
+											<f:selectItems value="#{selectorController.countryList}"
+												var="country"
+												itemLabel="#{country.isoAlpha3Code} - #{country.name}"
+												itemValue="#{country}" />
+											<p:ajax event="change" process="@this" update="rcInputRegion"
+												listener="#{customerCRUDController.onReportContactCountryChange()}" />
+										</p:selectOneMenu>
+
+										<!-- CITY -->
+										<p:outputLabel
+											value="#{msg['message.customer.form.report_contact.city']}" />
+										<p:inputText
+											value="#{customerCRUDController.selectCustomer.reportContact.address.city}"
+											styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly}"
+											title="#{msg['message.customer.tooltip.reportContact.city']}" />
+
+										<!-- REGION -->
+										<p:outputLabel
+											value="#{msg['message.customer.form.report_contact.region']}"
+											for="rcInputRegion" />
+										<p:selectOneMenu id="rcInputRegion"
+											value="#{customerCRUDController.selectCustomer.reportContact.address.region}"
+											styleClass="dis-input-width"
+											converter="omnifaces.SelectItemsConverter"
+											disabled="#{customerCRUDController.readOnly or null eq customerCRUDController.selectCustomer.reportContact.address.country}"
+											title="#{msg['message.customer.tooltip.reportContact.region']}">
+											<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+												itemValue="#{null}" />
+											<f:selectItems
+												value="#{customerCRUDController.reportContactRegionList}"
+												var="region" itemValue="#{region}"
+												itemLabel="#{region.code.concat(' - ').concat(region.description)}" />
+											<p:ajax event="change" process="@this" />
+										</p:selectOneMenu>
+
+										<!-- POSTAL CODE -->
+										<p:outputLabel for="postalCode" id="postalCodeLabel"
+											value="#{msg['message.customer.form.report_contact.postal_code']}" />
+										<p:inputText id="postalCode"
+											value="#{customerCRUDController.selectCustomer.reportContact.address.postalCode}"
+											styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly}"
+											label="#{msg['message.customer.tooltip.reportContact.postalCode']}"
+											title="#{msg['message.customer.tooltip.reportContact.postalCode']}" />
+
+									</p:panelGrid>
+
+									<!-- STREETS -->
+									<p:dataTable id="reportContactAddressDatatable"
+										widgetVar="reportContactAddressDatatable"
+										value="#{customerCRUDController.reportContactStreets}"
+										var="reportContactStreet"
+										selection="#{customerCRUDController.selectedReportContactStreets}"
+										rowIndexVar="rowIndexVar" stickyHeader="false"
+										emptyMessage="#{msg['message.datatable.emptyMessage']}"
+										styleClass="dataTable-letters customer-street-datatable"
+										editMode="cell" rowKey="#{reportContactStreet}"
+										editable="#{!customerCRUDController.readOnly}">
+
+										<f:facet name="header">
+											<table class="no-border dis-table-header">
+												<tr>
+													<td></td>
+													<td class="ui-datatable ui-datatable-header"><h:outputText
+															value="#{msg['message.customer.street.table.title']}" />
+													</td>
+													<td><p:panel styleClass="panel_Button_Invoice">
+															<p:commandButton id="addRCStreetButton"
+																styleClass="Fleft LightButton" icon="ui-icon-plus"
+																actionListener="#{customerCRUDController.addReportContactStreet}"
+																immediate="true" process="@form"
+																title="#{msg['message.customer.add.tooltip.street']}"
+																update="reportContactAddressDatatable"
+																rendered="#{!customerCRUDController.readOnly}"
+																disabled="#{customerCRUDController.streetTypeList.size() le customerCRUDController.reportContactStreets.size()}">
+															</p:commandButton>
+															<p:commandButton id="removeRCStreetButton"
+																styleClass="Fleft LightButton" icon="ui-icon-minusthick"
+																actionListener="#{customerCRUDController.removeReportContactStreet}"
+																immediate="true" process="@form"
+																title="#{msg['message.customer.remove.tooltip.street']}"
+																update="@this reportContactAddressDatatable"
+																disabled="#{empty customerCRUDController.selectedReportContactStreets}"
+																rendered="#{!customerCRUDController.readOnly}">
+															</p:commandButton>
+														</p:panel></td>
+												</tr>
+											</table>
+										</f:facet>
+
+										<p:ajax event="rowSelect"
+											update="addRCStreetButton removeRCStreetButton" />
+										<p:ajax event="rowUnselect"
+											update="addRCStreetButton removeRCStreetButton" />
+										<p:ajax event="rowSelectCheckbox"
+											update="addRCStreetButton removeRCStreetButton" />
+										<p:ajax event="rowUnselectCheckbox"
+											update="addRCStreetButton removeRCStreetButton" />
+										<p:ajax event="toggleSelect"
+											update="addRCStreetButton removeRCStreetButton" />
+
+										<p:ajax event="cellEdit" process="@this"
+											listener="#{customerCRUDController.onReportContactStreetsChange()}"
+											oncomplete="updateReportContactStreets();" />
+
+										<!-- STREET SELECTION CHECKBOX -->
+										<p:column id="rcStreetSelectionCol" selectionMode="multiple"
+											styleClass="street-selection-col"
+											rendered="#{not customerCRUDController.readOnly}" />
+
+										<!-- STREET TYPE -->
+										<p:column
+											headerText="#{msg['message.customer.street.table.streetType']}"
+											styleClass="col-channel-line">
+
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText
+														value="#{reportContactStreet.streetType != null ? 
+ 																	labelUtil.getStreetTypeLabel(reportContactStreet.streetType) : '-'}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:selectOneMenu value="#{reportContactStreet.streetType}"
+														styleClass="invoiceLineTable-edit"
+														converter="omnifaces.SelectItemsConverter"
+														label="#{msg['message.customer.address.table.streetType']}"
+														panelStyleClass="street-datatable-combo-panel">
+														<f:selectItem
+															itemLabel="#{msg['message.common.selectOne']}"
+															itemValue="#{null}" />
+														<f:selectItems
+															value="#{customerCRUDController.streetTypeList}"
+															var="streetType"
+															itemLabel="#{labelUtil.getStreetTypeLabel(streetType)}"
+															itemDisabled="#{(customerCRUDController.isReportContactStreetTypeDisabled(reportContactStreet, streetType))}" />
+														<p:ajax event="change" process="@this" />
+
+													</p:selectOneMenu>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+										<!-- STREET -->
+										<p:column headerText="#{msg['message.common.description']}"
+											styleClass="col-description-line">
+
+											<p:cellEditor>
+												<f:facet name="output">
+													<h:outputText value="#{reportContactStreet.description}" />
+												</f:facet>
+												<f:facet name="input">
+													<p:inputText value="#{reportContactStreet.description}"
+														styleClass="invoiceLineTable-edit"
+														label="#{msg['message.common.description']}"
+														maxlength="#{validationConstants.customerAddressStreetMaxLength}"
+														>
+														<p:ajax event="change" process="@this" />
+														<f:validateLength
+															maximum="#{validationConstants.customerAddressStreetMaxLength}">
+														</f:validateLength>
+													</p:inputText>
+												</f:facet>
+											</p:cellEditor>
+										</p:column>
+
+									</p:dataTable>
+
+								</p:panel>
+							</p:tab>
+
+							<!-- ASSOCIATED CUSTOMERS TAB -->
+							<p:tab id="CustomerAssociatedCustomersTab"
+								title="#{msg['message.customer.tabview.customers']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel6">
+									<p:panelGrid styleClass="no-border" columns="2"
+										columnClasses="label, value">
+										<p:outputLabel styleClass="dis-input-width"
+											value="#{customerCRUDController.selectCustomer.customerType eq 'AGENCY' ? msg['message.customer.parentAgency'] : msg['message.customer.form.agency']}" />
+										<p:selectOneMenu
+											value="#{customerCRUDController.selectCustomer.agency}"
+											effect="fade" var="agency" filter="true"
+											filterMatchMode="contains"
+											converter="omnifaces.SelectItemsConverter"
+											styleClass="dis-input-width"
+											disabled="#{customerCRUDController.readOnly or customerCRUDController.selectCustomer.otherCustomer}"
+											title="#{msg['message.customer.tooltip.agency']}">
+											<f:selectItem
+												itemLabel="#{msg['message.customer.select.agency']}"
+												itemValue="#{null}" />
+											<f:selectItems value="#{customerCRUDController.agencyList}"
+												var="ag" itemValue="#{ag}" itemLabel="#{ag.name}" />
+											<p:column>
+												<p:outputLabel
+													value="#{agency != null ? agency.name : msg['message.customer.select.agency']}" />
+											</p:column>
+										</p:selectOneMenu>
+
+										<p:outputLabel
+											value="#{msg['message.customer.form.advertisers']}"
+											rendered="#{customerCRUDController.selectCustomer.agencyCustomer}" />
+										<p:pickList id="PojoPickList"
+											styleClass="dis-picklist-noAll dis-picklist-noBorder"
+											disabled="#{customerCRUDController.readOnly or customerCRUDController.selectCustomer.otherCustomer or customerCRUDController.selectCustomer.advertiserCustomer}"
+											rendered="#{customerCRUDController.selectCustomer.agencyCustomer}"
+											value="#{customerCRUDController.dualListAdvertisers}"
+											var="advertiser" effect="bounce" itemValue="#{advertiser}"
+											itemLabel="#{advertiser.name}" showSourceFilter="true"
+											showTargetFilter="true" filterMatchMode="contains">
+
+											<f:facet name="sourceCaption">"#{msg['message.customer.pickHeadSource']}"</f:facet>
+											<f:facet name="targetCaption">"#{msg['message.customer.pickHeadTarget']}"</f:facet>
+
+											<p:ajax event="transfer"
+												listener="#{customerCRUDController.onAdvertisersTransfer}" />
+											<o:converter converterId="omnifaces.ListConverter"
+												list="#{customerCRUDController.allAdvertisers}" />
+											<p:column style="width:100%">
+												<h:outputText value="#{advertiser.name}" />
+											</p:column>
+										</p:pickList>
+
+									</p:panelGrid>
+								</p:panel>
+							</p:tab>
+
+							<!-- NOTES TAB -->
+							<p:tab id="customerNotes"
+								title="#{msg['message.customer.tabview.notes']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel7">
+									<p:panelGrid styleClass="no-border" columns="2"
+										columnClasses="label, value">
+
+										<!-- INTERNAL NOTES -->
+										<p:outputLabel for="internalNotes"
+											value="#{msg['message.customer.form.internalNotes']}" />
+										<p:inputTextarea id="internalNotes"
+											label="#{msg['message.customer.form.internalNotes']}"
+											autoResize="false"
+											value="#{customerCRUDController.selectCustomer.internalNotes}"
+											styleClass="dis-inputArea-big-width"
+											title="#{msg['message.customer.tooltip.internalNotes']}"
+											maxlength="#{validationConstants.customerInternalNotes}"
+											disabled="#{customerCRUDController.readOnly}">
+											<f:validateLength
+												maximum="#{validationConstants.customerInternalNotes}">
+											</f:validateLength>
+										</p:inputTextarea>
+
+									</p:panelGrid>
+								</p:panel>
+							</p:tab>
+
+							<!-- TAXES TAB -->
+							<p:tab id="customerTaxesTab"
+								rendered="#{customerCRUDController.showInputSwitchWithholding()}"
+								title="#{msg['message.customer.tabview.taxes']}">
+								<p:panel styleClass="no-border-panel"
+									id="selectCustomerUpdPanel9">
+
+									<p:panelGrid styleClass="no-border" columns="2"
+										id="customerTaxesGrid" columnClasses="label, value">
+
+										<!--WITHHOLDING APPICLABLE -->
+										<p:outputLabel for="withholdingApplicable"
+											value="#{msg['message.withholding.applicable']}"
+											rendered="#{customerCRUDController.showInputSwitchWithholding()}" />
+										<p:inputSwitch id="withholdingApplicable"
+											value="#{customerCRUDController.selectCustomer.withholdingApplicable}"
+											offLabel="#{msg['message.common.false']}"
+											onLabel="#{msg['message.common.true']}"
+											rendered="#{customerCRUDController.showInputSwitchWithholding()}"
+											disabled="#{customerCRUDController.readOnly}">
+											<p:ajax process="@this"
+												update="@form:customerTabView:customerTaxesTab:selectCustomerUpdPanel9:customerTaxesGrid" />
+										</p:inputSwitch>
+
+										<p:outputLabel for="excludingCustomerTaxes"
+											value="#{msg['message.customer.form.taxes.excludingCustomerTaxes']} *"
+											rendered="#{customerCRUDController.selectCustomer.withholdingApplicable}" />
+										<p:selectManyMenu id="excludingCustomerTaxes"
+											showCheckbox="true" var="t"
+											converter="omnifaces.SelectItemsConverter"
+											value="#{customerCRUDController.selectedTaxes}"
+											styleClass="dis-input-width dis-checkbox-fix dis-picklist-noAll dis-picklist-noBorder"
+											disabled="#{customerCRUDController.readOnly}"
+											rendered="#{customerCRUDController.selectCustomer.withholdingApplicable}"
+											title="#{msg['message.customer.tooltip.excludingCustomerTaxes']}">
+											<f:selectItems var="tax" itemValue="#{tax}"
+												itemLabel="#{tax.description}"
+												value="#{customerCRUDController.taxes}" />
+											<p:column>
+												<h:outputText value="#{t.taxCode}" />
+											</p:column>
+
+											<p:column>
+												<h:outputText value="#{t.description}" />
+											</p:column>
+
+										</p:selectManyMenu>
+
+									</p:panelGrid>
+								</p:panel>
+							</p:tab>
+
+							<!-- TELEPHONES TAB -->
+							<!-- <p:tab id="customerTelephonesTab"
+								title="#{msg['message.customer.tabview.telephones']}"
+								rendered="false" >
+								<p:panel styleClass="no-border-panel" id="customerTelephonesPanel">
+									<p:panelGrid id="customerTelephonesPanelGrid"
+										styleClass="no-border" columns="4"
+										columnClasses="label, value">
+
+										<p:panel id="customerTelephonesDataTablePanel"
+											widgetVar="customerTelephonesDataTablePanel" closeSpeed="0"
+											styleClass="no-border no-spacing">
+											
+											TELEPHONES
+											<p:dataTable id="customerTelephonesDatatable"
+												widgetVar="customerTelephonesDatatable"												
+												var="customerTelephone"
+												value="#{customerCRUDController.customerTelephones}"
+												selection="#{customerCRUDController.selectedTelephones}"
+												rowIndexVar="rowIndexVar"
+												stickyHeader="false"
+												emptyMessage="#{msg['message.datatable.emptyMessage']}"
+												styleClass="dataTable-letters"
+												editMode="cell"
+												rowKey="#{customerTelephone}" 
+												editable="#{!customerCRUDController.readOnly}" >
+												
+												<f:facet name="header">
+													<table class="no-border dis-table-header">
+														<tr>
+														
+															<td></td>
+															<td class="ui-datatable ui-datatable-header">
+																<h:outputText value="#{msg['message.customer.telephone.table.title']}" />
+															</td>
+															<td><p:panel styleClass="panel_Button_Invoice">
+																	<p:commandButton id="addTelephoneButton"
+																		styleClass="Fleft LightButton" icon="ui-icon-plus"
+																		actionListener="#{customerCRUDController.addTelephone}"
+																		immediate="true" process="@form"
+																		title="#{msg['message.customer.add.tooltip.telephone']}"
+																		update="customerTelephonesDatatable"
+																		rendered="#{!customerCRUDController.readOnly}" >
+																	</p:commandButton>
+																	<p:commandButton id="removeTelephoneButton"
+																		styleClass="Fleft LightButton"
+																		icon="ui-icon-minusthick"
+																		actionListener="#{customerCRUDController.removeTelephone}"
+																		immediate="true" process="@form"
+																		title="#{msg['message.customer.remove.tooltip.telephone']}"
+																		update="@this customerTelephonesDatatable
+																			@form:customerTabView:inputTelephonePanel
+																			@form:customerTabView:faxAddressPanel
+																			@form:customerTabView:billingContactTelephonePanel
+																			@form:customerTabView:billingContactFaxPanel
+																			@form:customerTabView:phonePanel"
+																		disabled="#{empty customerCRUDController.selectedTelephones}"
+																		rendered="#{!customerCRUDController.readOnly}" >
+																	</p:commandButton>
+																</p:panel></td>
+														</tr>
+													</table>
+												</f:facet>
+
+												<p:ajax event="rowSelect" update="addTelephoneButton removeTelephoneButton" />
+												<p:ajax event="rowUnselect" update="addTelephoneButton removeTelephoneButton" />
+												<p:ajax event="rowSelectCheckbox" update="addTelephoneButton removeTelephoneButton" />
+												<p:ajax event="rowUnselectCheckbox" update="addTelephoneButton removeTelephoneButton" />
+												<p:ajax event="toggleSelect" update="addTelephoneButton removeTelephoneButton" />
+												
+												TELEPHONE SELECTION CHECKBOX
+												<p:column id="telephoneSelectionCol" selectionMode="multiple"
+													styleClass="email-selection-col"
+													rendered="#{not customerCRUDController.readOnly}" />
+												
+												TELEPHONE TYPE
+												<p:column
+													headerText="#{msg['message.customer.telephone.table.telephoneType']}"
+													styleClass="col-channel-line">
+
+													<p:cellEditor>
+														<f:facet name="output">
+															<h:outputText
+																value="#{customerTelephone.telephoneType != null ? 
+ 																	labelUtil.getTelephoneTypeLabel(customerTelephone.telephoneType) : '-'}" />
+														</f:facet>
+														<f:facet name="input">
+															<p:selectOneMenu value="#{customerTelephone.telephoneType}"
+																styleClass="invoiceLineTable-edit"
+																converter="omnifaces.SelectItemsConverter"
+																label="#{msg['message.customer.telephone.table.telephoneType']}">
+																<f:selectItem itemLabel="#{msg['message.common.selectOne']}"
+																	itemValue="#{null}" />
+																<f:selectItems
+																	value="#{selectorController.telephoneTypeList}"
+																	var="telephoneType" itemLabel="#{customerCRUDController.getTelephoneTypeLabel(telephoneType)}" />
+
+																<p:ajax event="change" process="@this"
+																	listener="#{customerCRUDController.updateTelephones}"
+																	update="@form:customerTabView:inputTelephonePanel
+																			@form:customerTabView:faxAddressPanel
+																			@form:customerTabView:billingContactTelephonePanel
+																			@form:customerTabView:billingContactFaxPanel
+																			@form:customerTabView:phonePanel" />
+
+															</p:selectOneMenu>
+														</f:facet>
+													</p:cellEditor>
+												</p:column>
+
+												TELEPHONE
+												<p:column headerText="#{msg['message.customer.telephone.table.telephoneNumber']}"
+													styleClass="col-description-line">
+
+													<p:cellEditor>
+														<f:facet name="output">
+															<h:outputText value="#{customerTelephone.number}" />
+														</f:facet>
+														<f:facet name="input">
+															<p:inputText value="#{customerTelephone.number}"
+																styleClass="invoiceLineTable-edit"
+																label="#{msg['message.customer.telephone.table.telephoneNumber']}">
+																<p:ajax event="change" process="@this"
+																	listener="#{customerCRUDController.updateTelephones}"
+																	update="@form:customerTabView:inputTelephonePanel
+																			@form:customerTabView:faxAddressPanel
+																			@form:customerTabView:billingContactTelephonePanel
+																			@form:customerTabView:billingContactFaxPanel
+																			@form:customerTabView:phonePanel" />
+															</p:inputText>
+														</f:facet>
+													</p:cellEditor>
+
+												</p:column>
+												
+											</p:dataTable>
+										</p:panel>
+									</p:panelGrid>
+								</p:panel>
+							</p:tab> -->
+
+						</p:tabView>
+
+						<p:spacer styleClass="dis-spacer-small" />
+
+						<div class="form-group">
+							<div style="margin-top: 5px;">
+								<p:commandButton value="#{msg['message.common.save']}"
+									rendered="#{!customerCRUDController.readOnly and 
+									(perm.isPermitted('customer:update') or perm.isPermitted('customer:create'))}"
+									id="aceptar_customer"
+									action="#{customerCRUDController.createOrUpdate}"
+									icon="ui-icon-check" validateClient="true" process="@form"
+									oncomplete="scrollOnMessageToTop()"
+									update="createUpdateCustomerForm"
+									title="#{msg['message.customer.tooltip.create_or_update']}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.continue']}"
+										icon="ui-icon-alert" />
+
+								</p:commandButton>
+
+								<p:commandButton
+									value="#{customerCRUDController.readOnly ? 
+										msg['message.common.back'] : msg['message.common.cancel']}"
+									resetValues="true" id="cancelar_customer_nuevo" process="@this"
+									icon="#{customerCRUDController.readOnly ? 'ui-icon-arrowthick-1-w' : 'ui-icon-cancel'}"
+									title="#{msg['message.customer.tooltip.cancel']}"
+									immediate="true" action="#{customerCRUDController.cancel}">
+
+									<p:confirm
+										message="#{msg['message.common.confirmation.cancel']}"
+										icon="ui-icon-alert" />
+
+								</p:commandButton>
+
+							</div>
+						</div>
+						<p:commandButton id="buttonDefault" styleClass="buttonDefault"
+							disabled="true" />
+						<p:defaultCommand target="buttonDefault" />
+
+						<p:remoteCommand name="updateCustomerStreets"
+							update="@form:customerTabView:customerContactTab:selectCustomerUpdPanel3:customerAddressDatatable" />
+
+						<p:remoteCommand name="updateReportContactStreets"
+							update="@form:customerTabView:customerReportContact:selectCustomerUpdPanel8:reportContactAddressDatatable" />
+
+					</h:form>
+				</div>
+			</div>
+
+			<p:dialog id="emailDialog" widgetVar="emailDialog" modal="true"
+				height="400" width="80%" closable="false">
+
+				<p:panel styleClass="no-border-panel" id="customerEmailsPanel">
+
+					<h:form id="messagesEmailForm">
+						<p:messages autoUpdate="false" id="messagesEmail"
+							showDetail="false" showSummary="true" closable="true" />
+					</h:form>
+
+					<h:form id="emailForm" autocomplete="off">
+
+						<p:panelGrid id="customerEmailsPanelGrid" styleClass="no-border"
+							columns="4" columnClasses="label, value">
+
+							<p:panel id="customerEmailsDataTablePanel"
+								widgetVar="customerEmailsDataTablePanel" closeSpeed="0"
+								styleClass="no-border no-spacing">
+
+								<p:dataTable id="customerEmailsDatatable"
+									widgetVar="customerEmailsDatatable"
+									value="#{customerCRUDController.customerEmails}"
+									var="customerEmail"
+									selection="#{customerCRUDController.selectedEmails}"
+									rowIndexVar="rowIndexVar" stickyHeader="false"
+									emptyMessage="#{msg['message.datatable.emptyMessage']}"
+									styleClass="dataTable-letters" editMode="cell"
+									rowKey="#{customerEmail}"
+									editable="#{!customerCRUDController.readOnly}">
+
+									<f:facet name="header">
+										<table class="no-border dis-table-header">
+											<tr>
+												<td></td>
+												<td class="ui-datatable ui-datatable-header"><h:outputText
+														value="#{msg['message.customer.email.table.title']}" /></td>
+												<td><p:panel styleClass="panel_Button_Invoice">
+														<p:commandButton id="addEmailButton"
+															styleClass="Fleft LightButton" icon="ui-icon-plus"
+															actionListener="#{customerCRUDController.addEmail}"
+															process="@this"
+															title="#{msg['message.customer.add.tooltip.email']}"
+															update="@this customerEmailsDatatable"
+															rendered="#{!customerCRUDController.readOnly}">
+														</p:commandButton>
+														<p:commandButton id="removeEmailButton"
+															styleClass="Fleft LightButton" icon="ui-icon-minusthick"
+															actionListener="#{customerCRUDController.removeEmail}"
+															process="@this"
+															title="#{msg['message.customer.remove.tooltip.email']}"
+															update="customerEmailsDatatable"
+															disabled="#{empty customerCRUDController.selectedEmails}"
+															rendered="#{!customerCRUDController.readOnly}">
+														</p:commandButton>
+													</p:panel></td>
+											</tr>
+										</table>
+									</f:facet>
+
+									<p:ajax event="rowSelect"
+										update="addEmailButton removeEmailButton" />
+									<p:ajax event="rowUnselect"
+										update="addEmailButton removeEmailButton" />
+									<p:ajax event="rowSelectCheckbox"
+										update="addEmailButton removeEmailButton" />
+									<p:ajax event="rowUnselectCheckbox"
+										update="addEmailButton removeEmailButton" />
+									<p:ajax event="toggleSelect"
+										update="addEmailButton removeEmailButton" />
+
+									<!-- EMAIL SELECTIOn -->
+									<p:column id="emailSelectionCol" selectionMode="multiple"
+										styleClass="email-selection-col"
+										rendered="#{not customerCRUDController.readOnly}" />
+
+									<!-- EMAIL TYPE -->
+									<p:column
+										headerText="#{msg['message.customer.email.table.emailType']}"
+										styleClass="col-channel-line">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText
+													value="#{customerEmail.emailType != null ? 
+ 																	labelUtil.getEmailTypeLabel(customerEmail.emailType) : '-'}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:selectOneMenu value="#{customerEmail.emailType}"
+													styleClass="invoiceLineTable-edit"
+													converter="omnifaces.SelectItemsConverter"
+													label="#{msg['message.customer.email.table.emailType']}">
+													<f:selectItem
+														itemLabel="#{msg['message.common.selectOne']}"
+														itemValue="#{null}" />
+													<f:selectItems
+														value="#{selectorController.getEmailTypesByCompany(customerCRUDController.selectCustomer.company)}"
+														var="emailType"
+														itemLabel="#{labelUtil.getEmailTypeLabel(emailType)}" />
+
+													<p:ajax event="change" process="@this" />
+												</p:selectOneMenu>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+									<!-- EMAIL -->
+									<p:column headerText="#{msg['message.common.email']}"
+										styleClass="col-description-line">
+										<p:cellEditor>
+											<f:facet name="output">
+												<h:outputText value="#{customerEmail.email}" />
+											</f:facet>
+											<f:facet name="input">
+												<p:inputText value="#{customerEmail.email}"
+													autocomplete="false"
+													styleClass="invoiceLineTable-edit focusConfirmEmail"
+													label="#{msg['message.common.email']}">
+
+													<p:ajax event="keyup" process="@this" />
+												</p:inputText>
+											</f:facet>
+										</p:cellEditor>
+									</p:column>
+
+								</p:dataTable>
+
+								<f:facet name="footer">
+									<p:commandButton value="#{msg['message.common.confirm']}"
+										process="@this"
+										actionListener="#{customerCRUDController.saveEmails}"
+										update="createUpdateCustomerForm:customerTabView:emailAddress createUpdateCustomerForm:customerTabView:billingContactEmail createUpdateCustomerForm:customerTabView:reportContactEmail" />
+								</f:facet>
+							</p:panel>
+						</p:panelGrid>
+					</h:form>
+
+
+
+				</p:panel>
+			</p:dialog>
+		</c:if>
+	</ui:define>
+
+</ui:composition>

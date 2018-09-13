@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf14773193020100" configfile="/dis-web/src/main/webapp/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" x="122" y="11890" id="pf14821715474260" referenceLink="//@navigationRule.2/@fromViewId|" outlinks="pf14821715474271 pf14821715474272 pf14821715474273 pf14821715474274 pf14821715474275 pf14821715474276 pf14821715474277 pf14821715474278 pf14821715474279 pf148217154742710 pf148217154742711 pf148217154742712 pf148217154742713 pf148217154742714 pf148217154742715 pf148217154742716 pf148217154742717 pf148217154742718 pf148217154742719 pf148217154742720 pf148217154742721 pf148217154742722 pf148217154742723 pf148217154742724 pf148217154742725 pf148217154742726 pf148217154742727 pf148217154742728 pf148217154742729 pf148217154742730 pf148217154742731 pf148217154742732 pf148217154742733 pf148217154742734 pf148217154742735 pf148217154742736 pf148217154742737 pf148217154742738 pf148217154742739 pf148217154742740 pf148217154742741 pf148217154742742 pf148217154742743 pf148217154742744 pf148217154742745 pf148217154742746 pf148217154742747 pf148217154742748 pf148217154742749 pf148217154742750 pf148217154742751 pf148217154742752 pf148217154742753 pf148217154742754 pf148217154742755 pf148217154742756 pf148217154742757 pf148217154742758 pf148217154742759 pf148217154742760 pf148217154742761 pf148217154742762" path="/*"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.loginPage}" x="338" y="178" id="pf148217154742763" referenceLink="//@navigationRule.0/@navigationCase.0/@toViewId|" inlinks="pf14821715474271" path="#{navigationRuler.loginPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="login.xhtml" x="122" y="23986" id="pf148217154742864" referenceLink="//@navigationRule.1/@fromViewId|" outlinks="pf148217154742865" path="/login.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.changePasswordPage}" x="338" y="23986" id="pf148217154742866" referenceLink="//@navigationRule.1/@navigationCase.0/@toViewId|" inlinks="pf148217154742865" path="#{navigationRuler.changePasswordPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.indexPage}" x="338" y="562" id="pf148217154742867" referenceLink="//@navigationRule.2/@navigationCase.0/@toViewId|" inlinks="pf14821715474272" path="#{navigationRuler.indexPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.userSettingsPage}" x="338" y="946" id="pf148217154742868" referenceLink="//@navigationRule.2/@navigationCase.1/@toViewId|" inlinks="pf14821715474273" path="#{navigationRuler.userSettingsPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="pages/configurator/setting/setting.xhtml" x="338" y="1330" id="pf148217154742869" referenceLink="//@navigationRule.2/@navigationCase.2/@toViewId|" inlinks="pf14821715474274" path="/pages/configurator/setting/setting.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.roleListPage}" x="338" y="1714" id="pf148217154742870" referenceLink="//@navigationRule.2/@navigationCase.3/@toViewId|" inlinks="pf14821715474275" path="#{navigationRuler.roleListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.roleCRUDPage}" x="338" y="2098" id="pf148217154742871" referenceLink="//@navigationRule.2/@navigationCase.4/@toViewId|" inlinks="pf14821715474276" path="#{navigationRuler.roleCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.permissionListPage}" x="338" y="2482" id="pf148217154742872" referenceLink="//@navigationRule.2/@navigationCase.5/@toViewId|" inlinks="pf14821715474277" path="#{navigationRuler.permissionListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.permissionCRUDPage}" x="338" y="2866" id="pf148217154742873" referenceLink="//@navigationRule.2/@navigationCase.6/@toViewId|" inlinks="pf14821715474278" path="#{navigationRuler.permissionCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.passwordStandardsPage}" x="338" y="3250" id="pf148217154742874" referenceLink="//@navigationRule.2/@navigationCase.7/@toViewId|" inlinks="pf14821715474279" path="#{navigationRuler.passwordStandardsPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.customerListPage}" x="338" y="3634" id="pf148217154742875" referenceLink="//@navigationRule.2/@navigationCase.8/@toViewId|" inlinks="pf148217154742710" path="#{navigationRuler.customerListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.customerCRUDPage}" x="338" y="4018" id="pf148217154742876" referenceLink="//@navigationRule.2/@navigationCase.9/@toViewId|" inlinks="pf148217154742711" path="#{navigationRuler.customerCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.changePasswordSenttingPage}" x="338" y="4402" id="pf148217154742877" referenceLink="//@navigationRule.2/@navigationCase.10/@toViewId|" inlinks="pf148217154742712" path="#{navigationRuler.changePasswordSenttingPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.batchListPage}" x="338" y="4786" id="pf148217154742878" referenceLink="//@navigationRule.2/@navigationCase.11/@toViewId|" inlinks="pf148217154742713" path="#{navigationRuler.batchListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.batchDetailPage}" x="338" y="5170" id="pf148217154742879" referenceLink="//@navigationRule.2/@navigationCase.12/@toViewId|" inlinks="pf148217154742714" path="#{navigationRuler.batchDetailPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.batchImportPage}" x="338" y="5554" id="pf148217154742880" referenceLink="//@navigationRule.2/@navigationCase.13/@toViewId|" inlinks="pf148217154742715" path="#{navigationRuler.batchImportPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.transmissionOrdersSearch}" x="338" y="5938" id="pf148217154742881" referenceLink="//@navigationRule.2/@navigationCase.14/@toViewId|" inlinks="pf148217154742716" path="#{navigationRuler.transmissionOrdersSearch}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.transmissionOrdersPage}" x="338" y="6322" id="pf148217154742882" referenceLink="//@navigationRule.2/@navigationCase.15/@toViewId|" inlinks="pf148217154742717" path="#{navigationRuler.transmissionOrdersPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.invoiceListPage}" x="338" y="6706" id="pf148217154742883" referenceLink="//@navigationRule.2/@navigationCase.16/@toViewId|" inlinks="pf148217154742718" path="#{navigationRuler.invoiceListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.invoiceCRUDPage}" x="338" y="7090" id="pf148217154742884" referenceLink="//@navigationRule.2/@navigationCase.17/@toViewId|" inlinks="pf148217154742719" path="#{navigationRuler.invoiceCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.invoiceConsumptionsPage}" x="338" y="7474" id="pf148217154742885" referenceLink="//@navigationRule.2/@navigationCase.18/@toViewId|" inlinks="pf148217154742720" path="#{navigationRuler.invoiceConsumptionsPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.consumptionListPage}" x="338" y="7858" id="pf148217154742886" referenceLink="//@navigationRule.2/@navigationCase.19/@toViewId|" inlinks="pf148217154742721" path="#{navigationRuler.consumptionListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.consumptionCRUDPage}" x="338" y="8242" id="pf148217154742887" referenceLink="//@navigationRule.2/@navigationCase.20/@toViewId|" inlinks="pf148217154742722" path="#{navigationRuler.consumptionCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.transmissionOrdersViewPage}" x="338" y="8626" id="pf148217154742888" referenceLink="//@navigationRule.2/@navigationCase.21/@toViewId|" inlinks="pf148217154742723" path="#{navigationRuler.transmissionOrdersViewPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.transmissionOrdersDetailPage}" x="338" y="9010" id="pf148217154742889" referenceLink="//@navigationRule.2/@navigationCase.22/@toViewId|" inlinks="pf148217154742724" path="#{navigationRuler.transmissionOrdersDetailPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.journalListPage}" x="338" y="9394" id="pf148217154742890" referenceLink="//@navigationRule.2/@navigationCase.23/@toViewId|" inlinks="pf148217154742725" path="#{navigationRuler.journalListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.journalLinesPage}" x="338" y="9778" id="pf148217154742891" referenceLink="//@navigationRule.2/@navigationCase.24/@toViewId|" inlinks="pf148217154742726" path="#{navigationRuler.journalLinesPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportsPage}" x="338" y="10162" id="pf148217154742892" referenceLink="//@navigationRule.2/@navigationCase.25/@toViewId|" inlinks="pf148217154742727" path="#{navigationRuler.reportsPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportCustomerIBMSPage}" x="338" y="10546" id="pf148217154742893" referenceLink="//@navigationRule.2/@navigationCase.26/@toViewId|" inlinks="pf148217154742728" path="#{navigationRuler.reportCustomerIBMSPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportInvoiceIBMSPage}" x="338" y="10930" id="pf148217154742894" referenceLink="//@navigationRule.2/@navigationCase.27/@toViewId|" inlinks="pf148217154742729" path="#{navigationRuler.reportInvoiceIBMSPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportTransmissionOrderPage}" x="338" y="11314" id="pf148217154742895" referenceLink="//@navigationRule.2/@navigationCase.28/@toViewId|" inlinks="pf148217154742730" path="#{navigationRuler.reportTransmissionOrderPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportCustomerMasterPage}" x="338" y="11698" id="pf148217154742896" referenceLink="//@navigationRule.2/@navigationCase.29/@toViewId|" inlinks="pf148217154742731" path="#{navigationRuler.reportCustomerMasterPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportUnbilledARPage}" x="338" y="12082" id="pf148217154742897" referenceLink="//@navigationRule.2/@navigationCase.30/@toViewId|" inlinks="pf148217154742732" path="#{navigationRuler.reportUnbilledARPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportSummaryBillingPage}" x="338" y="12466" id="pf148217154742898" referenceLink="//@navigationRule.2/@navigationCase.31/@toViewId|" inlinks="pf148217154742733" path="#{navigationRuler.reportSummaryBillingPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportCustomerAuditPage}" x="338" y="12850" id="pf148217154742899" referenceLink="//@navigationRule.2/@navigationCase.32/@toViewId|" inlinks="pf148217154742734" path="#{navigationRuler.reportCustomerAuditPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportInvoiceERPPage}" x="338" y="13234" id="pf1482171547428100" referenceLink="//@navigationRule.2/@navigationCase.33/@toViewId|" inlinks="pf148217154742735" path="#{navigationRuler.reportInvoiceERPPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportJournalERPPage}" x="338" y="13618" id="pf1482171547428101" referenceLink="//@navigationRule.2/@navigationCase.34/@toViewId|" inlinks="pf148217154742736" path="#{navigationRuler.reportJournalERPPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportDetailActivityPage}" x="338" y="14002" id="pf1482171547428102" referenceLink="//@navigationRule.2/@navigationCase.35/@toViewId|" inlinks="pf148217154742737" path="#{navigationRuler.reportDetailActivityPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportJournalEntryPage}" x="338" y="14386" id="pf1482171547428103" referenceLink="//@navigationRule.2/@navigationCase.36/@toViewId|" inlinks="pf148217154742738" path="#{navigationRuler.reportJournalEntryPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportPreBillAndConsumptionPage}" x="338" y="14770" id="pf1482171547428104" referenceLink="//@navigationRule.2/@navigationCase.37/@toViewId|" inlinks="pf148217154742739" path="#{navigationRuler.reportPreBillAndConsumptionPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportTransmissionAffidavitPage}" x="338" y="15154" id="pf1482171547428105" referenceLink="//@navigationRule.2/@navigationCase.38/@toViewId|" inlinks="pf148217154742740" path="#{navigationRuler.reportTransmissionAffidavitPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.reportSAGEPage}" x="338" y="15538" id="pf1482171547428106" referenceLink="//@navigationRule.2/@navigationCase.39/@toViewId|" inlinks="pf148217154742741" path="#{navigationRuler.reportSAGEPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.companyListPage}" x="338" y="15922" id="pf1482171547428107" referenceLink="//@navigationRule.2/@navigationCase.40/@toViewId|" inlinks="pf148217154742742" path="#{navigationRuler.companyListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.companyCRUDPage}" x="338" y="16306" id="pf1482171547428108" referenceLink="//@navigationRule.2/@navigationCase.41/@toViewId|" inlinks="pf148217154742743" path="#{navigationRuler.companyCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.coaListPage}" x="338" y="16690" id="pf1482171547428109" referenceLink="//@navigationRule.2/@navigationCase.42/@toViewId|" inlinks="pf148217154742744" path="#{navigationRuler.coaListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.coaCRUDPage}" x="338" y="17074" id="pf1482171547429110" referenceLink="//@navigationRule.2/@navigationCase.43/@toViewId|" inlinks="pf148217154742745" path="#{navigationRuler.coaCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.accountListPage}" x="338" y="17458" id="pf1482171547429111" referenceLink="//@navigationRule.2/@navigationCase.44/@toViewId|" inlinks="pf148217154742746" path="#{navigationRuler.accountListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.accountCRUDPage}" x="338" y="17842" id="pf1482171547429112" referenceLink="//@navigationRule.2/@navigationCase.45/@toViewId|" inlinks="pf148217154742747" path="#{navigationRuler.accountCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.geographyListPage}" x="338" y="18226" id="pf1482171547429113" referenceLink="//@navigationRule.2/@navigationCase.46/@toViewId|" inlinks="pf148217154742748" path="#{navigationRuler.geographyListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.geographyCRUDPage}" x="338" y="18610" id="pf1482171547429114" referenceLink="//@navigationRule.2/@navigationCase.47/@toViewId|" inlinks="pf148217154742749" path="#{navigationRuler.geographyCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.platformListPage}" x="338" y="18994" id="pf1482171547429115" referenceLink="//@navigationRule.2/@navigationCase.48/@toViewId|" inlinks="pf148217154742750" path="#{navigationRuler.platformListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.platformCRUDPage}" x="338" y="19378" id="pf1482171547429116" referenceLink="//@navigationRule.2/@navigationCase.49/@toViewId|" inlinks="pf148217154742751" path="#{navigationRuler.platformCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.profitCenterListPage}" x="338" y="19762" id="pf1482171547429117" referenceLink="//@navigationRule.2/@navigationCase.50/@toViewId|" inlinks="pf148217154742752" path="#{navigationRuler.profitCenterListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.profitCenterCRUDPage}" x="338" y="20146" id="pf1482171547429118" referenceLink="//@navigationRule.2/@navigationCase.51/@toViewId|" inlinks="pf148217154742753" path="#{navigationRuler.profitCenterCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.costCenterListPage}" x="338" y="20530" id="pf1482171547429119" referenceLink="//@navigationRule.2/@navigationCase.52/@toViewId|" inlinks="pf148217154742754" path="#{navigationRuler.costCenterListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.costCenterCRUDPage}" x="338" y="20914" id="pf1482171547429120" referenceLink="//@navigationRule.2/@navigationCase.53/@toViewId|" inlinks="pf148217154742755" path="#{navigationRuler.costCenterCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.channelListPage}" x="338" y="21298" id="pf1482171547429121" referenceLink="//@navigationRule.2/@navigationCase.54/@toViewId|" inlinks="pf148217154742756" path="#{navigationRuler.channelListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.channelCRUDPage}" x="338" y="21682" id="pf1482171547429122" referenceLink="//@navigationRule.2/@navigationCase.55/@toViewId|" inlinks="pf148217154742757" path="#{navigationRuler.channelCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.countryListPage}" x="338" y="22066" id="pf1482171547429123" referenceLink="//@navigationRule.2/@navigationCase.56/@toViewId|" inlinks="pf148217154742758" path="#{navigationRuler.countryListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.countryCRUDPage}" x="338" y="22450" id="pf1482171547429124" referenceLink="//@navigationRule.2/@navigationCase.57/@toViewId|" inlinks="pf148217154742759" path="#{navigationRuler.countryCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.taxListPage}" x="338" y="22834" id="pf1482171547429125" referenceLink="//@navigationRule.2/@navigationCase.58/@toViewId|" inlinks="pf148217154742760" path="#{navigationRuler.taxListPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.taxCRUDPage}" x="338" y="23218" id="pf1482171547429126" referenceLink="//@navigationRule.2/@navigationCase.59/@toViewId|" inlinks="pf148217154742761" path="#{navigationRuler.taxCRUDPage}"/>
+  <nodes xsi:type="pageflow:PFPage" name="#{navigationRuler.splitPage}" x="338" y="23602" id="pf1482171547429127" referenceLink="//@navigationRule.2/@navigationCase.60/@toViewId|" inlinks="pf148217154742762" path="#{navigationRuler.splitPage}"/>
+  <links id="pf14821715474271" target="pf148217154742763" source="pf14821715474260" outcome="#{navigationRuler.loginOutcome}" redirect="true"/>
+  <links id="pf148217154742865" target="pf148217154742866" source="pf148217154742864" outcome="changePassword"/>
+  <links id="pf14821715474272" target="pf148217154742867" source="pf14821715474260" outcome="home" redirect="true"/>
+  <links id="pf14821715474273" target="pf148217154742868" source="pf14821715474260" outcome="userSettings"/>
+  <links id="pf14821715474274" target="pf148217154742869" source="pf14821715474260" outcome="setting"/>
+  <links id="pf14821715474275" target="pf148217154742870" source="pf14821715474260" outcome="roles"/>
+  <links id="pf14821715474276" target="pf148217154742871" source="pf14821715474260" outcome="createUpdateRole"/>
+  <links id="pf14821715474277" target="pf148217154742872" source="pf14821715474260" outcome="permission"/>
+  <links id="pf14821715474278" target="pf148217154742873" source="pf14821715474260" outcome="createUpdatePermission"/>
+  <links id="pf14821715474279" target="pf148217154742874" source="pf14821715474260" outcome="passwordStandards"/>
+  <links id="pf148217154742710" target="pf148217154742875" source="pf14821715474260" outcome="customers"/>
+  <links id="pf148217154742711" target="pf148217154742876" source="pf14821715474260" outcome="createUpdateCustomer"/>
+  <links id="pf148217154742712" target="pf148217154742877" source="pf14821715474260" outcome="changePasswordSetting"/>
+  <links id="pf148217154742713" target="pf148217154742878" source="pf14821715474260" outcome="Batchs"/>
+  <links id="pf148217154742714" target="pf148217154742879" source="pf14821715474260" outcome="detailBatch"/>
+  <links id="pf148217154742715" target="pf148217154742880" source="pf14821715474260" outcome="batchImport"/>
+  <links id="pf148217154742716" target="pf148217154742881" source="pf14821715474260" outcome="ordersSearch"/>
+  <links id="pf148217154742717" target="pf148217154742882" source="pf14821715474260" outcome="orders"/>
+  <links id="pf148217154742718" target="pf148217154742883" source="pf14821715474260" outcome="invoices"/>
+  <links id="pf148217154742719" target="pf148217154742884" source="pf14821715474260" outcome="createUpdateInvoice"/>
+  <links id="pf148217154742720" target="pf148217154742885" source="pf14821715474260" outcome="invoiceConsumptions"/>
+  <links id="pf148217154742721" target="pf148217154742886" source="pf14821715474260" outcome="consumptions"/>
+  <links id="pf148217154742722" target="pf148217154742887" source="pf14821715474260" outcome="createUpdateConsumption"/>
+  <links id="pf148217154742723" target="pf148217154742888" source="pf14821715474260" outcome="ordersView"/>
+  <links id="pf148217154742724" target="pf148217154742889" source="pf14821715474260" outcome="ordersDetail"/>
+  <links id="pf148217154742725" target="pf148217154742890" source="pf14821715474260" outcome="journal"/>
+  <links id="pf148217154742726" target="pf148217154742891" source="pf14821715474260" outcome="journalLines"/>
+  <links id="pf148217154742727" target="pf148217154742892" source="pf14821715474260" outcome="reports"/>
+  <links id="pf148217154742728" target="pf148217154742893" source="pf14821715474260" outcome="reportCustomerIBMS"/>
+  <links id="pf148217154742729" target="pf148217154742894" source="pf14821715474260" outcome="reportInvoiceIBMS"/>
+  <links id="pf148217154742730" target="pf148217154742895" source="pf14821715474260" outcome="reportTransmissionOrder"/>
+  <links id="pf148217154742731" target="pf148217154742896" source="pf14821715474260" outcome="reportCustomerMaster"/>
+  <links id="pf148217154742732" target="pf148217154742897" source="pf14821715474260" outcome="reportUnbilledAR"/>
+  <links id="pf148217154742733" target="pf148217154742898" source="pf14821715474260" outcome="reportSummaryBilling"/>
+  <links id="pf148217154742734" target="pf148217154742899" source="pf14821715474260" outcome="reportCustomerAudit"/>
+  <links id="pf148217154742735" target="pf1482171547428100" source="pf14821715474260" outcome="reportInvoiceERP"/>
+  <links id="pf148217154742736" target="pf1482171547428101" source="pf14821715474260" outcome="reportJournalERP"/>
+  <links id="pf148217154742737" target="pf1482171547428102" source="pf14821715474260" outcome="reportDetailActivity"/>
+  <links id="pf148217154742738" target="pf1482171547428103" source="pf14821715474260" outcome="reportJournalEntry"/>
+  <links id="pf148217154742739" target="pf1482171547428104" source="pf14821715474260" outcome="reportPreBillAndConsumption"/>
+  <links id="pf148217154742740" target="pf1482171547428105" source="pf14821715474260" outcome="reportTransmissionAffidavit"/>
+  <links id="pf148217154742741" target="pf1482171547428106" source="pf14821715474260" outcome="reportSAGE"/>
+  <links id="pf148217154742742" target="pf1482171547428107" source="pf14821715474260" outcome="companies"/>
+  <links id="pf148217154742743" target="pf1482171547428108" source="pf14821715474260" outcome="companyCRUD"/>
+  <links id="pf148217154742744" target="pf1482171547428109" source="pf14821715474260" outcome="coaMapping"/>
+  <links id="pf148217154742745" target="pf1482171547429110" source="pf14821715474260" outcome="coaCRUD"/>
+  <links id="pf148217154742746" target="pf1482171547429111" source="pf14821715474260" outcome="accounts"/>
+  <links id="pf148217154742747" target="pf1482171547429112" source="pf14821715474260" outcome="accountCRUD"/>
+  <links id="pf148217154742748" target="pf1482171547429113" source="pf14821715474260" outcome="geography"/>
+  <links id="pf148217154742749" target="pf1482171547429114" source="pf14821715474260" outcome="geographyCRUD"/>
+  <links id="pf148217154742750" target="pf1482171547429115" source="pf14821715474260" outcome="platform"/>
+  <links id="pf148217154742751" target="pf1482171547429116" source="pf14821715474260" outcome="platformCRUD"/>
+  <links id="pf148217154742752" target="pf1482171547429117" source="pf14821715474260" outcome="profitCenter"/>
+  <links id="pf148217154742753" target="pf1482171547429118" source="pf14821715474260" outcome="profitCenterCRUD"/>
+  <links id="pf148217154742754" target="pf1482171547429119" source="pf14821715474260" outcome="costCenter"/>
+  <links id="pf148217154742755" target="pf1482171547429120" source="pf14821715474260" outcome="costCenterCRUD"/>
+  <links id="pf148217154742756" target="pf1482171547429121" source="pf14821715474260" outcome="channel"/>
+  <links id="pf148217154742757" target="pf1482171547429122" source="pf14821715474260" outcome="channelCRUD"/>
+  <links id="pf148217154742758" target="pf1482171547429123" source="pf14821715474260" outcome="country"/>
+  <links id="pf148217154742759" target="pf1482171547429124" source="pf14821715474260" outcome="countryCRUD"/>
+  <links id="pf148217154742760" target="pf1482171547429125" source="pf14821715474260" outcome="tax"/>
+  <links id="pf148217154742761" target="pf1482171547429126" source="pf14821715474260" outcome="taxCRUD"/>
+  <links id="pf148217154742762" target="pf1482171547429127" source="pf14821715474260" outcome="split"/>
+</pageflow:Pageflow>
